@@ -1,0 +1,293 @@
+body {
+	margin: 0;
+	padding: 0;
+	border: 0;
+	font-family: Verdana, Arial, Helvetica, sans-serif;
+	max-width: 800px;
+	margin: 0 auto;
+}
+
+div.pagewrap {
+	margin: 0 5px 5px 5px;
+}
+
+div.pagewrap div.headerwrap {
+	text-align: center;
+	font-weight: bold;
+	font-size: 1.7em;
+	border-left: 1px solid #BBBBBB;
+	border-right: 1px solid #BBBBBB;
+	border-bottom: 1px solid #BBBBBB;
+	background-color: #F5F5F5;
+	padding: 0.1em;
+	border-bottom-right-radius: 3px;
+	border-bottom-left-radius: 3px;
+	-moz-border-radius-bottomright: 3px;
+	-moz-border-radius-bottomleft: 3px;
+	-webkitborder-bottom-right-radius: 3px;
+	-webkitborder-bottom-left-radius: 3px;
+}
+
+div.pagewrap div.contentwrap {
+	margin-top: 10px;
+}
+
+div.pagewrap div.menuwrap {
+	margin-top: 7px;
+	border-top: 1px solid #CCCCCC;
+	padding: 25px 0 10px;
+}
+
+/* Basic styles for elements. */
+img {
+	border: 0px none;
+	margin: 0px;
+}
+
+form {
+	border: 0px none;
+	margin: 0px;
+}
+
+a {
+	color: #035488;
+	text-decoration: none;
+}
+
+a:hover {
+	color: #444444;
+	text-decoration: underline;
+}
+
+/* Optional message styles. */
+div.message {
+	margin: 10px 7px;
+	font-weight: bold;
+}
+
+div.message .success {
+	background-color: #E8FCDC;
+	border: 1px solid #008800;
+	color: #008800;
+	padding: 7px 15px;
+	border-radius: 3px;
+	-moz-border-radius: 3px;
+	-webkit-border-radius: 3px;
+}
+
+div.message .error {
+	background-color: #FCDCDC;
+	border: 1px solid #880000;
+	color: #880000;
+	padding: 7px 15px;
+	border-radius: 3px;
+	-moz-border-radius: 3px;
+	-webkit-border-radius: 3px;
+}
+
+div.message .info {
+	background-color: #DCDCDC;
+	border: 1px solid #333333;
+	color: #333333;
+	padding: 7px 15px;
+	border-radius: 3px;
+	-moz-border-radius: 3px;
+	-webkit-border-radius: 3px;
+}
+
+div.maincontent {
+}
+
+div.maincontent div.proptitle {
+	font-weight: bold;
+	font-size: 1.3em;
+	color: #1F1F1F;
+}
+
+div.maincontent div.propdesc {
+	margin-top: 5px;
+	padding: 10px 7px;
+	border-top: 1px solid #CCCCCC;
+	color: #333333;
+	font-size: 1.0em;
+}
+
+div.maincontent div.propinfo {
+}
+
+div.maincontent div.propmain {
+	margin: 0px 7px;
+}
+
+div.maincontent div.propmain div.formfields {
+	font-size: 0.9em;
+}
+
+div.maincontent div.propmain div.formfields div.formitem {
+	margin: 0.9em 0 0.5em;
+}
+
+div.maincontent div.propmain div.formfields div.formitem div.formitemtitle {
+	font-weight: bold;
+	margin-bottom: 2px;
+}
+
+div.maincontent div.propmain div.formfields div.formitem div.static {
+	margin-left: 7px;
+	width: 95%;
+	font-size: 0.95em;
+	color: #333333;
+}
+
+div.maincontent div.propmain div.formfields div.formitem input.text {
+	padding: 0.5em;
+	width: 95%;
+	border: 1px solid #BBBBBB;
+}
+
+div.maincontent div.propmain div.formfields div.formitem input.text:hover {
+	border: 1px solid #888888;
+}
+
+div.maincontent div.propmain div.formfields div.formitem input.text:focus {
+	border: 1px solid #888888;
+}
+
+div.maincontent div.propmain div.formfields div.formitem input.date {
+	padding: 0.5em;
+	max-width: 20em;
+	width: 95%;
+	border: 1px solid #BBBBBB;
+}
+
+div.maincontent div.propmain div.formfields div.formitem input.date:hover {
+	border: 1px solid #888888;
+}
+
+div.maincontent div.propmain div.formfields div.formitem input.date:focus {
+	border: 1px solid #888888;
+}
+
+div.maincontent div.propmain div.formfields div.formitem div.textareawrap {
+	width: 95%;
+}
+
+div.maincontent div.propmain div.formfields div.formitem textarea.text {
+	padding: 0.3em;
+	width: 100%;
+	border: 1px solid #BBBBBB;
+}
+
+div.maincontent div.propmain div.formfields div.formitem textarea.text:hover {
+	border: 1px solid #888888;
+}
+
+div.maincontent div.propmain div.formfields div.formitem textarea.text:focus {
+	border: 1px solid #888888;
+}
+
+div.maincontent div.propmain div.formfields div.formitem input.checkbox {
+	border: 1px solid #BBBBBB;
+}
+
+div.maincontent div.propmain div.formfields div.formitem select {
+	padding: 0.3em;
+	width: 95%;
+	border: 1px solid #BBBBBB;
+}
+
+div.maincontent div.propmain div.formfields div.formitem select:hover {
+	border: 1px solid #888888;
+}
+
+div.maincontent div.propmain div.formfields div.formitem select:focus {
+	border: 1px solid #888888;
+}
+
+div.maincontent div.propmain div.formfields div.formitem div.formitemdesc {
+	margin-left: 7px;
+	font-size: 0.9em;
+	color: #333333;
+}
+
+div.maincontent div.propmain div.formsubmit {
+	margin: 15px auto;
+	text-align: center;
+}
+
+div.maincontent div.propmain div.formsubmit input.submit {
+	color: #1F1F1F;
+	font-size: 0.9em;
+	font-weight: bold;
+	padding: 0.2em 0.5em;
+}
+
+div.maincontent div.propmain hr {
+	margin-top: 0.7em;
+	border: none 0;
+	border-top: 1px dashed #AAAAAA;
+	height: 1px;
+}
+
+div.maincontent div.propmain div.nontablewrap {
+	border-left: 1px solid #CCCCCC;
+	border-right: 1px solid #CCCCCC;
+	border-bottom: 1px solid #CCCCCC;
+	color: #333333;
+}
+
+div.maincontent div.propmain div.nontable_row {
+	background-color: #F5F5F5;
+	border-top: 1px dashed #CCCCCC;
+	padding: 0.5em;
+}
+
+div.maincontent div.propmain div.nontable_row.firstrow {
+	border-top: 1px solid #CCCCCC;
+}
+
+div.maincontent div.propmain div.nontable_row.altrow {
+	background-color: #FEFEFE;
+}
+
+div.maincontent div.propmain div.nontable_th {
+	margin-top: 0.4em;
+	font-weight: bold;
+}
+
+div.maincontent div.propmain div.nontable_th.firstcol {
+	margin-top: 0;
+}
+
+div.maincontent div.propmain div.nontable_td {
+	margin-left: 7px;
+	color: #444444;
+}
+
+/* Optional menu navigation styles. */
+div.menuwrap {
+}
+
+div.menuwrap div.menu {
+	font-size: 0.7em;
+	border: 1px solid #BBBBBB;
+	background-color: #F5F5F5;
+	margin-top: 7px;
+	padding: 5px;
+}
+
+div.menuwrap div.menu div.title {
+	font-weight: bold;
+	padding-bottom: 6px;
+}
+
+div.menuwrap div.menu a {
+	display: block;
+	border-top: 1px solid #CCCCCC;
+	padding: 12px 15px;
+}
+
+div.menuwrap div.menu a:hover {
+	background-color: #EAEAEA;
+	text-decoration: none;
+}
