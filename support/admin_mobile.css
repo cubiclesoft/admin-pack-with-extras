@@ -123,6 +123,10 @@ div.maincontent div.propmain div.formfields {
 	font-size: 0.9em;
 }
 
+div.maincontent div.propmain div.formfields div.formaccordionwrap.ui-accordion {
+	margin-bottom: 7px;
+}
+
 div.maincontent div.propmain div.formfields div.formaccordionwrap.ui-accordion h3.ui-accordion-header {
 	margin-top: 7px;
 }
