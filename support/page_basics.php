@@ -228,6 +228,14 @@
 	}
 
 
+	function BB_OutputJQueryUI($rooturl, $supportpath)
+	{
+?>
+	<link rel="stylesheet" href="<?php echo htmlspecialchars($rooturl . "/" . $supportpath . "/jquery_ui_themes/smoothness/jquery-ui-1.9.0.css"); ?>" type="text/css" media="all" />
+	<script type="text/javascript" src="<?php echo htmlspecialchars($rooturl . "/" . $supportpath . "/jquery-ui-1.9.0.min.js"); ?>"></script>
+<?php
+	}
+
 	// Slightly modified code swiped from Barebone CMS editing routines.
 	function BB_PropertyForm($options)
 	{
@@ -237,6 +245,7 @@
 		if (!isset($bb_formwidths) || !is_bool($bb_formwidths))  $bb_formwidths = true;
 
 		$dateused = false;
+		$accordionused = false;
 		$multiselectused = false;
 		$multiselectheight = 200;
 		$autofocus = false;
@@ -278,11 +287,27 @@
 		<div class="formfields<?php if (count($options["fields"]) == 1 && !isset($options["fields"][0]["title"]))  echo " alt"; ?>">
 <?php
 			$insiderow = false;
+			$insideaccordion = false;
 			foreach ($options["fields"] as $num => $field)
 			{
 				if (is_string($field))
 				{
 					if ($field == "split" && !$insiderow)  echo "<hr />";
+					else if ($field == "endaccordion" || $field == "endaccordian")
+					{
+						if ($insiderow)
+						{
+?>
+			</tr></table>
+<?php
+							$insiderow = false;
+						}
+?>
+				</div>
+			</div>
+<?php
+						$insideaccordion = false;
+					}
 					else if ($field == "startrow")
 					{
 						if ($insiderow)  echo "</tr><tr>";
@@ -302,12 +327,44 @@
 						$insiderow = false;
 					}
 				}
+				else if ($field["type"] == "accordion" || $field["type"] == "accordian")
+				{
+					if ($insiderow)
+					{
+?>
+			</tr></table>
+<?php
+						$insiderow = false;
+					}
+
+					if ($insideaccordion)
+					{
+?>
+				</div>
+				<h3><?php echo htmlspecialchars(BB_Translate($field["title"])); ?></h3>
+				<div class="formaccordionitems">
+<?php
+					}
+					else
+					{
+?>
+			<div class="formaccordionwrap">
+				<h3><?php echo htmlspecialchars(BB_Translate($field["title"])); ?></h3>
+				<div class="formaccordionitems">
+<?php
+						$insideaccordion = true;
+						$accordionused = true;
+					}
+
+					$firstaccordionitem = true;
+				}
 				else
 				{
 					if ($insiderow)  echo "<td>";
 ?>
-			<div class="formitem">
+			<div class="formitem<?=($insideaccordion && $firstaccordionitem ? " firstitem" : "")?>">
 <?php
+					$firstaccordionitem = false;
 					if (isset($field["title"]))
 					{
 ?>
@@ -605,6 +662,14 @@
 			</tr></table>
 <?php
 			}
+
+			if ($insideaccordion)
+			{
+?>
+				</div>
+			</div>
+<?php
+			}
 ?>
 		</div>
 <?php
@@ -647,10 +712,7 @@
 		{
 			if (!$jqueryuiused)
 			{
-?>
-	<link rel="stylesheet" href="<?php echo htmlspecialchars($rooturl . "/" . $supportpath . "/jquery_ui_themes/smoothness/jquery-ui-1.8.22.css"); ?>" type="text/css" media="all" />
-	<script type="text/javascript" src="<?php echo htmlspecialchars($rooturl . "/" . $supportpath . "/jquery-ui-1.8.22.min.js"); ?>"></script>
-<?php
+				BB_OutputJQueryUI($rooturl, $supportpath);
 				$jqueryuiused = true;
 			}
 ?>
@@ -667,10 +729,7 @@
 		{
 			if (!$jqueryuiused)
 			{
-?>
-	<link rel="stylesheet" href="<?php echo htmlspecialchars($rooturl . "/" . $supportpath . "/jquery_ui_themes/smoothness/jquery-ui-1.8.22.css"); ?>" type="text/css" media="all" />
-	<script type="text/javascript" src="<?php echo htmlspecialchars($rooturl . "/" . $supportpath . "/jquery-ui-1.8.22.min.js"); ?>"></script>
-<?php
+				BB_OutputJQueryUI($rooturl, $supportpath);
 				$jqueryuiused = true;
 			}
 
@@ -702,6 +761,24 @@
 	</script>
 <?php
 			}
+		}
+
+		if ($accordionused)
+		{
+			if (!$jqueryuiused)
+			{
+				BB_OutputJQueryUI($rooturl, $supportpath);
+				$jqueryuiused = true;
+			}
+
+?>
+	<script type="text/javascript">
+	$(function() {
+		if (jQuery.fn.accordion)  $('div.formaccordionwrap').accordion({ collapsible : true, active : false, heightStyle : 'content' });
+		else  alert('<?php echo BB_JSSafe(BB_Translate("Warning:  Missing jQuery UI for accordion.\n\nThis feature requires AdminPack Extras.")); ?>');
+	});
+	</script>
+<?php
 		}
 
 		if (isset($options["focus"]) && (is_string($options["focus"]) || ($options["focus"] === true && $autofocus !== false)))

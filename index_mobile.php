@@ -85,6 +85,10 @@
 			),
 			"fields" => array(
 				array(
+					"title" => "Some Options",
+					"type" => "accordion"
+				),
+				array(
 					"title" => "Field 1",
 					"type" => "text",
 					"name" => "field1",
@@ -97,6 +101,10 @@
 					"name" => "field2",
 					"value" => BB_GetValue("field2", $somevar),
 					"desc" => "Description for Field 2."
+				),
+				array(
+					"title" => "Some More Options",
+					"type" => "accordion"
 				),
 				array(
 					"title" => "Date",
@@ -118,6 +126,7 @@
 					"name" => "file",
 					"desc" => "Description for File."
 				),
+				"endaccordion",
 				"split",
 				"startrow",
 				array(

@@ -14,7 +14,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
 <link rel="stylesheet" href="@ROOTURL@/@SUPPORTPATH@/admin_mobile.css" type="text/css" media="all" />
 <link rel="stylesheet" href="@ROOTURL@/@SUPPORTPATH@/admin_mobile_print.css" type="text/css" media="print" />
-<script type="text/javascript" src="@ROOTURL@/@SUPPORTPATH@/jquery-1.6.4.min.js"></script>
+<script type="text/javascript" src="@ROOTURL@/@SUPPORTPATH@/jquery-1.7.2.min.js"></script>
 </head>
 <body>
 <div class="pagewrap">

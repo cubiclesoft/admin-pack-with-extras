@@ -233,6 +233,34 @@ div.maincontent div.propmain div.alt {
 	padding: 0px;
 }
 
+div.maincontent div.propmain div.formfields div.formaccordionwrap.ui-accordion h3.ui-accordion-header {
+	margin-top: 7px;
+}
+
+div.maincontent div.propmain div.formfields div.formaccordionwrap.ui-accordion h3.ui-state-active {
+	background: url("jquery_ui_themes/smoothness/images/ui-bg_glass_75_e6e6e6_1x400.png") repeat-x scroll 50% 50% #E6E6E6;
+}
+
+div.maincontent div.propmain div.formfields div.formaccordionwrap.ui-accordion div.formaccordionitems.ui-accordion-content {
+	padding: 0 14px;
+	background: none;
+	background-color: #FEFEFE;
+}
+
+div.maincontent div.propmain div.formfields div.formaccordionwrap.ui-accordion div.formaccordionitems.ui-widget-content a {
+	color: #035488;
+}
+
+div.maincontent div.propmain div.formfields div.formaccordionwrap.ui-accordion div.formaccordionitems.ui-accordion-content div.formitem {
+	margin-top: 6px;
+	border-top: 1px dotted #CCCCCC;
+	padding-top: 6px;
+}
+
+div.maincontent div.propmain div.formfields div.formaccordionwrap.ui-accordion div.formaccordionitems.ui-accordion-content div.formitem.firstitem {
+	border-top: 0;
+}
+
 div.maincontent div.propmain div.formfields div.formitem {
 	margin-top: 12px;
 	margin-bottom: 12px;
@@ -296,6 +324,7 @@ div.maincontent div.propmain div.formfields div.formitem div.swfuploadinject {
 div.maincontent div.propmain div.formfields div.formitem div.formitemdesc {
 	margin-left: 15px;
 	font-size: 0.9em;
+	color: #333333;
 }
 
 div.maincontent div.propmain div.formsubmit {
