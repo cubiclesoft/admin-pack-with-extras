@@ -284,7 +284,7 @@
 		if (isset($options["fields"]))
 		{
 ?>
-		<div class="formfields<?php if (count($options["fields"]) == 1 && !isset($options["fields"][0]["title"]))  echo " alt"; ?>">
+		<div class="formfields<?php if (count($options["fields"]) == 1 && !isset($options["fields"][0]["title"]) && !isset($options["fields"][0]["htmltitle"]))  echo " alt"; ?>">
 <?php
 			$insiderow = false;
 			$insideaccordion = false;
@@ -362,13 +362,19 @@
 				{
 					if ($insiderow)  echo "<td>";
 ?>
-			<div class="formitem<?=($insideaccordion && $firstaccordionitem ? " firstitem" : "")?>">
+			<div class="formitem<?php echo ($insideaccordion && $firstaccordionitem ? " firstitem" : ""); ?>">
 <?php
 					$firstaccordionitem = false;
 					if (isset($field["title"]))
 					{
 ?>
 			<div class="formitemtitle"><?php echo htmlspecialchars(BB_Translate($field["title"])); ?></div>
+<?php
+					}
+					else if (isset($field["htmltitle"]))
+					{
+?>
+			<div class="formitemtitle"><?php echo BB_Translate($field["htmltitle"]); ?></div>
 <?php
 					}
 					else if ($field["type"] == "checkbox" && $insiderow)
@@ -558,11 +564,13 @@
 <?php
 									}
 
+									$num2 = 0;
 									foreach ($row as $col)
 									{
 ?>
-					<td><?php echo $col; ?></td>
+					<td<?php if (count($row) < count($field["cols"]) && $num2 + 1 == count($row))  echo " colspan=\"" . (count($field["cols"]) - count($row) + 1) . "\""; ?>><?php echo $col; ?></td>
 <?php
+										$num2++;
 									}
 ?>
 				</tr>
