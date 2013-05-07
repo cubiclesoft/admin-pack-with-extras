@@ -1,6 +1,6 @@
 <?php
 	// Admin Pack server-side page manipulation functions.
-	// (C) 2012 CubicleSoft.  All Rights Reserved.
+	// (C) 2013 CubicleSoft.  All Rights Reserved.
 
 	// Code swiped from Barebones CMS support functions.
 	function BB_JSSafe($data)

@@ -1,6 +1,6 @@
 <?php
 	// Admin Pack default mobile layout.
-	// (C) 2012 CubicleSoft.  All Rights Reserved.
+	// (C) 2013 CubicleSoft.  All Rights Reserved.
 
 	// Disable features.
 	$bb_formtables = false;

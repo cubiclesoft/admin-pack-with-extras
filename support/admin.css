@@ -225,6 +225,7 @@ div.maincontent div.propmain div.formfields {
 	padding-left: 10px;
 	padding-right: 10px;
 	font-size: 0.9em;
+	overflow: auto;
 }
 
 div.maincontent div.propmain div.alt {

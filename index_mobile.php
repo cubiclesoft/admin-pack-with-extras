@@ -1,6 +1,6 @@
 <?php
 	// Admin Pack.
-	// (C) 2012 CubicleSoft.  All Rights Reserved.
+	// (C) 2013 CubicleSoft.  All Rights Reserved.
 
 	// This small package exists to make it easy to design quick-n-dirty administrative backends that look good.
 	// This file is well-commented.  When republishing based on this work, copyrights must remain intact.
@@ -50,7 +50,7 @@
 
 	if (isset($_REQUEST["action"]) && $_REQUEST["action"] == "bb_setlayout")
 	{
-		SetCookieFixDomain("bb_layout", preg_replace('/[^a-z]/', "", $_REQUEST["layout"]));
+		SetCookieFixDomain("bb_layout", preg_replace('/[^a-z]/', "", $_REQUEST["layout"]), time() + 365 * 24 * 60 * 60);
 
 		BB_RedirectPage("success", "Successfully switched the layout.");
 	}
