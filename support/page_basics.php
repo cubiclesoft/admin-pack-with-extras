@@ -298,7 +298,7 @@
 						if ($insiderow)
 						{
 ?>
-			</tr></table>
+			</tr></table></div>
 <?php
 							$insiderow = false;
 						}
@@ -308,6 +308,10 @@
 <?php
 						$insideaccordion = false;
 					}
+					else if ($field == "nosplit")
+					{
+						if ($insideaccordion)  $firstaccordionitem = true;
+					}
 					else if ($field == "startrow")
 					{
 						if ($insiderow)  echo "</tr><tr>";
@@ -315,14 +319,15 @@
 						{
 							$insiderow = true;
 ?>
-			<table class="rowwrap"><tr>
+			<div class="fieldtablewrap<?php if ($insideaccordion && $firstaccordionitem)  echo " firstitem"; ?>"><table class="rowwrap"><tr>
 <?php
+							$firstaccordionitem = false;
 						}
 					}
 					else if ($field == "endrow" && $bb_formtables)
 					{
 ?>
-			</tr></table>
+			</tr></table></div>
 <?php
 						$insiderow = false;
 					}
@@ -332,7 +337,7 @@
 					if ($insiderow)
 					{
 ?>
-			</tr></table>
+			</tr></table></div>
 <?php
 						$insiderow = false;
 					}
@@ -362,7 +367,7 @@
 				{
 					if ($insiderow)  echo "<td>";
 ?>
-			<div class="formitem<?php echo ($insideaccordion && $firstaccordionitem ? " firstitem" : ""); ?>">
+			<div class="formitem<?php echo ((isset($field["split"]) && $field["split"] === false) || ($insideaccordion && $firstaccordionitem) ? " firstitem" : ""); ?>">
 <?php
 					$firstaccordionitem = false;
 					if (isset($field["title"]))
@@ -667,7 +672,7 @@
 			if ($insiderow)
 			{
 ?>
-			</tr></table>
+			</tr></table></div>
 <?php
 			}
 

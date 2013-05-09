@@ -262,6 +262,27 @@ div.maincontent div.propmain div.formfields div.formaccordionwrap.ui-accordion d
 	padding-top: 6px;
 }
 
+div.maincontent div.propmain div.formfields div.formaccordionwrap.ui-accordion div.formaccordionitems.ui-accordion-content table.rowwrap {
+	background-color: transparent;
+}
+
+div.maincontent div.propmain div.formfields div.formaccordionwrap.ui-accordion div.formaccordionitems.ui-accordion-content div.fieldtablewrap {
+	margin-top: 6px;
+	border-top: 1px dotted #CCCCCC;
+}
+
+div.maincontent div.propmain div.formfields div.formaccordionwrap.ui-accordion div.formaccordionitems.ui-accordion-content div.fieldtablewrap.firstitem {
+	border-top: 0;
+}
+
+div.maincontent div.propmain div.formfields div.formaccordionwrap.ui-accordion div.formaccordionitems.ui-accordion-content div.fieldtablewrap.firstitem table.rowwrap div.formitem {
+	margin-top: 0;
+}
+
+div.maincontent div.propmain div.formfields div.formaccordionwrap.ui-accordion div.formaccordionitems.ui-accordion-content div.fieldtablewrap table.rowwrap div.formitem {
+	border-top: 0;
+}
+
 div.maincontent div.propmain div.formfields div.formaccordionwrap.ui-accordion div.formaccordionitems.ui-accordion-content div.formitem.firstitem {
 	border-top: 0;
 }

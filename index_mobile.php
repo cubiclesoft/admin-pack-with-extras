@@ -106,6 +106,22 @@
 					"title" => "Some More Options",
 					"type" => "accordion"
 				),
+				"startrow",
+				array(
+					"title" => "Field 2a",
+					"type" => "text",
+					"width" => "200px",
+					"name" => "field2a",
+					"value" => BB_GetValue("field2a", ""),
+				),
+				array(
+					"title" => "Field 2b",
+					"type" => "text",
+					"width" => "50px",
+					"name" => "field2b",
+					"value" => BB_GetValue("field2b", ""),
+				),
+				"endrow",
 				array(
 					"title" => "Date",
 					"type" => "date",
@@ -115,11 +131,29 @@
 				),
 				array(
 					"title" => "Table",
+					"split" => false,
 					"type" => "table",
 					"cols" => array("ID", "Type", "Options"),
 					"rows" => $rows,
 					"desc" => "Description for Table."
 				),
+				"nosplit",
+				"startrow",
+				array(
+					"title" => "Field 2c",
+					"type" => "text",
+					"width" => "200px",
+					"name" => "field2c",
+					"value" => BB_GetValue("field2c", ""),
+				),
+				array(
+					"title" => "Field 2d",
+					"type" => "text",
+					"width" => "50px",
+					"name" => "field2d",
+					"value" => BB_GetValue("field2d", ""),
+				),
+				"endrow",
 				array(
 					"title" => "File",
 					"type" => "file",
