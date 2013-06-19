@@ -331,6 +331,10 @@
 <?php
 						$insiderow = false;
 					}
+					else if (substr($field, 0, 5) == "html:")
+					{
+						echo substr($field, 5);
+					}
 				}
 				else if ($field["type"] == "accordion" || $field["type"] == "accordian")
 				{
