@@ -246,9 +246,24 @@
 
 		$dateused = false;
 		$accordionused = false;
-		$multiselectused = false;
+		$multiselectused = array();
 		$multiselectheight = 200;
 		$autofocus = false;
+
+		// Certain types of fields require the Admin Pack extras package.
+		$jqueryuiused = false;
+		if (defined("BB_ROOT_URL"))  $rooturl = BB_ROOT_URL;
+		else if (defined("ROOT_URL"))  $rooturl = ROOT_URL;
+		else
+		{
+			$rooturl = BB_GetRequestURLBase();
+			if (substr($rooturl, -1) != "/")  $rooturl = dirname($rooturl);
+			if (substr($rooturl, -1) == "/")  $rooturl = substr($rooturl, 0, -1);
+		}
+
+		if (defined("BB_SUPPORT_PATH"))  $supportpath = BB_SUPPORT_PATH;
+		else if (defined("SUPPORT_PATH"))  $supportpath = SUPPORT_PATH;
+		else  $supportpath = "support";
 
 ?>
 	<div class="proptitle"><?php echo htmlspecialchars(BB_Translate($options["title"])); ?></div>
@@ -434,7 +449,7 @@
 							if ($autofocus === false)  $autofocus = htmlspecialchars("f" . $num . "_" . $field["name"]);
 
 							if (!isset($field["multiple"]) || $field["multiple"] !== true)  $mode = "select";
-							else if (!isset($field["mode"]) || ($field["mode"] != "flat" && $field["mode"] != "dropdown"))  $mode = "checkbox";
+							else if (!isset($field["mode"]) || ($field["mode"] != "flat" && $field["mode"] != "dropdown" && $field["mode"] != "tags" && $field["mode"] != "select"))  $mode = "checkbox";
 							else  $mode = $field["mode"];
 
 							if (!isset($field["width"]) && !isset($field["height"]))  $style = "";
@@ -514,7 +529,73 @@
 ?>
 			</select>
 <?php
-								if (isset($field["multiple"]) && $field["multiple"] === true)  $multiselectused = $mode;
+								if (isset($field["multiple"]) && $field["multiple"] === true)
+								{
+									if (!$jqueryuiused)
+									{
+										BB_OutputJQueryUI($rooturl, $supportpath);
+										$jqueryuiused = true;
+									}
+
+									if ($mode == "tags")
+									{
+										if (!isset($multiselectused[$mode]))
+										{
+?>
+	<link rel="stylesheet" href="<?php echo htmlspecialchars($rooturl . "/" . $supportpath . "/multiselect-select2/select2.css"); ?>" type="text/css" media="all" />
+	<script type="text/javascript" src="<?php echo htmlspecialchars($rooturl . "/" . $supportpath . "/multiselect-select2/select2.min.js"); ?>"></script>
+<?php
+										}
+?>
+	<script type="text/javascript">
+	$(function() {
+		if (jQuery.fn.select2)  $('div.formfields div.formitem select.multi[name="<?php echo BB_JSSafe($field["name"] . "[]"); ?>"]').select2({ <?php if (isset($field["mininput"]))  echo "minimumInputLength: " . (int)$field["mininput"]; ?> });
+		else  alert('<?php echo BB_JSSafe(BB_Translate("Warning:  Missing jQuery UI select2 for multiple selection field.\n\This feature requires AdminPack Extras.")); ?>');
+	});
+	</script>
+<?php
+									}
+									else if ($mode == "dropdown")
+									{
+										if (!isset($multiselectused[$mode]))
+										{
+?>
+	<link rel="stylesheet" href="<?php echo htmlspecialchars($rooturl . "/" . $supportpath . "/multiselect-widget/jquery.multiselect.css"); ?>" type="text/css" media="all" />
+	<link rel="stylesheet" href="<?php echo htmlspecialchars($rooturl . "/" . $supportpath . "/multiselect-widget/jquery.multiselect.filter.css"); ?>" type="text/css" media="all" />
+	<script type="text/javascript" src="<?php echo htmlspecialchars($rooturl . "/" . $supportpath . "/multiselect-widget/jquery.multiselect.min.js"); ?>"></script>
+	<script type="text/javascript" src="<?php echo htmlspecialchars($rooturl . "/" . $supportpath . "/multiselect-widget/jquery.multiselect.filter.js"); ?>"></script>
+<?php
+										}
+?>
+	<script type="text/javascript">
+	$(function() {
+		if (jQuery.fn.multiselect && jQuery.fn.multiselectfilter)  $('div.formfields div.formitem select.multi[name="<?php echo BB_JSSafe($field["name"] . "[]"); ?>"]').multiselect({ selectedText: '<?php echo BB_JSSafe(BB_Translate("# of # selected")); ?>', selectedList: 5, height: <?php echo $multiselectheight; ?>, position: { my: 'left top', at: 'left bottom', collision: 'flip' } }).multiselectfilter();
+		else  alert('<?php echo BB_JSSafe(BB_Translate("Warning:  Missing jQuery UI multiselect widget or multiselectfilter for dropdown multiple selection field.\n\This feature requires AdminPack Extras.")); ?>');
+	});
+	</script>
+<?php
+									}
+									else if ($mode == "flat")
+									{
+										if (!isset($multiselectused[$mode]))
+										{
+?>
+	<link rel="stylesheet" href="<?php echo htmlspecialchars($rooturl . "/" . $supportpath . "/multiselect-flat/css/ui.multiselect.css"); ?>" type="text/css" media="all" />
+	<script type="text/javascript" src="<?php echo htmlspecialchars($rooturl . "/" . $supportpath . "/multiselect-flat/js/ui.multiselect.js"); ?>"></script>
+<?php
+										}
+?>
+	<script type="text/javascript">
+	$(function() {
+		if (jQuery.fn.multiselect)  $('div.formfields div.formitem select.multi[name="<?php echo BB_JSSafe($field["name"] . "[]"); ?>"]').multiselect({ dividerLocation: 0.5 });
+		else  alert('<?php echo BB_JSSafe(BB_Translate("Warning:  Missing jQuery UI multiselect plugin for flat multiple selection field.\n\This feature requires AdminPack Extras.")); ?>');
+	});
+	</script>
+<?php
+									}
+
+									$multiselectused[$mode] = true;
+								}
 							}
 
 							break;
@@ -710,21 +791,6 @@
 ?>
 	</div>
 <?php
-		// Certain types of fields require the Admin Pack extras package.
-		$jqueryuiused = false;
-		if (defined("BB_ROOT_URL"))  $rooturl = BB_ROOT_URL;
-		else if (defined("ROOT_URL"))  $rooturl = ROOT_URL;
-		else
-		{
-			$rooturl = BB_GetRequestURLBase();
-			if (substr($rooturl, -1) != "/")  $rooturl = dirname($rooturl);
-			if (substr($rooturl, -1) == "/")  $rooturl = substr($rooturl, 0, -1);
-		}
-
-		if (defined("BB_SUPPORT_PATH"))  $supportpath = BB_SUPPORT_PATH;
-		else if (defined("SUPPORT_PATH"))  $supportpath = SUPPORT_PATH;
-		else  $supportpath = "support";
-
 		if ($dateused)
 		{
 			if (!$jqueryuiused)
@@ -740,44 +806,6 @@
 	});
 	</script>
 <?php
-		}
-
-		if ($multiselectused !== false)
-		{
-			if (!$jqueryuiused)
-			{
-				BB_OutputJQueryUI($rooturl, $supportpath);
-				$jqueryuiused = true;
-			}
-
-			if ($multiselectused == "dropdown")
-			{
-?>
-	<link rel="stylesheet" href="<?php echo htmlspecialchars($rooturl . "/" . $supportpath . "/multiselect-widget/jquery.multiselect.css"); ?>" type="text/css" media="all" />
-	<link rel="stylesheet" href="<?php echo htmlspecialchars($rooturl . "/" . $supportpath . "/multiselect-widget/jquery.multiselect.filter.css"); ?>" type="text/css" media="all" />
-	<script type="text/javascript" src="<?php echo htmlspecialchars($rooturl . "/" . $supportpath . "/multiselect-widget/jquery.multiselect.min.js"); ?>"></script>
-	<script type="text/javascript" src="<?php echo htmlspecialchars($rooturl . "/" . $supportpath . "/multiselect-widget/jquery.multiselect.filter.js"); ?>"></script>
-	<script type="text/javascript">
-	$(function() {
-		if (jQuery.fn.multiselect && jQuery.fn.multiselectfilter)  $('div.formfields div.formitem select.multi').multiselect({ selectedText: '<?php echo BB_JSSafe(BB_Translate("# of # selected")); ?>', selectedList: 5, height: <?php echo $multiselectheight; ?>, position: { my: 'left top', at: 'left bottom', collision: 'flip' } }).multiselectfilter();
-		else  alert('<?php echo BB_JSSafe(BB_Translate("Warning:  Missing jQuery UI multiselect widget or multiselectfilter for dropdown multiple selection field.\n\This feature requires AdminPack Extras.")); ?>');
-	});
-	</script>
-<?php
-			}
-			else if ($multiselectused == "flat")
-			{
-?>
-	<link rel="stylesheet" href="<?php echo htmlspecialchars($rooturl . "/" . $supportpath . "/multiselect-flat/css/ui.multiselect.css"); ?>" type="text/css" media="all" />
-	<script type="text/javascript" src="<?php echo htmlspecialchars($rooturl . "/" . $supportpath . "/multiselect-flat/js/ui.multiselect.js"); ?>"></script>
-	<script type="text/javascript">
-	$(function() {
-		if (jQuery.fn.multiselect)  $('div.formfields div.formitem select.multi').multiselect({ dividerLocation: 0.5 });
-		else  alert('<?php echo BB_JSSafe(BB_Translate("Warning:  Missing jQuery UI multiselect plugin for flat multiple selection field.\n\This feature requires AdminPack Extras.")); ?>');
-	});
-	</script>
-<?php
-			}
 		}
 
 		if ($accordionused)

@@ -208,6 +208,17 @@
 					"select" => BB_SelectValues(BB_GetValue("field7", array())),
 					"desc" => "Description for Field 7."
 				),
+				array(
+					"title" => "Field 8",
+					"type" => "select",
+					"width" => "100%",
+					"multiple" => true,
+					"mode" => "tags",
+					"name" => "field8",
+					"options" => array("name" => "Name", "email" => "E-mail Address", "phone" => "Phone Number"),
+					"select" => BB_SelectValues(BB_GetValue("field8", array())),
+					"desc" => "Description for Field 8."
+				),
 			),
 			"submit" => "Save",
 			"focus" => true
