@@ -391,9 +391,12 @@
 					$firstaccordionitem = false;
 					if (isset($field["title"]))
 					{
+						if (is_string($field["title"]))
+						{
 ?>
 			<div class="formitemtitle"><?php echo htmlspecialchars(BB_Translate($field["title"])); ?></div>
 <?php
+						}
 					}
 					else if (isset($field["htmltitle"]))
 					{
