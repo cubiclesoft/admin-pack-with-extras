@@ -960,6 +960,16 @@
 		return $result;
 	}
 
+	function BB_ProcessInfoDefaults($info, $defaults)
+	{
+		foreach ($defaults as $key => $val)
+		{
+			if (!isset($info[$key]))  $info[$key] = $val;
+		}
+
+		return $info;
+	}
+
 	function BB_GeneratePage($title, $menuopts, $contentopts)
 	{
 		global $bb_rootname, $bb_page_layout, $bb_menu_layout, $bb_menu_item_layout, $bb_message_layout;
