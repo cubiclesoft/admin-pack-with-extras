@@ -363,6 +363,8 @@ div.maincontent div.propmain div.formsubmit {
 }
 
 div.maincontent div.propmain div.formsubmit input.submit {
+	margin-left: 5px;
+	margin-right: 5px;
 	background-color: #FFFFFF;
 	border: 1px solid #0F5C8E;
 	font-weight: bold;

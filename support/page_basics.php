@@ -778,9 +778,17 @@
 
 		if (isset($options["submit"]))
 		{
+			if (is_string($options["submit"]))  $options["submit"] = array($options["submit"]);
 ?>
 		<div class="formsubmit">
-			<input class="submit" type="submit" value="<?php echo htmlspecialchars(BB_Translate($options["submit"])); ?>" />
+<?php
+			foreach ($options["submit"] as $val)
+			{
+?>
+			<input class="submit" type="submit"<?php if (isset($options["submitname"]))  echo " name=\"" . htmlspecialchars($options["submitname"]) . "\""; ?> value="<?php echo htmlspecialchars(BB_Translate($val)); ?>" />
+<?php
+			}
+?>
 		</div>
 <?php
 		}
@@ -970,21 +978,17 @@
 		return $info;
 	}
 
-	function BB_GeneratePage($title, $menuopts, $contentopts)
+	function BB_InitLayouts()
 	{
-		global $bb_rootname, $bb_page_layout, $bb_menu_layout, $bb_menu_item_layout, $bb_message_layout;
-
-		if (!isset($contentopts["title"]))  $contentopts["title"] = $title;
-		if (isset($contentopts["hidden"]) && !isset($contentopts["hidden"]["bb_back"]))  $contentopts["hidden"]["bb_back"] = (isset($_POST["bb_back"]) ? $_POST["bb_back"] : BB_GetBackQueryString());
-
-		header("Content-Type: text/html; charset=UTF-8");
+		global $bb_page_layout, $bb_menu_layout, $bb_menu_item_layout, $bb_message_layout;
 
 		// Default layout swiped from the Barebones CMS Layout widget.
 		// SEO-friendly (2-1) admin-style 2-column pixel-widths liquid layout (200px 100% height, content).
 		// Sources:  http://matthewjamestaylor.com/blog/holy-grail-no-quirks-mode.htm, http://matthewjamestaylor.com/blog/ultimate-2-column-left-menu-pixels.htm
 		if (!isset($bb_page_layout))
 		{
-			$bb_page_layout = <<<EOF
+			ob_start();
+?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
@@ -992,6 +996,7 @@
 <link rel="stylesheet" href="@ROOTURL@/@SUPPORTPATH@/admin.css" type="text/css" media="all" />
 <link rel="stylesheet" href="@ROOTURL@/@SUPPORTPATH@/admin_print.css" type="text/css" media="print" />
 <script type="text/javascript" src="@ROOTURL@/@SUPPORTPATH@/jquery-1.7.2.min.js"></script>
+<?php if (function_exists("BB_InjectLayoutHead"))  BB_InjectLayoutHead(); ?>
 </head>
 <body>
 <div class="pagewrap">
@@ -1016,7 +1021,9 @@
 </div>
 </body>
 </html>
-EOF;
+<?php
+			$bb_page_layout = ob_get_contents();
+			ob_end_clean();
 		}
 
 		if (!isset($bb_menu_layout))
@@ -1042,6 +1049,18 @@ EOF;
 <div class="message"><div class="@MSGTYPE@">@MESSAGE@</div></div>
 EOF;
 		}
+	}
+
+	function BB_GeneratePage($title, $menuopts, $contentopts)
+	{
+		global $bb_rootname, $bb_page_layout, $bb_menu_layout, $bb_menu_item_layout, $bb_message_layout;
+
+		if (!isset($contentopts["title"]))  $contentopts["title"] = $title;
+		if (isset($contentopts["hidden"]) && !isset($contentopts["hidden"]["bb_back"]))  $contentopts["hidden"]["bb_back"] = (isset($_POST["bb_back"]) ? $_POST["bb_back"] : BB_GetBackQueryString());
+
+		header("Content-Type: text/html; charset=UTF-8");
+
+		BB_InitLayouts();
 
 		// Process the header.
 		if (defined("BB_ROOT_URL"))  $rooturl = BB_ROOT_URL;
