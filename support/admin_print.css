@@ -59,6 +59,10 @@ div.maincontent {
 	border: 0 none;
 }
 
+div.maincontent div.proptitle div.navbutton {
+	display: none;
+}
+
 div.maincontent div.propmain div.formfields {
 	border: 0 none;
 	background-color: #FFFFFF;

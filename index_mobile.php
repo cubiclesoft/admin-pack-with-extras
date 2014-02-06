@@ -1,6 +1,6 @@
 <?php
 	// Admin Pack.
-	// (C) 2013 CubicleSoft.  All Rights Reserved.
+	// (C) 2014 CubicleSoft.  All Rights Reserved.
 
 	// This small package exists to make it easy to design quick-n-dirty administrative backends that look good.
 	// This file is well-commented.  When republishing based on this work, copyrights must remain intact.
@@ -197,11 +197,23 @@
 				),
 				"endrow",
 				"split",
+				// NOTE:  Dropdown and flat are incompatible and can't be on the same page.
+//				array(
+//					"title" => "Field 7",
+//					"type" => "select",
+//					"multiple" => true,
+//					"mode" => "dropdown",
+//					"height" => "250px",
+//					"name" => "field7",
+//					"options" => array("name" => "Name", "email" => "E-mail Address", "phone" => "Phone Number"),
+//					"select" => BB_SelectValues(BB_GetValue("field7", array())),
+//					"desc" => "Description for Field 7."
+//				),
 				array(
 					"title" => "Field 7",
 					"type" => "select",
 					"multiple" => true,
-					"mode" => "dropdown",
+					"mode" => "flat",
 					"height" => "250px",
 					"name" => "field7",
 					"options" => array("name" => "Name", "email" => "E-mail Address", "phone" => "Phone Number"),

@@ -1,6 +1,6 @@
 <?php
 	// Admin Pack server-side page manipulation functions.
-	// (C) 2013 CubicleSoft.  All Rights Reserved.
+	// (C) 2014 CubicleSoft.  All Rights Reserved.
 
 	// Code swiped from Barebones CMS support functions.
 	function BB_JSSafe($data)
@@ -231,8 +231,8 @@
 	function BB_OutputJQueryUI($rooturl, $supportpath)
 	{
 ?>
-	<link rel="stylesheet" href="<?php echo htmlspecialchars($rooturl . "/" . $supportpath . "/jquery_ui_themes/smoothness/jquery-ui-1.9.0.css"); ?>" type="text/css" media="all" />
-	<script type="text/javascript" src="<?php echo htmlspecialchars($rooturl . "/" . $supportpath . "/jquery-ui-1.9.0.min.js"); ?>"></script>
+	<link rel="stylesheet" href="<?php echo htmlspecialchars($rooturl . "/" . $supportpath . "/jquery_ui_themes/smoothness/jquery-ui-1.10.4.css"); ?>" type="text/css" media="all" />
+	<script type="text/javascript" src="<?php echo htmlspecialchars($rooturl . "/" . $supportpath . "/jquery-ui-1.10.4.min.js"); ?>"></script>
 <?php
 	}
 
@@ -266,7 +266,11 @@
 		else  $supportpath = "support";
 
 ?>
-	<div class="proptitle"><?php echo htmlspecialchars(BB_Translate($options["title"])); ?></div>
+	<noscript><style type="text/css">
+		div.maincontent div.proptitle div.navbutton { display: none; }
+		div.leftnav { display: block; }
+	</style></noscript>
+	<div class="proptitle"><div id="navbutton">Menu</div><div id="navdropdown"></div><?php echo htmlspecialchars(BB_Translate($options["title"])); ?></div>
 	<div class="propdesc"><?php echo htmlspecialchars(BB_Translate($options["desc"])); ?><?php if (isset($options["htmldesc"]))  echo $options["htmldesc"]; ?></div>
 	<div class="propinfo"></div>
 	<div class="propmain">
@@ -583,17 +587,27 @@
 										if (!isset($multiselectused[$mode]))
 										{
 ?>
-	<link rel="stylesheet" href="<?php echo htmlspecialchars($rooturl . "/" . $supportpath . "/multiselect-flat/css/ui.multiselect.css"); ?>" type="text/css" media="all" />
-	<script type="text/javascript" src="<?php echo htmlspecialchars($rooturl . "/" . $supportpath . "/multiselect-flat/js/ui.multiselect.js"); ?>"></script>
+	<link rel="stylesheet" href="<?php echo htmlspecialchars($rooturl . "/" . $supportpath . "/multiselect-flat/css/jquery.uix.multiselect.css"); ?>" type="text/css" media="all" />
+	<script type="text/javascript" src="<?php echo htmlspecialchars($rooturl . "/" . $supportpath . "/multiselect-flat/js/jquery.uix.multiselect.js"); ?>"></script>
 <?php
 										}
 ?>
 	<script type="text/javascript">
 	$(function() {
-		if (jQuery.fn.multiselect)  $('div.formfields div.formitem select.multi[name="<?php echo BB_JSSafe($field["name"] . "[]"); ?>"]').multiselect({ dividerLocation: 0.5 });
-		else  alert('<?php echo BB_JSSafe(BB_Translate("Warning:  Missing jQuery UI multiselect plugin for flat multiple selection field.\n\This feature requires AdminPack Extras.")); ?>');
+		if (jQuery.fn.multiselect)
+		{
+			$('div.formfields div.formitem select.multi[name="<?php echo BB_JSSafe($field["name"] . "[]"); ?>"]').multiselect({ availableListPosition: <?php echo ($bb_formtables ? "'left'" : "'top'"); ?>, sortable: true, sortMethod: null });
+			$(window).resize(function() {
+				$('div.formfields div.formitem select.multi[name="<?php echo BB_JSSafe($field["name"] . "[]"); ?>"]').multiselect('refresh');
+			});
+		}
+		else
+		{
+			alert('<?php echo BB_JSSafe(BB_Translate("Warning:  Missing jQuery UI multiselect plugin for flat multiple selection field.\n\This feature requires AdminPack Extras.")); ?>');
+		}
 	});
 	</script>
+	<div style="clear: both;"></div>
 <?php
 									}
 
@@ -995,7 +1009,8 @@
 <title>@TITLE@</title>
 <link rel="stylesheet" href="@ROOTURL@/@SUPPORTPATH@/admin.css" type="text/css" media="all" />
 <link rel="stylesheet" href="@ROOTURL@/@SUPPORTPATH@/admin_print.css" type="text/css" media="print" />
-<script type="text/javascript" src="@ROOTURL@/@SUPPORTPATH@/jquery-1.7.2.min.js"></script>
+<script type="text/javascript" src="@ROOTURL@/@SUPPORTPATH@/jquery-1.11.0.min.js"></script>
+<script type="text/javascript" src="@ROOTURL@/@SUPPORTPATH@/admin.js"></script>
 <?php if (function_exists("BB_InjectLayoutHead"))  BB_InjectLayoutHead(); ?>
 </head>
 <body>

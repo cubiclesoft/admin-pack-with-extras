@@ -324,3 +324,12 @@ div.menuwrap div.menu a:hover {
 	background-color: #EAEAEA;
 	text-decoration: none;
 }
+
+/* Floating navigation menu styles. */
+div.maincontent div.proptitle div#navbutton {
+	display: none;
+}
+
+div.maincontent div.proptitle div#navdropdown {
+	display: none;
+}

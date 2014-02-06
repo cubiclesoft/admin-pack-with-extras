@@ -1,3 +1,9 @@
+body {
+	font-family: Verdana, Arial, Helvetica, sans-serif;
+}
+
+@media (min-width: 900px) {
+
 html {
 	height: 100%;
 }
@@ -10,7 +16,6 @@ body {
 	height: 100%;
 	background-color: #FFFFFF;
 	min-width: 600px;    /* Minimum width of layout.  Removeable. */
-	font-family: Verdana, Arial, Helvetica, sans-serif;
 }
 
 div.pagewrap {
@@ -74,6 +79,8 @@ div.stickycol {
 	border-right: 1px solid #CCCCCC;
 }
 
+}
+
 /* Basic styles for elements. */
 img {
 	border: 0px none;
@@ -122,6 +129,71 @@ div.leftnav div.menu a {
 div.leftnav div.menu a:hover {
 	background-color: #EFEFEF;
 	text-decoration: none;
+}
+
+/* Floating navigation menu styles. */
+div.maincontent div.proptitle div#navbutton {
+	float: right;
+	margin-left: 1.0em;
+	border: 1px solid #D3D3D3;
+	border-radius: 0.3em;
+	background-color: #FFFFFF;
+	padding: 0.2em 0.4em;
+	font-weight: bold;
+	font-size: 0.7em;
+	color: #333333;
+	cursor: pointer;
+}
+
+div.maincontent div.proptitle div#navbutton:hover {
+	background-color: #EAEAEA;
+	border: 1px solid #BBBBBB;
+}
+
+div.maincontent div.proptitle div#navbutton.clicked {
+	background-color: #EAEAEA;
+	border-top: 1px solid #BBBBBB;
+	border-left: 1px solid #BBBBBB;
+	border-right: 1px solid #BBBBBB;
+	border-bottom: 1px solid #EAEAEA;
+	border-bottom-right-radius: 0;
+	border-bottom-left-radius: 0;
+}
+
+div.leftnav {
+	display: none;
+}
+
+div.maincontent div.proptitle div#navdropdown {
+	display: none;
+	position: absolute;
+	right: 0;
+	z-index: 10000;
+	width: 200px;
+	background-color: #EAEAEA;
+	border: 1px solid #BBBBBB;
+	font-weight: normal;
+	font-size: 0.75em;
+}
+
+div.maincontent div.proptitle div#navdropdown div.leftnav {
+	display: block;
+}
+
+@media (min-width: 900px) {
+
+div.maincontent div.proptitle div#navbutton {
+	display: none;
+}
+
+div.maincontent div.proptitle div#navdropdown {
+	display: none !important;
+}
+
+div.leftnav {
+	display: block;
+}
+
 }
 
 /* Optional message styles. */
