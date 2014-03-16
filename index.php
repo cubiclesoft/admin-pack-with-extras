@@ -10,7 +10,7 @@
 	require_once "support/str_basics.php";
 	require_once "support/page_basics.php";
 
-	ProcessAllInput();
+	Str::ProcessAllInput();
 
 	// $bb_randpage is used in combination with a user token to prevent hackers from sending malicious URLs.
 	// [Put random content into the string.  Try www.random.org.]
