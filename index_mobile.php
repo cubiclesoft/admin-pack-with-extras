@@ -71,11 +71,12 @@
 		// [Do processing here to generate content options dynamically.]
 		$somevar = "default value 2";
 
+		$items = array("Furries", "Fuzzies", "Fluffies", "Puppies", "Kitties", "Tribbles", "Unicorns");
 		$rows = array();
-		$rows[] = array("1", htmlspecialchars("Furries"), "<a href=\"" . BB_GetRequestURLBase() . "?action=somepage_edit&id=1&sec_t=" . BB_CreateSecurityToken("somepage_edit") . "\">Edit</a>");
-		$rows[] = array("2", htmlspecialchars("Fuzzies"), "<a href=\"" . BB_GetRequestURLBase() . "?action=somepage_edit&id=2&sec_t=" . BB_CreateSecurityToken("somepage_edit") . "\">Edit</a>");
-		$rows[] = array("3", htmlspecialchars("Dogs"), "<a href=\"" . BB_GetRequestURLBase() . "?action=somepage_edit&id=3&sec_t=" . BB_CreateSecurityToken("somepage_edit") . "\">Edit</a>");
-		$rows[] = array("4", htmlspecialchars("Cats"), "<a href=\"" . BB_GetRequestURLBase() . "?action=somepage_edit&id=4&sec_t=" . BB_CreateSecurityToken("somepage_edit") . "\">Edit</a>");
+		foreach ($items as $num => $item)
+		{
+			$rows[] = array(($num + 1), htmlspecialchars($item), "<a href=\"" . BB_GetRequestURLBase() . "?action=somepage_edit&id=" . ($num + 1) . "&sec_t=" . BB_CreateSecurityToken("somepage_edit") . "\">Edit</a>");
+		}
 
 		$contentopts = array(
 			"desc" => "This is some page.",
@@ -135,7 +136,9 @@
 					"type" => "table",
 					"cols" => array("ID", "Type", "Options"),
 					"rows" => $rows,
-					"desc" => "Description for Table."
+					"order" => "Order",
+					"stickyheader" => true,
+					"desc" => "Description for Table.  Drag-and-drop and sticky header enabled."
 				),
 				"nosplit",
 				"startrow",

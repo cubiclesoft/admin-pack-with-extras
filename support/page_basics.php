@@ -248,6 +248,8 @@
 		$accordionused = false;
 		$multiselectused = array();
 		$multiselectheight = 200;
+		$tableorderused = false;
+		$tablestickyheaderused = false;
 		$autofocus = false;
 
 		// Certain types of fields require the Admin Pack extras package.
@@ -635,12 +637,15 @@
 						}
 						case "table":
 						{
+							$order = (isset($field["order"]) ? $field["order"] : "");
+							$idbase = "f" . $num . "_" . (isset($field["name"]) ? $field["name"] : "table");
+
 							if ($bb_formtables)
 							{
-								$order = "";
 ?>
-			<table id="<?php echo htmlspecialchars("f" . $num . "_" . (isset($field["name"]) ? $field["name"] : "table")); ?>"<?php if (isset($field["width"]))  echo " style=\"width: " . htmlspecialchars($field["width"]) . "\""; ?>>
-				<tr class="head<?php if ($order != "")  echo " nodrag nodrop"; ?>">
+			<table id="<?php echo htmlspecialchars($idbase); ?>"<?php if (isset($field["class"]))  echo " class=\"" . htmlspecialchars($field["class"]) . "\""; ?><?php if (isset($field["width"]))  echo " style=\"width: " . htmlspecialchars($field["width"]) . "\""; ?>>
+				<thead>
+				<tr<?php if ($order != "")  echo " id=\"" . htmlspecialchars($idbase . "_head") . "\""; ?> class="head<?php if ($order != "")  echo " nodrag nodrop"; ?>">
 <?php
 								if ($order != "")
 								{
@@ -649,7 +654,7 @@
 <?php
 								}
 
-								foreach ($field["cols"] as $col)
+								foreach ($field["cols"] as $num2 => $col)
 								{
 ?>
 					<th><?php echo htmlspecialchars(BB_Translate($col)); ?></th>
@@ -657,42 +662,91 @@
 								}
 ?>
 				</tr>
+				</thead>
+				<tbody>
 <?php
+								$rownum = 0;
 								$altrow = false;
-								foreach ($field["rows"] as $row)
+								if (isset($field["callback"]) && function_exists($field["callback"]))  $field["rows"] = $field["callback"]();
+								while (count($field["rows"]))
 								{
-?>
-				<tr class="row<?php if ($altrow)  echo " altrow"; ?>">
-<?php
-									if ($order != "")
+									foreach ($field["rows"] as $row)
 									{
+?>
+				<tr<?php if ($order != "")  echo " id=\"" . htmlspecialchars($idbase . "_" . $rownum) . "\""; ?> class="row<?php if ($altrow)  echo " altrow"; ?>">
+<?php
+										if ($order != "")
+										{
 ?>
 					<td class="draghandle">&nbsp;</td>
 <?php
-									}
+										}
 
-									$num2 = 0;
-									foreach ($row as $col)
-									{
+										$num2 = 0;
+										foreach ($row as $col)
+										{
 ?>
 					<td<?php if (count($row) < count($field["cols"]) && $num2 + 1 == count($row))  echo " colspan=\"" . (count($field["cols"]) - count($row) + 1) . "\""; ?>><?php echo $col; ?></td>
 <?php
-										$num2++;
-									}
+											$num2++;
+										}
 ?>
 				</tr>
 <?php
-									$altrow = !$altrow;
+										$rownum++;
+										$altrow = !$altrow;
+									}
+
+									if (isset($field["callback"]) && function_exists($field["callback"]))  $field["rows"] = $field["callback"]();
+									else  $field["rows"] = array();
 								}
 ?>
+				</tbody>
 			</table>
 <?php
 
 								if ($order != "")
 								{
+									if (!$tableorderused)
+									{
+?>
+			<script type="text/javascript" src="<?php echo htmlspecialchars($rooturl . "/" . $supportpath . "/jquery.tablednd-20140418.min.js"); ?>"></script>
+<?php
+										$tableorderused = true;
+									}
 ?>
 			<script type="text/javascript">
-			InitPropertiesTableDragAndDrop('<?php echo BB_JSSafe("f" . $num . "_" . (isset($field["name"]) ? $field["name"] : "table")); ?>');
+			if (jQuery.fn.tableDnD)
+			{
+				InitPropertiesTableDragAndDrop('<?php echo BB_JSSafe($idbase); ?>'<?php if (isset($field["reordercallback"]))  echo ", " . $field["reordercallback"]; ?>);
+			}
+			else
+			{
+				alert('<?php echo BB_JSSafe(BB_Translate("Warning:  Missing jQuery TableDnD plugin for drag-and-drop row ordering.\n\This feature requires AdminPack Extras.")); ?>');
+			}
+			</script>
+<?php
+								}
+
+								if (isset($field["stickyheader"]) && $field["stickyheader"])
+								{
+									if (!$tablestickyheaderused)
+									{
+?>
+			<script type="text/javascript" src="<?php echo htmlspecialchars($rooturl . "/" . $supportpath . "/jquery.stickytableheaders.min.js"); ?>"></script>
+<?php
+										$tablestickyheaderused = true;
+									}
+?>
+			<script type="text/javascript">
+			if (jQuery.fn.stickyTableHeaders)
+			{
+				$('#<?php echo BB_JSSafe($idbase); ?>').stickyTableHeaders();
+			}
+			else
+			{
+				alert('<?php echo BB_JSSafe(BB_Translate("Warning:  Missing jQuery Sticky Table Headers plugin.\n\This feature requires AdminPack Extras.")); ?>');
+			}
 			</script>
 <?php
 								}
@@ -1107,12 +1161,6 @@ EOF;
 			$data = str_replace("@MESSAGE@", $data2, $data);
 		}
 
-		// Process the content.
-		ob_start();
-		BB_PropertyForm($contentopts);
-		$data = str_replace("@CONTENT@", ob_get_contents(), $data);
-		ob_end_clean();
-
 		// Process the menu.
 		$data2 = "";
 		foreach ($menuopts as $title => $items)
@@ -1138,7 +1186,10 @@ EOF;
 		}
 		$data = str_replace("@MENU@", $data2, $data);
 
-		// Display the output.
-		echo $data;
+		// Process and display the content.
+		$pos = strpos($data, "@CONTENT@");
+		echo substr($data, 0, $pos);
+		BB_PropertyForm($contentopts);
+		echo substr($data, $pos + 9);
 	}
 ?>
