@@ -1046,6 +1046,22 @@
 		return $info;
 	}
 
+	function BB_GetIDDiff($origids, $newids)
+	{
+		$result = array("remove" => array(), "add" => array());
+		foreach ($origids as $id => $val)
+		{
+			if (!isset($newids[$id]))  $result["remove"][$id] = $val;
+		}
+
+		foreach ($newids as $id => $val)
+		{
+			if (!isset($origids[$id]))  $result["add"][$id] = $val;
+		}
+
+		return $result;
+	}
+
 	function BB_InitLayouts()
 	{
 		global $bb_page_layout, $bb_menu_layout, $bb_menu_item_layout, $bb_message_layout;
