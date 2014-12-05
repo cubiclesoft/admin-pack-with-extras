@@ -419,6 +419,22 @@
 
 					if (isset($field["width"]) && !$bb_formwidths)  unset($field["width"]);
 
+					if (isset($field["name"]) && isset($field["default"]))
+					{
+						if ($field["type"] == "select")
+						{
+							if (!isset($field["select"]))
+							{
+								$field["select"] = BB_GetValue($field["name"], $field["default"]);
+								if (is_array($field["select"]))  $field["select"] = BB_SelectValues($field["select"]);
+							}
+						}
+						else
+						{
+							if (!isset($field["value"]))  $field["value"] = BB_GetValue($field["name"], $field["default"]);
+						}
+					}
+
 					switch ($field["type"])
 					{
 						case "static":
@@ -916,20 +932,47 @@
 	}
 
 
+	// Drop-in replacement for hash_hmac() on hosts where Hash is not available.
+	// Only supports HMAC-MD5 and HMAC-SHA1.
+	if (!function_exists("hash_hmac"))
+	{
+		function hash_hmac($algo, $data, $key, $raw_output = false)
+		{
+			$algo = strtolower($algo);
+			$size = 64;
+			$opad = str_repeat("\x5C", $size);
+			$ipad = str_repeat("\x36", $size);
+
+			if (strlen($key) > $size)  $key = $algo($key, true);
+			$key = str_pad($key, $size, "\x00");
+
+			$y = strlen($key) - 1;
+			for ($x = 0; $x < $y; $x++)
+			{
+				$opad[$x] = $opad[$x] ^ $key[$x];
+				$ipad[$x] = $ipad[$x] ^ $key[$x];
+			}
+
+			$result = $algo($opad . $algo($ipad . $data, true), $raw_output);
+
+			return $result;
+		}
+	}
+
 	// Function swiped from Barebones CMS edit.php.
 	// Create a valid language-level security token (also known as a 'nonce').
 	function BB_CreateSecurityToken($name, $extra = "")
 	{
 		global $bb_randpage, $bb_usertoken;
 
-		$str = $bb_randpage . ":" . $name . ":";
+		$str = $name . ":";
 		if (is_string($extra) && $extra != "")
 		{
 			$extra = explode(",", $extra);
 			foreach ($extra as $key)
 			{
 				$key = trim($key);
-				if ($key != "" && isset($_REQUEST[$key]))  $str .= $_REQUEST[$key] . ":";
+				if ($key != "" && isset($_REQUEST[$key]))  $str .= (string)$_REQUEST[$key] . ":";
 			}
 		}
 		else if (is_array($extra))
@@ -937,7 +980,7 @@
 			foreach ($extra as $val)  $str .= $val . ":";
 		}
 
-		return sha1($str . $bb_usertoken);
+		return hash_hmac("sha1", $str, $bb_randpage . ":" . $bb_usertoken);
 	}
 
 	function BB_IsSecExtraOpt($opt)

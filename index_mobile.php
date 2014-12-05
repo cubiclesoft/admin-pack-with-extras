@@ -113,21 +113,21 @@
 					"type" => "text",
 					"width" => "200px",
 					"name" => "field2a",
-					"value" => BB_GetValue("field2a", ""),
+					"default" => "",
 				),
 				array(
 					"title" => "Field 2b",
 					"type" => "text",
 					"width" => "50px",
 					"name" => "field2b",
-					"value" => BB_GetValue("field2b", ""),
+					"default" => "",
 				),
 				"endrow",
 				array(
 					"title" => "Date",
 					"type" => "date",
 					"name" => "date",
-					"value" => BB_GetValue("date", date("Y-m-d")),
+					"default" => date("Y-m-d"),
 					"desc" => "Description for Date."
 				),
 				array(
@@ -147,14 +147,14 @@
 					"type" => "text",
 					"width" => "200px",
 					"name" => "field2c",
-					"value" => BB_GetValue("field2c", ""),
+					"default" => "",
 				),
 				array(
 					"title" => "Field 2d",
 					"type" => "text",
 					"width" => "50px",
 					"name" => "field2d",
-					"value" => BB_GetValue("field2d", ""),
+					"default" => "",
 				),
 				"endrow",
 				array(
@@ -171,7 +171,7 @@
 					"type" => "text",
 					"width" => "200px",
 					"name" => "field3",
-					"value" => BB_GetValue("field3", "default value"),
+					"default" => "default value",
 					"desc" => "Description for Field 3."
 				),
 				array(
@@ -179,7 +179,7 @@
 					"type" => "text",
 					"width" => "200px",
 					"name" => "field4",
-					"value" => BB_GetValue("field4", $somevar)
+					"default" => $somevar
 				),
 				"startrow",
 				array(
@@ -187,7 +187,7 @@
 					"type" => "text",
 					"width" => "220px",
 					"name" => "field5",
-					"value" => BB_GetValue("field5", "default value"),
+					"default" => "default value",
 					"desc" => "Description for Field 5."
 				),
 				array(
@@ -195,7 +195,7 @@
 					"type" => "text",
 					"width" => "220px",
 					"name" => "field6",
-					"value" => BB_GetValue("field6", $somevar),
+					"default" => $somevar,
 					"desc" => "Description for Field 6."
 				),
 				"endrow",
@@ -231,7 +231,7 @@
 					"mode" => "tags",
 					"name" => "field8",
 					"options" => array("name" => "Name", "email" => "E-mail Address", "phone" => "Phone Number"),
-					"select" => BB_SelectValues(BB_GetValue("field8", array())),
+					"default" => array(),
 					"desc" => "Description for Field 8."
 				),
 			),
