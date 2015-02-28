@@ -357,6 +357,10 @@
 						echo substr($field, 5);
 					}
 				}
+				else if (!isset($field["type"]))
+				{
+					// Do nothing if type is not specified.
+				}
 				else if ($field["type"] == "accordion" || $field["type"] == "accordian")
 				{
 					if ($insiderow)
