@@ -6,7 +6,7 @@ function InitPropertiesTableDragAndDrop(tableid, callback)
 		onDrop : function (table, row) {
 			var altrow = false;
 
-			$('#' + tableid + ' tr').each(function(x) {
+			$('#' + tableid + ' tr.row').each(function(x) {
 				if (altrow)  $(this).addClass('altrow');
 				else  $(this).removeClass('altrow');
 
