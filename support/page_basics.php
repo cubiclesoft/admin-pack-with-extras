@@ -219,7 +219,7 @@
 			}
 		}
 
-		header('Set-Cookie: ' . rawurlencode($name) . "=" . rawurlencode($value)
+		header("Set-Cookie: " . rawurlencode($name) . "=" . rawurlencode($value)
 							. (empty($expires) ? "" : "; expires=" . gmdate("D, d-M-Y H:i:s", $expires) . " GMT")
 							. (empty($path) ? "" : "; path=" . $path)
 							. (empty($domain) ? "" : "; domain=" . $domain)
@@ -280,7 +280,7 @@
 		if (isset($options["submit"]) || (isset($options["useform"]) && $options["useform"]))
 		{
 ?>
-		<form id="propform" method="post" enctype="multipart/form-data" action="<?php echo htmlspecialchars(BB_GetRequestURLBase()); ?>">
+		<form id="propform"<?php if (isset($options["formmode"]) && $options["formmode"] === "get")  { ?> method="get"<?php } else { ?> method="post" enctype="multipart/form-data"<?php } ?> action="<?php echo htmlspecialchars(BB_GetRequestURLBase()); ?>">
 <?php
 
 			$extra = array();
@@ -1124,10 +1124,10 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
 <title>@TITLE@</title>
-<link rel="stylesheet" href="@ROOTURL@/@SUPPORTPATH@/admin.css" type="text/css" media="all" />
-<link rel="stylesheet" href="@ROOTURL@/@SUPPORTPATH@/admin_print.css" type="text/css" media="print" />
+<link rel="stylesheet" href="@ROOTURL@/@SUPPORTPATH@/admin.css?201402023" type="text/css" media="all" />
+<link rel="stylesheet" href="@ROOTURL@/@SUPPORTPATH@/admin_print.css?201402023" type="text/css" media="print" />
 <script type="text/javascript" src="@ROOTURL@/@SUPPORTPATH@/jquery-1.11.0.min.js"></script>
-<script type="text/javascript" src="@ROOTURL@/@SUPPORTPATH@/admin.js"></script>
+<script type="text/javascript" src="@ROOTURL@/@SUPPORTPATH@/admin.js?20140615"></script>
 <?php if (function_exists("BB_InjectLayoutHead"))  BB_InjectLayoutHead(); ?>
 </head>
 <body>
@@ -1188,7 +1188,7 @@ EOF;
 		global $bb_rootname, $bb_page_layout, $bb_menu_layout, $bb_menu_item_layout, $bb_message_layout;
 
 		if (!isset($contentopts["title"]))  $contentopts["title"] = $title;
-		if (isset($contentopts["hidden"]) && !isset($contentopts["hidden"]["bb_back"]))  $contentopts["hidden"]["bb_back"] = (isset($_POST["bb_back"]) ? $_POST["bb_back"] : BB_GetBackQueryString());
+		if (isset($contentopts["hidden"]) && !isset($contentopts["hidden"]["bb_back"]) && (!isset($contentopts["formmode"]) || $contentopts["formmode"] !== "get"))  $contentopts["hidden"]["bb_back"] = (isset($_POST["bb_back"]) ? $_POST["bb_back"] : BB_GetBackQueryString());
 
 		header("Content-Type: text/html; charset=UTF-8");
 
