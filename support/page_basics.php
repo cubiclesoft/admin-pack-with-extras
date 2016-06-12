@@ -433,6 +433,10 @@
 								if (is_array($field["select"]))  $field["select"] = BB_SelectValues($field["select"]);
 							}
 						}
+						else if ($field["type"] == "checkbox")
+						{
+							if (!isset($field["check"]) && isset($field["value"]))  $field["check"] = (isset($_REQUEST[$field["name"]]) && $_REQUEST[$field["name"]] === $field["value"] ? true : ($_SERVER["REQUEST_METHOD"] === "GET" ? $field["default"] : false));
+						}
 						else
 						{
 							if (!isset($field["value"]))  $field["value"] = BB_GetValue($field["name"], $field["default"]);
@@ -460,7 +464,7 @@
 						{
 							if ($autofocus === false)  $autofocus = htmlspecialchars("f" . $num . "_" . $field["name"]);
 ?>
-			<input class="text"<?php if (isset($field["width"]))  echo " style=\"width: " . htmlspecialchars($field["width"]) . ";\""; ?> type="password" id="<?php echo htmlspecialchars("f" . $num . "_" . $field["name"]); ?>" name="<?php echo htmlspecialchars($field["name"]); ?>" value="<?php echo htmlspecialchars($field["value"]); ?>" />
+			<input class="text<?php if (isset($field["passwordmanager"]) && $field["passwordmanager"] === false)  echo " nopasswordmanager"; ?>"<?php if (isset($field["width"]))  echo " style=\"width: " . htmlspecialchars($field["width"]) . ";\""; ?> type="password" id="<?php echo htmlspecialchars("f" . $num . "_" . $field["name"]); ?>" name="<?php echo htmlspecialchars($field["name"]); ?>" value="<?php echo htmlspecialchars($field["value"]); ?>" />
 <?php
 							break;
 						}
