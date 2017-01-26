@@ -1,6 +1,6 @@
 <?php
 	// Admin Pack server-side page manipulation functions.
-	// (C) 2014 CubicleSoft.  All Rights Reserved.
+	// (C) 2017 CubicleSoft.  All Rights Reserved.
 
 	// Code swiped from Barebones CMS support functions.
 	function BB_JSSafe($data)
@@ -781,22 +781,29 @@
 			<div class="nontablewrap" id="<?php echo htmlspecialchars("f" . $num . "_" . (isset($field["name"]) ? $field["name"] : "table")); ?>">
 <?php
 								$altrow = false;
-								foreach ($field["rows"] as $num2 => $row)
+								if (isset($field["callback"]) && is_callable($field["callback"]))  $field["rows"] = call_user_func($field["callback"]);
+								while (count($field["rows"]))
 								{
+									foreach ($field["rows"] as $num2 => $row)
+									{
 ?>
 				<div class="nontable_row<?php if ($altrow)  echo " altrow"; ?><?php if (!$num2)  echo " firstrow"; ?>">
 <?php
-									foreach ($row as $num3 => $col)
-									{
+										foreach ($row as $num3 => $col)
+										{
 ?>
 					<div class="nontable_th<?php if (!$num3)  echo " firstcol"; ?>"><?php echo htmlspecialchars(BB_Translate($field["cols"][$num3])); ?></div>
 					<div class="nontable_td"><?php echo $col; ?></div>
 <?php
-									}
+										}
 ?>
 				</div>
 <?php
-									$altrow = !$altrow;
+										$altrow = !$altrow;
+									}
+
+									if (isset($field["callback"]) && is_callable($field["callback"]))  $field["rows"] = call_user_func($field["callback"]);
+									else  $field["rows"] = array();
 								}
 ?>
 			</div>
