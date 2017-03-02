@@ -792,7 +792,7 @@
 										foreach ($row as $num3 => $col)
 										{
 ?>
-					<div class="nontable_th<?php if (!$num3)  echo " firstcol"; ?>"><?php echo htmlspecialchars(BB_Translate($field["cols"][$num3])); ?></div>
+					<div class="nontable_th<?php if (!$num3)  echo " firstcol"; ?>"><?php echo htmlspecialchars(BB_Translate(isset($field["cols"][$num3]) ? $field["cols"][$num3] : "")); ?></div>
 					<div class="nontable_td"><?php echo $col; ?></div>
 <?php
 										}
