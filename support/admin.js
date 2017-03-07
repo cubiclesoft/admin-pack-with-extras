@@ -1,27 +1,3 @@
-function InitPropertiesTableDragAndDrop(tableid, callback)
-{
-	$('#' + tableid).tableDnD({
-		dragHandle : '.draghandle',
-		onDragClass : 'dragactive',
-		onDrop : function (table, row) {
-			var altrow = false;
-
-			$('#' + tableid + ' tr.row').each(function(x) {
-				if (altrow)  $(this).addClass('altrow');
-				else  $(this).removeClass('altrow');
-
-				altrow = !altrow;
-			});
-
-			if (callback)  callback();
-		}
-	});
-}
-
-$(window).resize(function() {
-	$(window).trigger('resize.stickyTableHeaders');
-});
-
 $(function() {
 	$('#navbutton').click(function() {
 		$('#navbutton').toggleClass("clicked");

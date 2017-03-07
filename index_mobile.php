@@ -9,6 +9,7 @@
 
 	require_once "support/str_basics.php";
 	require_once "support/page_basics.php";
+	require_once "support/adminpack_extras.php";
 
 	Str::ProcessAllInput();
 
@@ -77,6 +78,11 @@
 		{
 			$rows[] = array(($num + 1), htmlspecialchars($item), "<a href=\"" . BB_GetRequestURLBase() . "?action=somepage_edit&id=" . ($num + 1) . "&sec_t=" . BB_CreateSecurityToken("somepage_edit") . "\">Edit</a>");
 		}
+
+		if (file_exists("support/adminpack_calendar_table.php"))  require_once "support/adminpack_calendar_table.php";
+		if (file_exists("support/adminpack_chart.php"))  require_once "support/adminpack_chart.php";
+
+		$tomorrow = mktime(0, 0, 0, date("n"), date("j") + 1);
 
 		$contentopts = array(
 			"desc" => "This is some page.",
@@ -233,6 +239,42 @@
 					"options" => array("name" => "Name", "email" => "E-mail Address", "phone" => "Phone Number"),
 					"default" => array(),
 					"desc" => "Description for Field 8."
+				),
+				array(
+					"title" => "Module:  Calendar Table",
+					"type" => "calendar",
+					"startyear" => date("Y"),
+					"startmonth" => date("m"),
+					"endyear" => date("Y"),
+					"endmonth" => date("m"),
+					"cols" => array("Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"),
+					"data" => array(date("Y-m-d", $tomorrow) => "<a href=\"https://google.com/?q=" . urlencode("things to do on " . date("l, F j, Y", $tomorrow)) . "\" target=\"_blank\"><b>" . date("j", $tomorrow) . "</b></a>"),
+					"desc" => "Description for calendar.  This feature requires Admin Pack Modules to be installed."
+				),
+				array(
+					"title" => "Module:  Chart (Line)",
+					"type" => "chart",
+					"chart" => "line",
+					"data" => array("key1" => array(1, 5, 10, 7, 6, 9, 8), "key2" => array(10, 6, 3, 4, 5, 6, 7)),
+					"options" => array("grid.x.show" => true, "zoom.enabled" => true),
+					"desc" => "Description for line chart.  This feature requires Admin Pack Modules to be installed."
+				),
+				array(
+					"title" => "Module:  Chart (Pie)",
+					"type" => "chart",
+					"chart" => "pie",
+					"data" => array("key1" => array(1, 5, 10, 7, 6, 9, 8), "key2" => array(10, 6, 3, 4, 5, 6, 7)),
+					"desc" => "Description for pie chart.  This feature requires Admin Pack Modules to be installed."
+				),
+				array(
+					"title" => "Module:  Chart (Gauge)",
+					"type" => "chart",
+					"chart" => "gauge",
+					"height" => 180,
+					"colors" => array("#FF0000", "#F97600", "#F6C600", "#60B044"),
+					"thresholds" => array(30, 60, 90, 100),
+					"data" => array("value" => array(91.4)),
+					"desc" => "Description for gauge.  This feature requires Admin Pack Modules to be installed."
 				),
 			),
 			"submit" => "Save",

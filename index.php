@@ -9,6 +9,7 @@
 
 	require_once "support/str_basics.php";
 	require_once "support/page_basics.php";
+	require_once "support/adminpack_extras.php";
 
 	Str::ProcessAllInput();
 
@@ -141,7 +142,7 @@
 	else
 	{
 		$contentopts = array(
-			"desc" => "Pick an option from the left."
+			"desc" => "Pick an option from the menu."
 		);
 
 		BB_GeneratePage("Home", $menuopts, $contentopts);

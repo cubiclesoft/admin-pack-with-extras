@@ -231,29 +231,30 @@
 	function BB_OutputJQueryUI($rooturl, $supportpath)
 	{
 ?>
-	<link rel="stylesheet" href="<?php echo htmlspecialchars($rooturl . "/" . $supportpath . "/jquery_ui_themes/smoothness/jquery-ui-1.10.4.css"); ?>" type="text/css" media="all" />
-	<script type="text/javascript" src="<?php echo htmlspecialchars($rooturl . "/" . $supportpath . "/jquery-ui-1.10.4.min.js"); ?>"></script>
+	<link rel="stylesheet" href="<?php echo htmlspecialchars($rooturl . "/" . $supportpath . "/jquery_ui_themes/smoothness/jquery-ui-1.12.1.css"); ?>" type="text/css" media="all" />
+	<script type="text/javascript" src="<?php echo htmlspecialchars($rooturl . "/" . $supportpath . "/jquery-ui-1.12.1.min.js"); ?>"></script>
 <?php
+	}
+
+	function BB_RegisterPropertyFormHandler($mode, $callback)
+	{
+		global $bb_propformhandlers;
+
+		if (!isset($bb_propformhandlers) || !is_array($bb_propformhandlers))  $bb_propformhandlers = array("init" => array(), "field_string" => array(), "field_type" => array(), "table_row" => array(), "finalize" => array());
+
+		$bb_propformhandlers[$mode][] = $callback;
 	}
 
 	// Slightly modified code swiped from Barebone CMS editing routines.
 	function BB_PropertyForm($options)
 	{
-		global $bb_formtables, $bb_formwidths;
+		global $bb_formtables, $bb_formwidths, $bb_propformhandlers;
 
 		if (!isset($bb_formtables) || !is_bool($bb_formtables))  $bb_formtables = true;
 		if (!isset($bb_formwidths) || !is_bool($bb_formwidths))  $bb_formwidths = true;
-
-		$dateused = false;
-		$accordionused = false;
-		$multiselectused = array();
-		$multiselectheight = 200;
-		$tableorderused = false;
-		$tablestickyheaderused = false;
-		$autofocus = false;
+		if (!isset($bb_propformhandlers) || !is_array($bb_propformhandlers))  $bb_propformhandlers = array("init" => array(), "field_string" => array(), "field_type" => array(), "table_row" => array(), "finalize" => array());
 
 		// Certain types of fields require the Admin Pack extras package.
-		$jqueryuiused = false;
 		if (defined("BB_ROOT_URL"))  $rooturl = BB_ROOT_URL;
 		else if (defined("ROOT_URL"))  $rooturl = ROOT_URL;
 		else
@@ -266,6 +267,22 @@
 		if (defined("BB_SUPPORT_PATH"))  $supportpath = BB_SUPPORT_PATH;
 		else if (defined("SUPPORT_PATH"))  $supportpath = SUPPORT_PATH;
 		else  $supportpath = "support";
+
+		$state = array(
+			"autofocus" => false,
+			"jqueryuiused" => false,
+			"rooturl" => $rooturl,
+			"supportpath" => $supportpath,
+			"insiderow" => false,
+			"firstitem" => false,
+			"customfieldtypes" => array()
+		);
+
+		// Let property form handlers modify the options and state arrays.
+		foreach ($bb_propformhandlers["init"] as $callback)
+		{
+			if (is_callable($callback))  call_user_func_array($callback, array(&$state, &$options));
+		}
 
 ?>
 	<noscript><style type="text/css">
@@ -307,42 +324,21 @@
 ?>
 		<div class="formfields<?php if (count($options["fields"]) == 1 && !isset($options["fields"][0]["title"]) && !isset($options["fields"][0]["htmltitle"]))  echo " alt"; ?>">
 <?php
-			$insiderow = false;
-			$insideaccordion = false;
 			foreach ($options["fields"] as $num => $field)
 			{
 				if (is_string($field))
 				{
-					if ($field == "split" && !$insiderow)  echo "<hr />";
-					else if ($field == "endaccordion" || $field == "endaccordian")
-					{
-						if ($insiderow)
-						{
-?>
-			</tr></table></div>
-<?php
-							$insiderow = false;
-						}
-?>
-				</div>
-			</div>
-<?php
-						$insideaccordion = false;
-					}
-					else if ($field == "nosplit")
-					{
-						if ($insideaccordion)  $firstaccordionitem = true;
-					}
+					if ($field == "split" && !$state["insiderow"])  echo "<hr />";
 					else if ($field == "startrow")
 					{
-						if ($insiderow)  echo "</tr><tr>";
+						if ($state["insiderow"])  echo "</tr><tr>";
 						else if ($bb_formtables)
 						{
-							$insiderow = true;
+							$state["insiderow"] = true;
 ?>
-			<div class="fieldtablewrap<?php if ($insideaccordion && $firstaccordionitem)  echo " firstitem"; ?>"><table class="rowwrap"><tr>
+			<div class="fieldtablewrap<?php if ($state["firstitem"])  echo " firstitem"; ?>"><table class="rowwrap"><tr>
 <?php
-							$firstaccordionitem = false;
+							$state["firstitem"] = false;
 						}
 					}
 					else if ($field == "endrow" && $bb_formtables)
@@ -350,55 +346,38 @@
 ?>
 			</tr></table></div>
 <?php
-						$insiderow = false;
+						$state["insiderow"] = false;
 					}
 					else if (substr($field, 0, 5) == "html:")
 					{
 						echo substr($field, 5);
+					}
+
+					// Let property form handlers process strings.
+					foreach ($bb_propformhandlers["field_string"] as $callback)
+					{
+						if (is_callable($callback))  call_user_func_array($callback, array(&$state, $num, &$field));
 					}
 				}
 				else if (!isset($field["type"]))
 				{
 					// Do nothing if type is not specified.
 				}
-				else if ($field["type"] == "accordion" || $field["type"] == "accordian")
+				else if (isset($state["customfieldtypes"][$field["type"]]))
 				{
-					if ($insiderow)
+					// Let property form handlers process custom field types.
+					foreach ($bb_propformhandlers["field_type"] as $callback)
 					{
-?>
-			</tr></table></div>
-<?php
-						$insiderow = false;
+						if (is_callable($callback))  call_user_func_array($callback, array(&$state, $num, &$field));
 					}
-
-					if ($insideaccordion)
-					{
-?>
-				</div>
-				<h3><?php echo htmlspecialchars(BB_Translate($field["title"])); ?></h3>
-				<div class="formaccordionitems">
-<?php
-					}
-					else
-					{
-?>
-			<div class="formaccordionwrap">
-				<h3><?php echo htmlspecialchars(BB_Translate($field["title"])); ?></h3>
-				<div class="formaccordionitems">
-<?php
-						$insideaccordion = true;
-						$accordionused = true;
-					}
-
-					$firstaccordionitem = true;
 				}
 				else
 				{
-					if ($insiderow)  echo "<td>";
+					if ($state["insiderow"])  echo "<td>";
 ?>
-			<div class="formitem<?php echo ((isset($field["split"]) && $field["split"] === false) || ($insideaccordion && $firstaccordionitem) ? " firstitem" : ""); ?>">
+			<div class="formitem<?php echo ((isset($field["split"]) && $field["split"] === false) || $state["firstitem"] ? " firstitem" : ""); ?>">
 <?php
-					$firstaccordionitem = false;
+					$state["firstitem"] = false;
 					if (isset($field["title"]))
 					{
 						if (is_string($field["title"]))
@@ -414,7 +393,7 @@
 			<div class="formitemtitle"><?php echo BB_Translate($field["htmltitle"]); ?></div>
 <?php
 					}
-					else if ($field["type"] == "checkbox" && $insiderow)
+					else if ($field["type"] == "checkbox" && $state["insiderow"])
 					{
 ?>
 			<div class="formitemtitle">&nbsp;</div>
@@ -443,6 +422,12 @@
 						}
 					}
 
+					// Let property form handlers process modified and other field types.
+					foreach ($bb_propformhandlers["field_type"] as $callback)
+					{
+						if (is_callable($callback))  call_user_func_array($callback, array(&$state, $num, &$field));
+					}
+
 					switch ($field["type"])
 					{
 						case "static":
@@ -454,7 +439,7 @@
 						}
 						case "text":
 						{
-							if ($autofocus === false)  $autofocus = htmlspecialchars("f" . $num . "_" . $field["name"]);
+							if ($state["autofocus"] === false)  $state["autofocus"] = htmlspecialchars("f" . $num . "_" . $field["name"]);
 ?>
 			<input class="text"<?php if (isset($field["width"]))  echo " style=\"width: " . htmlspecialchars($field["width"]) . ";\""; ?> type="text" id="<?php echo htmlspecialchars("f" . $num . "_" . $field["name"]); ?>" name="<?php echo htmlspecialchars($field["name"]); ?>" value="<?php echo htmlspecialchars($field["value"]); ?>" />
 <?php
@@ -462,7 +447,7 @@
 						}
 						case "password":
 						{
-							if ($autofocus === false)  $autofocus = htmlspecialchars("f" . $num . "_" . $field["name"]);
+							if ($state["autofocus"] === false)  $state["autofocus"] = htmlspecialchars("f" . $num . "_" . $field["name"]);
 ?>
 			<input class="text<?php if (isset($field["passwordmanager"]) && $field["passwordmanager"] === false)  echo " nopasswordmanager"; ?>"<?php if (isset($field["width"]))  echo " style=\"width: " . htmlspecialchars($field["width"]) . ";\""; ?> type="password" id="<?php echo htmlspecialchars("f" . $num . "_" . $field["name"]); ?>" name="<?php echo htmlspecialchars($field["name"]); ?>" value="<?php echo htmlspecialchars($field["value"]); ?>" />
 <?php
@@ -470,7 +455,7 @@
 						}
 						case "checkbox":
 						{
-							if ($autofocus === false)  $autofocus = htmlspecialchars("f" . $num . "_" . $field["name"]);
+							if ($state["autofocus"] === false)  $state["autofocus"] = htmlspecialchars("f" . $num . "_" . $field["name"]);
 ?>
 			<input class="checkbox" type="checkbox" id="<?php echo htmlspecialchars("f" . $num . "_" . $field["name"]); ?>" name="<?php echo htmlspecialchars($field["name"]); ?>" value="<?php echo htmlspecialchars($field["value"]); ?>"<?php if (isset($field["check"]) && $field["check"])  echo " checked"; ?> />
 			<label for="<?php echo htmlspecialchars("f" . $num . "_" . $field["name"]); ?>"><?php echo htmlspecialchars(BB_Translate($field["display"])); ?></label>
@@ -479,10 +464,10 @@
 						}
 						case "select":
 						{
-							if ($autofocus === false)  $autofocus = htmlspecialchars("f" . $num . "_" . $field["name"]);
+							if ($state["autofocus"] === false)  $state["autofocus"] = htmlspecialchars("f" . $num . "_" . $field["name"]);
 
 							if (!isset($field["multiple"]) || $field["multiple"] !== true)  $mode = "select";
-							else if (!isset($field["mode"]) || ($field["mode"] != "flat" && $field["mode"] != "dropdown" && $field["mode"] != "tags" && $field["mode"] != "select"))  $mode = "checkbox";
+							else if (!isset($field["mode"]) || ($field["mode"] != "formhandler" && $field["mode"] != "select"))  $mode = "checkbox";
 							else  $mode = $field["mode"];
 
 							if (!isset($field["width"]) && !isset($field["height"]))  $style = "";
@@ -490,11 +475,7 @@
 							{
 								$style = array();
 								if (isset($field["width"]))  $style[] = "width: " . htmlspecialchars($field["width"]);
-								if (isset($field["height"]) && isset($field["multiple"]) && $field["multiple"] === true)
-								{
-									$style[] = "height: " . htmlspecialchars($field["height"]);
-									$multiselectheight = (int)$field["height"];
-								}
+								if (isset($field["height"]) && isset($field["multiple"]) && $field["multiple"] === true)  $style[] = "height: " . htmlspecialchars($field["height"]);
 								$style = " style=\"" . implode("; ", $style) . ";\"";
 							}
 
@@ -562,90 +543,13 @@
 ?>
 			</select>
 <?php
-								if (isset($field["multiple"]) && $field["multiple"] === true)
-								{
-									if (!$jqueryuiused)
-									{
-										BB_OutputJQueryUI($rooturl, $supportpath);
-										$jqueryuiused = true;
-									}
-
-									if ($mode == "tags")
-									{
-										if (!isset($multiselectused[$mode]))
-										{
-?>
-	<link rel="stylesheet" href="<?php echo htmlspecialchars($rooturl . "/" . $supportpath . "/multiselect-select2/select2.css"); ?>" type="text/css" media="all" />
-	<script type="text/javascript" src="<?php echo htmlspecialchars($rooturl . "/" . $supportpath . "/multiselect-select2/select2.min.js"); ?>"></script>
-<?php
-										}
-?>
-	<script type="text/javascript">
-	$(function() {
-		if (jQuery.fn.select2)  $('div.formfields div.formitem select.multi[name="<?php echo BB_JSSafe($field["name"] . "[]"); ?>"]').select2({ <?php if (isset($field["mininput"]))  echo "minimumInputLength: " . (int)$field["mininput"]; ?> });
-		else  alert('<?php echo BB_JSSafe(BB_Translate("Warning:  Missing jQuery UI select2 for multiple selection field.\n\This feature requires AdminPack Extras.")); ?>');
-	});
-	</script>
-<?php
-									}
-									else if ($mode == "dropdown")
-									{
-										if (!isset($multiselectused[$mode]))
-										{
-?>
-	<link rel="stylesheet" href="<?php echo htmlspecialchars($rooturl . "/" . $supportpath . "/multiselect-widget/jquery.multiselect.css"); ?>" type="text/css" media="all" />
-	<link rel="stylesheet" href="<?php echo htmlspecialchars($rooturl . "/" . $supportpath . "/multiselect-widget/jquery.multiselect.filter.css"); ?>" type="text/css" media="all" />
-	<script type="text/javascript" src="<?php echo htmlspecialchars($rooturl . "/" . $supportpath . "/multiselect-widget/jquery.multiselect.min.js"); ?>"></script>
-	<script type="text/javascript" src="<?php echo htmlspecialchars($rooturl . "/" . $supportpath . "/multiselect-widget/jquery.multiselect.filter.js"); ?>"></script>
-<?php
-										}
-?>
-	<script type="text/javascript">
-	$(function() {
-		if (jQuery.fn.multiselect && jQuery.fn.multiselectfilter)  $('div.formfields div.formitem select.multi[name="<?php echo BB_JSSafe($field["name"] . "[]"); ?>"]').multiselect({ selectedText: '<?php echo BB_JSSafe(BB_Translate("# of # selected")); ?>', selectedList: 5, height: <?php echo $multiselectheight; ?>, position: { my: 'left top', at: 'left bottom', collision: 'flip' } }).multiselectfilter();
-		else  alert('<?php echo BB_JSSafe(BB_Translate("Warning:  Missing jQuery UI multiselect widget or multiselectfilter for dropdown multiple selection field.\n\This feature requires AdminPack Extras.")); ?>');
-	});
-	</script>
-<?php
-									}
-									else if ($mode == "flat")
-									{
-										if (!isset($multiselectused[$mode]))
-										{
-?>
-	<link rel="stylesheet" href="<?php echo htmlspecialchars($rooturl . "/" . $supportpath . "/multiselect-flat/css/jquery.uix.multiselect.css"); ?>" type="text/css" media="all" />
-	<script type="text/javascript" src="<?php echo htmlspecialchars($rooturl . "/" . $supportpath . "/multiselect-flat/js/jquery.uix.multiselect.js"); ?>"></script>
-<?php
-										}
-?>
-	<script type="text/javascript">
-	$(function() {
-		if (jQuery.fn.multiselect)
-		{
-			$('div.formfields div.formitem select.multi[name="<?php echo BB_JSSafe($field["name"] . "[]"); ?>"]').multiselect({ availableListPosition: <?php echo ($bb_formtables ? "'left'" : "'top'"); ?>, sortable: true, sortMethod: null });
-			$(window).resize(function() {
-				$('div.formfields div.formitem select.multi[name="<?php echo BB_JSSafe($field["name"] . "[]"); ?>"]').multiselect('refresh');
-			});
-		}
-		else
-		{
-			alert('<?php echo BB_JSSafe(BB_Translate("Warning:  Missing jQuery UI multiselect plugin for flat multiple selection field.\n\This feature requires AdminPack Extras.")); ?>');
-		}
-	});
-	</script>
-	<div style="clear: both;"></div>
-<?php
-									}
-
-									$multiselectused[$mode] = true;
-								}
 							}
 
 							break;
 						}
 						case "textarea":
 						{
-							if ($autofocus === false)  $autofocus = htmlspecialchars("f" . $num . "_" . $field["name"]);
+							if ($state["autofocus"] === false)  $state["autofocus"] = htmlspecialchars("f" . $num . "_" . $field["name"]);
 							if (!isset($field["width"]) && !isset($field["height"]))  $style = "";
 							else
 							{
@@ -669,19 +573,25 @@
 ?>
 			<table id="<?php echo htmlspecialchars($idbase); ?>"<?php if (isset($field["class"]))  echo " class=\"" . htmlspecialchars($field["class"]) . "\""; ?><?php if (isset($field["width"]))  echo " style=\"width: " . htmlspecialchars($field["width"]) . "\""; ?>>
 				<thead>
-				<tr<?php if ($order != "")  echo " id=\"" . htmlspecialchars($idbase . "_head") . "\""; ?> class="head<?php if ($order != "")  echo " nodrag nodrop"; ?>">
 <?php
-								if ($order != "")
+								// Let property form handlers process the columns.
+								$trattrs = array("class" => "head");
+								$colattrs = array();
+								if (!isset($field["cols"]))  $field["cols"] = array();
+								foreach ($field["cols"] as $col)  $colattrs[] = array();
+								foreach ($bb_propformhandlers["table_row"] as $callback)
 								{
-?>
-					<th><?php echo htmlspecialchars(BB_Translate($order)); ?></th>
-<?php
+									if (is_callable($callback))  call_user_func_array($callback, array(&$state, $num, &$field, $idbase, "head", -1, &$trattrs, &$colattrs, &$field["cols"]));
 								}
+
+?>
+				<tr<?php foreach ($trattrs as $key => $val)  echo " " . $key . "=\"" . htmlspecialchars($val) . "\""; ?>>
+<?php
 
 								foreach ($field["cols"] as $num2 => $col)
 								{
 ?>
-					<th><?php echo htmlspecialchars(BB_Translate($col)); ?></th>
+					<th<?php foreach ($colattrs[$num2] as $key => $val)  echo " " . $key . "=\"" . htmlspecialchars($val) . "\""; ?>><?php echo htmlspecialchars(BB_Translate($col)); ?></th>
 <?php
 								}
 ?>
@@ -689,6 +599,9 @@
 				</thead>
 				<tbody>
 <?php
+								$colattrs = array();
+								foreach ($field["cols"] as $col)  $colattrs[] = array();
+
 								$rownum = 0;
 								$altrow = false;
 								if (isset($field["callback"]) && is_callable($field["callback"]))  $field["rows"] = call_user_func($field["callback"]);
@@ -696,21 +609,25 @@
 								{
 									foreach ($field["rows"] as $row)
 									{
-?>
-				<tr<?php if ($order != "")  echo " id=\"" . htmlspecialchars($idbase . "_" . $rownum) . "\""; ?> class="row<?php if ($altrow)  echo " altrow"; ?>">
-<?php
-										if ($order != "")
+										// Let property form handlers process the current row.
+										$trattrs = array("class" => "row" . ($altrow ? " altrow" : ""));
+										$colattrs2 = $colattrs;
+										foreach ($bb_propformhandlers["table_row"] as $callback)
 										{
-?>
-					<td class="draghandle">&nbsp;</td>
-<?php
+											if (is_callable($callback))  call_user_func_array($callback, array(&$state, $num, &$field, $idbase, "body", $rownum, &$trattrs, &$colattrs2, &$row));
 										}
+
+										if (count($row) < count($colattrs2))  $colattrs2[count($colattrs2) - 1]["colspan"] = (count($colattrs2) - count($row) + 1);
+
+?>
+				<tr<?php foreach ($trattrs as $key => $val)  echo " " . $key . "=\"" . htmlspecialchars($val) . "\""; ?>>
+<?php
 
 										$num2 = 0;
 										foreach ($row as $col)
 										{
 ?>
-					<td<?php if (count($row) < count($field["cols"]) && $num2 + 1 == count($row))  echo " colspan=\"" . (count($field["cols"]) - count($row) + 1) . "\""; ?>><?php echo $col; ?></td>
+					<td<?php if (isset($colattrs2[$num2]))  { foreach ($colattrs2[$num2] as $key => $val)  echo " " . $key . "=\"" . htmlspecialchars($val) . "\""; } ?>><?php echo $col; ?></td>
 <?php
 											$num2++;
 										}
@@ -728,73 +645,54 @@
 				</tbody>
 			</table>
 <?php
-
-								if ($order != "")
-								{
-									if (!$tableorderused)
-									{
-?>
-			<script type="text/javascript" src="<?php echo htmlspecialchars($rooturl . "/" . $supportpath . "/jquery.tablednd-20140418.min.js"); ?>"></script>
-<?php
-										$tableorderused = true;
-									}
-?>
-			<script type="text/javascript">
-			if (jQuery.fn.tableDnD)
-			{
-				InitPropertiesTableDragAndDrop('<?php echo BB_JSSafe($idbase); ?>'<?php if (isset($field["reordercallback"]))  echo ", " . $field["reordercallback"]; ?>);
-			}
-			else
-			{
-				alert('<?php echo BB_JSSafe(BB_Translate("Warning:  Missing jQuery TableDnD plugin for drag-and-drop row ordering.\n\This feature requires AdminPack Extras.")); ?>');
-			}
-			</script>
-<?php
-								}
-
-								if (isset($field["stickyheader"]) && $field["stickyheader"])
-								{
-									if (!$tablestickyheaderused)
-									{
-?>
-			<script type="text/javascript" src="<?php echo htmlspecialchars($rooturl . "/" . $supportpath . "/jquery.stickytableheaders.min.js"); ?>"></script>
-<?php
-										$tablestickyheaderused = true;
-									}
-?>
-			<script type="text/javascript">
-			if (jQuery.fn.stickyTableHeaders)
-			{
-				$('#<?php echo BB_JSSafe($idbase); ?>').stickyTableHeaders();
-			}
-			else
-			{
-				alert('<?php echo BB_JSSafe(BB_Translate("Warning:  Missing jQuery Sticky Table Headers plugin.\n\This feature requires AdminPack Extras.")); ?>');
-			}
-			</script>
-<?php
-								}
 							}
 							else
 							{
 ?>
-			<div class="nontablewrap" id="<?php echo htmlspecialchars("f" . $num . "_" . (isset($field["name"]) ? $field["name"] : "table")); ?>">
+			<div class="nontablewrap" id="<?php echo htmlspecialchars($idbase); ?>">
 <?php
+								// Let property form handlers process the columns.
+								$trattrs = array();
+								$headcolattrs = array();
+								if (!isset($field["cols"]))  $field["cols"] = array();
+								foreach ($field["cols"] as $num2 => $col)
+								{
+									$headcolattrs[] = array("class" => "nontable_th" . ($num2 ? "" : " firstcol"));
+								}
+								foreach ($bb_propformhandlers["table_row"] as $callback)
+								{
+									if (is_callable($callback))  call_user_func_array($callback, array(&$state, $num, &$field, $idbase, "head", -1, &$trattrs, &$headcolattrs, &$field["cols"]));
+								}
+
+								$colattrs = array();
+								foreach ($field["cols"] as $col)  $colattrs[] = array("class" => "nontable_td");
+
+								$rownum = 0;
 								$altrow = false;
 								if (isset($field["callback"]) && is_callable($field["callback"]))  $field["rows"] = call_user_func($field["callback"]);
 								while (count($field["rows"]))
 								{
-									foreach ($field["rows"] as $num2 => $row)
+									foreach ($field["rows"] as $row)
 									{
+										// Let property form handlers process the current row.
+										$trattrs = array("class" => "nontable_row" . ($altrow ? " altrow" : "") . ($rownum ? "" : " firstrow"));
+										$colattrs2 = $colattrs;
+										foreach ($bb_propformhandlers["table_row"] as $callback)
+										{
+											if (is_callable($callback))  call_user_func_array($callback, array(&$state, $num, &$field, $idbase, "body", $rownum, &$trattrs, &$colattrs2, &$row));
+										}
+
 ?>
-				<div class="nontable_row<?php if ($altrow)  echo " altrow"; ?><?php if (!$num2)  echo " firstrow"; ?>">
+				<div<?php foreach ($trattrs as $key => $val)  echo " " . $key . "=\"" . htmlspecialchars($val) . "\""; ?>>
 <?php
-										foreach ($row as $num3 => $col)
+										$num2 = 0;
+										foreach ($row as $col)
 										{
 ?>
-					<div class="nontable_th<?php if (!$num3)  echo " firstcol"; ?>"><?php echo htmlspecialchars(BB_Translate(isset($field["cols"][$num3]) ? $field["cols"][$num3] : "")); ?></div>
-					<div class="nontable_td"><?php echo $col; ?></div>
+					<div<?php foreach ($headcolattrs as $key => $val)  echo " " . $key . "=\"" . htmlspecialchars($val) . "\""; ?>><?php echo htmlspecialchars(BB_Translate(isset($field["cols"][$num2]) ? $field["cols"][$num2] : "")); ?></div>
+					<div<?php if (isset($colattrs2[$num2]))  { foreach ($colattrs2[$num2] as $key => $val)  echo " " . $key . "=\"" . htmlspecialchars($val) . "\""; } ?>><?php echo $col; ?></div>
 <?php
+											$num2++;
 										}
 ?>
 				</div>
@@ -814,20 +712,10 @@
 						}
 						case "file":
 						{
-							if ($autofocus === false)  $autofocus = htmlspecialchars("f" . $num . "_" . $field["name"]);
+							if ($state["autofocus"] === false)  $state["autofocus"] = htmlspecialchars("f" . $num . "_" . $field["name"]);
 ?>
 			<input class="text" type="file" id="<?php echo htmlspecialchars("f" . $num . "_" . $field["name"]); ?>" name="<?php echo htmlspecialchars($field["name"]); ?>" />
 <?php
-							break;
-						}
-						case "date":
-						{
-							if ($autofocus === false)  $autofocus = htmlspecialchars("f" . $num . "_" . $field["name"]);
-?>
-			<input class="date"<?php if (isset($field["width"]))  echo " style=\"width: " . htmlspecialchars($field["width"]) . "\""; ?> type="text" id="<?php echo htmlspecialchars("f" . $num . "_" . $field["name"]); ?>" name="<?php echo htmlspecialchars($field["name"]); ?>" value="<?php echo htmlspecialchars($field["value"]); ?>" />
-<?php
-							$dateused = true;
-
 							break;
 						}
 						case "custom":
@@ -852,24 +740,25 @@
 ?>
 			</div>
 <?php
-					if ($insiderow)  echo "</td>";
+					if ($state["insiderow"])  echo "</td>";
 				}
 			}
 
-			if ($insiderow)
+			if ($state["insiderow"])
 			{
 ?>
 			</tr></table></div>
 <?php
 			}
 
-			if ($insideaccordion)
+			if ($state["jqueryuiused"])  BB_OutputJQueryUI($state["rooturl"], $state["supportpath"]);
+
+			// Let property form handlers process other field types.
+			foreach ($bb_propformhandlers["finalize"] as $callback)
 			{
-?>
-				</div>
-			</div>
-<?php
+				if (is_callable($callback))  call_user_func_array($callback, array(&$state));
 			}
+
 ?>
 		</div>
 <?php
@@ -901,46 +790,12 @@
 ?>
 	</div>
 <?php
-		if ($dateused)
-		{
-			if (!$jqueryuiused)
-			{
-				BB_OutputJQueryUI($rooturl, $supportpath);
-				$jqueryuiused = true;
-			}
-?>
-	<script type="text/javascript">
-	$(function() {
-		if (jQuery.fn.datepicker)  $('div.formfields div.formitem input.date').datepicker({ dateFormat: 'yy-mm-dd' });
-		else  alert('<?php echo BB_JSSafe(BB_Translate("Warning:  Missing jQuery UI for date field.\n\nThis feature requires AdminPack Extras.")); ?>');
-	});
-	</script>
-<?php
-		}
 
-		if ($accordionused)
-		{
-			if (!$jqueryuiused)
-			{
-				BB_OutputJQueryUI($rooturl, $supportpath);
-				$jqueryuiused = true;
-			}
-
-?>
-	<script type="text/javascript">
-	$(function() {
-		if (jQuery.fn.accordion)  $('div.formaccordionwrap').accordion({ collapsible : true, active : false, heightStyle : 'content' });
-		else  alert('<?php echo BB_JSSafe(BB_Translate("Warning:  Missing jQuery UI for accordion.\n\nThis feature requires AdminPack Extras.")); ?>');
-	});
-	</script>
-<?php
-		}
-
-		if (isset($options["focus"]) && (is_string($options["focus"]) || ($options["focus"] === true && $autofocus !== false)))
+		if (isset($options["focus"]) && (is_string($options["focus"]) || ($options["focus"] === true && $state["autofocus"] !== false)))
 		{
 ?>
 	<script type="text/javascript">
-	$('#<?php echo BB_JSSafe(is_string($options["focus"]) ? $options["focus"] : $autofocus); ?>').focus();
+	$('#<?php echo BB_JSSafe(is_string($options["focus"]) ? $options["focus"] : $state["autofocus"]); ?>').focus();
 	</script>
 <?php
 		}
@@ -1104,6 +959,19 @@
 		return $info;
 	}
 
+	function BB_SetNestedPathValue(&$data, $pathparts, $val)
+	{
+		$curr = &$data;
+		foreach ($pathparts as $key)
+		{
+			if (!isset($curr[$key]))  $curr[$key] = array();
+
+			$curr = &$curr[$key];
+		}
+
+		$curr = $val;
+	}
+
 	function BB_GetIDDiff($origids, $newids)
 	{
 		$result = array("remove" => array(), "add" => array());
@@ -1137,7 +1005,7 @@
 <title>@TITLE@</title>
 <link rel="stylesheet" href="@ROOTURL@/@SUPPORTPATH@/admin.css?201402023" type="text/css" media="all" />
 <link rel="stylesheet" href="@ROOTURL@/@SUPPORTPATH@/admin_print.css?201402023" type="text/css" media="print" />
-<script type="text/javascript" src="@ROOTURL@/@SUPPORTPATH@/jquery-1.11.0.min.js"></script>
+<script type="text/javascript" src="@ROOTURL@/@SUPPORTPATH@/jquery-3.1.1.min.js"></script>
 <script type="text/javascript" src="@ROOTURL@/@SUPPORTPATH@/admin.js?20140615"></script>
 <?php if (function_exists("BB_InjectLayoutHead"))  BB_InjectLayoutHead(); ?>
 </head>
