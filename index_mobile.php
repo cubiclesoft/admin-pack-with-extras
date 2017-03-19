@@ -30,7 +30,8 @@
 	// Menu/Navigation options.
 	$menuopts = array(
 		"Temp Title/Section" => array(
-			"Some Page" => BB_GetRequestURLBase() . "?action=somepage&sec_t=" . BB_CreateSecurityToken("somepage")
+			"Some Page" => BB_GetRequestURLBase() . "?action=somepage&sec_t=" . BB_CreateSecurityToken("somepage"),
+			"Some Page 2" => BB_GetRequestURLBase() . "?action=somepage2&sec_t=" . BB_CreateSecurityToken("somepage2")
 		)
 	);
 
@@ -282,6 +283,58 @@
 		);
 
 		BB_GeneratePage("Some Page", $menuopts, $contentopts);
+	}
+	else if (isset($_REQUEST["action"]) && $_REQUEST["action"] == "somepage2_getinfo")
+	{
+		$id = (int)$_REQUEST["id"];
+
+?>
+<script type="text/javascript">
+setTimeout(function() {
+	$('#mainitem_<?=$id?>').remove();
+	BB_StripeSidebar();
+}, 2000);
+
+$('#maincontentwrap').html('Loaded item #<b><?=$id?></b> and the item will be removed from the sidebar in two seconds.');
+</script>
+<?php
+	}
+	else if (isset($_REQUEST["action"]) && $_REQUEST["action"] == "somepage2")
+	{
+		$items = array();
+		for ($x = 0; $x < 1000; $x++)
+		{
+			$items[] = array(
+				"id" => "mainitem_" . $x,
+				"display" => "Item #" . $x,
+				"onclick" => "LoadItem('" . $x . "');"
+			);
+		}
+
+		ob_start();
+?>
+<script type="text/javascript">
+function LoadItem(id) {
+	$('#ajaxhidden').load('index.php', {
+		'action' : 'somepage2_getinfo',
+		'id' : id,
+		'sec_t' : '<?=BB_CreateSecurityToken("somepage2_getinfo")?>'
+	});
+}
+</script>
+<?php
+		$js = ob_get_contents();
+		ob_end_clean();
+
+		$contentopts = array(
+			"items" => $items,
+			"topbarhtml" => "An optional <b>top bar</b>",
+			"initialhtml" => "<i>Select an option from the left.</i>",
+			"bottombarhtml" => "An optional <b>bottom bar</b>",
+			"javascript" => $js
+		);
+
+		BB_GenerateBulkEditPage("Some Bulk Edit Page", $contentopts);
 	}
 	else
 	{

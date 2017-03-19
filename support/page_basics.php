@@ -990,7 +990,7 @@
 
 	function BB_InitLayouts()
 	{
-		global $bb_page_layout, $bb_menu_layout, $bb_menu_item_layout, $bb_message_layout;
+		global $bb_page_layout, $bb_menu_layout, $bb_menu_item_layout, $bb_message_layout, $bb_page_layout_bulkedit;
 
 		// Default layout swiped from the Barebones CMS Layout widget.
 		// SEO-friendly (2-1) admin-style 2-column pixel-widths liquid layout (200px 100% height, content).
@@ -1059,6 +1059,36 @@ EOF;
 			$bb_message_layout = <<<EOF
 <div class="message"><div class="@MSGTYPE@">@MESSAGE@</div></div>
 EOF;
+		}
+
+		// Bulk edit layout.
+		if (!isset($bb_page_layout_bulkedit))
+		{
+			ob_start();
+?>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
+<title>@TITLE@</title>
+<link rel="stylesheet" href="@ROOTURL@/@SUPPORTPATH@/admin_bulkedit.css?201703018" type="text/css" media="all" />
+<script type="text/javascript" src="@ROOTURL@/@SUPPORTPATH@/jquery-3.1.1.min.js"></script>
+<script type="text/javascript" src="@ROOTURL@/@SUPPORTPATH@/admin_bulkedit.js?201703018"></script>
+<?php if (function_exists("BB_InjectLayoutHead"))  BB_InjectLayoutHead(); ?>
+</head>
+<body>
+<div id="sidebarwrap">@ITEMS@</div>
+<div id="topbarwrap">@TOPBAR@</div>
+<div id="maincontentwrap">@CONTENT@</div>
+<div id="bottombarwrap">@BOTTOMBAR@</div>
+<div id="ajaxhidden"></div>
+@SCRIPTS@
+</body>
+</html>
+<?php
+			$bb_page_layout_bulkedit = ob_get_contents();
+			ob_end_clean();
 		}
 	}
 
@@ -1133,5 +1163,65 @@ EOF;
 		echo substr($data, 0, $pos);
 		BB_PropertyForm($contentopts);
 		echo substr($data, $pos + 9);
+	}
+
+	function BB_GenerateBulkEditPage($title, $contentopts)
+	{
+		global $bb_rootname, $bb_page_layout_bulkedit;
+
+		if (!isset($contentopts["title"]))  $contentopts["title"] = $title;
+
+		header("Content-Type: text/html; charset=UTF-8");
+
+		BB_InitLayouts();
+
+		// Process the header.
+		if (defined("BB_ROOT_URL"))  $rooturl = BB_ROOT_URL;
+		else if (defined("ROOT_URL"))  $rooturl = ROOT_URL;
+		else
+		{
+			$rooturl = BB_GetRequestURLBase();
+			if (substr($rooturl, -1) != "/")  $rooturl = dirname($rooturl);
+			if (substr($rooturl, -1) == "/")  $rooturl = substr($rooturl, 0, -1);
+		}
+
+		if (defined("BB_SUPPORT_PATH"))  $supportpath = BB_SUPPORT_PATH;
+		else if (defined("SUPPORT_PATH"))  $supportpath = SUPPORT_PATH;
+		else  $supportpath = "support";
+
+		$data = str_replace("@ROOTURL@", htmlspecialchars($rooturl), $bb_page_layout_bulkedit);
+		$data = str_replace("@SUPPORTPATH@", htmlspecialchars($supportpath), $data);
+
+		// Process the title and message.
+		$data = str_replace("@TITLE@", htmlspecialchars(BB_Translate(($bb_rootname != "" ? $bb_rootname . " | " : "") . $title)), $data);
+		$data = str_replace("@ROOTNAME@", htmlspecialchars(BB_Translate($bb_rootname)), $data);
+
+		// Process the top and bottom bars, initial content, and necessary Javascript.
+		$data = str_replace("@TOPBAR@", (isset($contentopts["topbarhtml"]) ? $contentopts["topbarhtml"] : ""), $data);
+		$data = str_replace("@BOTTOMBAR@", (isset($contentopts["bottombarhtml"]) ? $contentopts["bottombarhtml"] : ""), $data);
+		$data = str_replace("@CONTENT@", (isset($contentopts["initialhtml"]) ? $contentopts["initialhtml"] : ""), $data);
+		$data = str_replace("@SCRIPTS@", (isset($contentopts["javascript"]) ? $contentopts["javascript"] : ""), $data);
+
+		// Process and display the items.
+		$pos = strpos($data, "@ITEMS@");
+		echo substr($data, 0, $pos);
+		if (isset($contentopts["items_callback"]) && is_callable($contentopts["items_callback"]))  $contentopts["items"] = call_user_func($contentopts["items_callback"]);
+		if (isset($contentopts["items"]))
+		{
+			$altrow = false;
+			while (count($contentopts["items"]))
+			{
+				foreach ($contentopts["items"] as $item)
+				{
+					echo "<a href=\"#\"" . (isset($item["id"]) ? " id=\"" . htmlspecialchars($item["id"]) . "\"" : "") . " class=\"" . trim(($altrow ? "altrow" : "") . (isset($item["class"]) ? " " . htmlspecialchars($item["class"]) : "")) . "\" onclick=\"" . (isset($item["onclick"]) ? htmlspecialchars($item["onclick"]) . "; " : "") . "return BB_SelectSidebarItem(this);\">" . htmlspecialchars($item["display"]) . "</a>\n";
+
+					$altrow = !$altrow;
+				}
+
+				if (isset($contentopts["items_callback"]) && is_callable($contentopts["items_callback"]))  $contentopts["items"] = call_user_func($contentopts["items_callback"]);
+				else  $contentopts["items"] = array();
+			}
+		}
+		echo substr($data, $pos + 7);
 	}
 ?>
