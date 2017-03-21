@@ -42,7 +42,7 @@
 ?>
 	<script type="text/javascript">
 	$(function() {
-		var options = <?php echo json_encode($options, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES | JSON_FORCE_OBJECT); ?>;
+		var options = <?php echo json_encode($options, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES); ?>;
 <?php
 				if (isset($field["callbacks"]))
 				{
@@ -159,7 +159,7 @@
 ?>
 	<script type="text/javascript">
 	$(function() {
-		var options = <?php echo json_encode($options, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES | JSON_FORCE_OBJECT); ?>;
+		var options = <?php echo json_encode($options, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES); ?>;
 <?php
 				if (isset($field["callbacks"]))
 				{
@@ -236,7 +236,7 @@
 						$state["extras_multiselect_tags"] = "";
 					}
 
-					$options = array();
+					$options = array("__adminpack" => true);
 					if (isset($field["mininput"]))  $options["minimumInputLength"] = (int)$field["mininput"];
 
 					// Allow each select2 instance to be fully customized beyond basic support.
@@ -249,7 +249,7 @@
 ?>
 	<script type="text/javascript">
 	$(function() {
-		var options = <?php echo json_encode($options, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES | JSON_FORCE_OBJECT); ?>;
+		var options = <?php echo json_encode($options, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES); ?>;
 <?php
 					if (isset($field["multiselect_callbacks"]))
 					{
@@ -263,7 +263,7 @@
 ?>
 
 		if (jQuery.fn.select2)  $('#<?php echo BB_JSSafe($idbase); ?>').select2(options);
-		else  alert('<?php echo BB_JSSafe(BB_Translate("Warning:  Missing jQuery UI select2 for multiple selection field.\n\This feature requires AdminPack Extras.")); ?>');
+		else  alert('<?php echo BB_JSSafe(BB_Translate("Warning:  Missing jQuery UI select2 for multiple selection field.\n\nThis feature requires AdminPack Extras.")); ?>');
 	});
 	</script>
 <?php
@@ -313,7 +313,7 @@
 ?>
 	<script type="text/javascript">
 	$(function() {
-		var options = <?php echo json_encode($options, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES | JSON_FORCE_OBJECT); ?>;
+		var options = <?php echo json_encode($options, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES); ?>;
 <?php
 					if (isset($field["multiselect_callbacks"]))
 					{
@@ -327,7 +327,7 @@
 ?>
 
 		if (jQuery.fn.multiselect && jQuery.fn.multiselectfilter)  $('#<?php echo BB_JSSafe($idbase); ?>').multiselect(options).multiselectfilter();
-		else  alert('<?php echo BB_JSSafe(BB_Translate("Warning:  Missing jQuery UI multiselect widget or multiselectfilter for dropdown multiple selection field.\n\This feature requires AdminPack Extras.")); ?>');
+		else  alert('<?php echo BB_JSSafe(BB_Translate("Warning:  Missing jQuery UI multiselect widget or multiselectfilter for dropdown multiple selection field.\n\nThis feature requires AdminPack Extras.")); ?>');
 	});
 	</script>
 <?php
@@ -370,7 +370,7 @@
 	$(function() {
 		if (jQuery.fn.multiselect)
 		{
-			var options = <?php echo json_encode($options, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES | JSON_FORCE_OBJECT); ?>;
+			var options = <?php echo json_encode($options, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES); ?>;
 <?php
 				if (isset($field["multiselect_callbacks"]))
 				{
@@ -390,7 +390,7 @@
 		}
 		else
 		{
-			alert('<?php echo BB_JSSafe(BB_Translate("Warning:  Missing jQuery UI multiselect plugin for flat multiple selection field.\n\This feature requires AdminPack Extras.")); ?>');
+			alert('<?php echo BB_JSSafe(BB_Translate("Warning:  Missing jQuery UI multiselect plugin for flat multiple selection field.\n\nThis feature requires AdminPack Extras.")); ?>');
 		}
 	});
 	</script>
@@ -470,7 +470,7 @@ function AdminPackExtras_TableDnD_DefaultDrop(table, row) {
 			<script type="text/javascript">
 			if (jQuery.fn.tableDnD)
 			{
-				var options = <?php echo json_encode($options, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES | JSON_FORCE_OBJECT); ?>;
+				var options = <?php echo json_encode($options, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES); ?>;
 <?php
 				if (!isset($field["order_callbacks"]))  $field["order_callbacks"] = array();
 
@@ -489,11 +489,11 @@ function AdminPackExtras_TableDnD_DefaultDrop(table, row) {
 				}
 ?>
 
-				$('#<?php echo $idbase; ?>').tableDnD(options);
+				$('#<?php echo BB_JSSafe($idbase); ?>').tableDnD(options);
 			}
 			else
 			{
-				alert('<?php echo BB_JSSafe(BB_Translate("Warning:  Missing jQuery TableDnD plugin for drag-and-drop row ordering.\n\This feature requires AdminPack Extras.")); ?>');
+				alert('<?php echo BB_JSSafe(BB_Translate("Warning:  Missing jQuery TableDnD plugin for drag-and-drop row ordering.\n\nThis feature requires AdminPack Extras.")); ?>');
 			}
 			</script>
 <?php
@@ -545,7 +545,7 @@ $(window).resize(function() {
 						$state["extras_table_stickyheaders"] = "";
 					}
 
-					$options = array();
+					$options = array("__adminpack" => true);
 
 					// Allow each sticky headers instance to be fully customized beyond basic support.
 					// Valid options:  https://github.com/jmosbech/StickyTableHeaders
@@ -558,7 +558,7 @@ $(window).resize(function() {
 			<script type="text/javascript">
 			if (jQuery.fn.stickyTableHeaders)
 			{
-				var options = <?php echo json_encode($options, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES | JSON_FORCE_OBJECT); ?>;
+				var options = <?php echo json_encode($options, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES); ?>;
 <?php
 				if (!isset($field["order_callbacks"]))  $field["order_callbacks"] = array();
 
@@ -577,7 +577,7 @@ $(window).resize(function() {
 			}
 			else
 			{
-				alert('<?php echo BB_JSSafe(BB_Translate("Warning:  Missing jQuery Sticky Table Headers plugin.\n\This feature requires AdminPack Extras.")); ?>');
+				alert('<?php echo BB_JSSafe(BB_Translate("Warning:  Missing jQuery Sticky Table Headers plugin.\n\nThis feature requires AdminPack Extras.")); ?>');
 			}
 			</script>
 <?php
