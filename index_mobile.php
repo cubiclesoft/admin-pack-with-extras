@@ -1,6 +1,6 @@
 <?php
 	// Admin Pack.
-	// (C) 2014 CubicleSoft.  All Rights Reserved.
+	// (C) 2017 CubicleSoft.  All Rights Reserved.
 
 	// This small package exists to make it easy to design quick-n-dirty administrative backends that look good.
 	// This file is well-commented.  When republishing based on this work, copyrights must remain intact.
@@ -73,7 +73,7 @@
 		// [Do processing here to generate content options dynamically.]
 		$somevar = "default value 2";
 
-		$items = array("Furries", "Fuzzies", "Fluffies", "Puppies", "Kitties", "Tribbles", "Unicorns");
+		$items = array("Furries", "Fuzzies", "Fluffies", "Puppies", "Kitties", "Penguins", "Ponies", "Tribbles", "Unicorns");
 		$rows = array();
 		foreach ($items as $num => $item)
 		{
@@ -82,6 +82,9 @@
 
 		if (file_exists("support/adminpack_calendar_table.php"))  require_once "support/adminpack_calendar_table.php";
 		if (file_exists("support/adminpack_chart.php"))  require_once "support/adminpack_chart.php";
+		if (file_exists("support/adminpack_tablefilter.php"))  require_once "support/adminpack_tablefilter.php";
+		if (file_exists("support/adminpack_htmledit.php"))  require_once "support/adminpack_htmledit.php";
+		if (file_exists("support/adminpack_textcounter.php"))  require_once "support/adminpack_textcounter.php";
 
 		$tomorrow = mktime(0, 0, 0, date("n"), date("j") + 1);
 
@@ -276,6 +279,32 @@
 					"thresholds" => array(30, 60, 90, 100),
 					"data" => array("value" => array(91.4)),
 					"desc" => "Description for gauge.  This feature requires Admin Pack Modules to be installed."
+				),
+				array(
+					"title" => "Module:  Table Filter",
+					"type" => "table",
+					"cols" => array("ID", "Type", "Options"),
+					"rows" => $rows,
+					"filter" => true,
+					"desc" => "Description for table.  Try typing 'ies' into the filter field.  This feature requires Admin Pack Modules to be installed."
+				),
+				array(
+					"title" => "Module:  HTML Editor",
+					"type" => "textarea",
+					"width" => "100%",
+					"height" => "300px",
+					"name" => "htmledit",
+					"default" => "<p><b>Why, hello there!</b></p><p>Have you had your Wheaties today?</p>",
+					"html" => true,
+					"desc" => "Description for HTML editor.  This feature requires Admin Pack Modules to be installed."
+				),
+				array(
+					"title" => "Module:  Text Counter",
+					"type" => "text",
+					"name" => "textcount",
+					"default" => "",
+					"counter" => 150,
+					"desc" => "Description for Text Counter.  This feature requires Admin Pack Modules to be installed."
 				),
 			),
 			"submit" => "Save",
