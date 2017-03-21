@@ -20,8 +20,7 @@ function BB_UpdateLayout() {
 }
 
 function BB_StripeSidebar() {
-	$('#sidebarwrap a').removeClass('altrow');
-	$('#sidebarwrap a:odd').addClass('altrow');
+	$('#sidebarwrap a').removeClass('altrow').filter(':visible:odd').addClass('altrow');
 }
 
 function BB_SelectSidebarItem(obj) {

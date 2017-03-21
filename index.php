@@ -1,6 +1,6 @@
 <?php
 	// Admin Pack.
-	// (C) 2014 CubicleSoft.  All Rights Reserved.
+	// (C) 2017 CubicleSoft.  All Rights Reserved.
 
 	// This small package exists to make it easy to design quick-n-dirty administrative backends that look good.
 	// This file is well-commented.  When republishing based on this work, copyrights must remain intact.
