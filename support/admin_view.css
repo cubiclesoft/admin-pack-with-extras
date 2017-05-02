@@ -164,7 +164,7 @@ div.maincontent div.propmain div.formfields div.formitem div.formitemtitle {
 	margin-bottom: 2px;
 }
 
-div.maincontent div.propmain div.formfields div.formitem div.static {
+div.maincontent div.propmain div.formfields div.formitem div.staticwrap, div.maincontent div.propmain div.formfields div.formitem div.static {
 	margin-left: 7px;
 	width: 95%;
 	font-size: 0.95em;
@@ -237,6 +237,16 @@ div.maincontent div.propmain div.formfields div.formitem select:focus {
 	border: 1px solid #888888;
 }
 
+div.maincontent div.propmain div.formfields div.formitem table.viewtable td {
+	vertical-align: top;
+}
+
+div.maincontent div.propmain div.formfields div.formitem table.viewtable td.datakey {
+	padding-right: 2.0em;
+	font-weight: bold;
+	white-space: nowrap;
+}
+
 div.maincontent div.propmain div.formfields div.formitem div.formitemdesc {
 	margin-left: 7px;
 	font-size: 0.9em;
@@ -295,6 +305,35 @@ div.maincontent div.propmain div.nontable_th.firstcol {
 div.maincontent div.propmain div.nontable_td {
 	margin-left: 7px;
 	color: #444444;
+}
+
+div.maincontent div.propmain div.mediawrap {
+	float: right;
+	margin-left: 2.0em;
+	max-width: 45%;
+	margin-bottom: 0.5em;
+}
+
+@media (max-width: 600px) {
+	div.maincontent div.propmain div.mediawrap {
+		float: none;
+		margin-left: 0;
+		max-width: none;
+	}
+}
+
+div.maincontent div.propmain div.mediawrap div.mediaitemtitle {
+	font-weight: bold;
+	margin-bottom: 0.3em;
+}
+
+div.maincontent div.propmain div.mediawrap .mediaitem {
+	max-width: 100%;
+}
+
+div.maincontent div.propmain div.mediawrap div.mediaitemdesc {
+	font-size: 0.9em;
+	color: #333333;
 }
 
 /* Optional menu navigation styles. */

@@ -2,96 +2,50 @@
 	// Admin Pack server-side page manipulation functions.
 	// (C) 2017 CubicleSoft.  All Rights Reserved.
 
+	// Most functionality has been moved into FlexForms.  Much of this is legacy interface code for convenience and to avoid breaking things badly.
+	require_once "flex_forms.php";
+	if (file_exists(str_replace("\\", "/", dirname(__FILE__)) . "/flex_forms_extras.php"))  require_once str_replace("\\", "/", dirname(__FILE__)) . "/flex_forms_extras.php";
+
+	class BB_FlexForms extends FlexForms
+	{
+		public function CreateSecurityToken($action, $extra = "")
+		{
+			global $bb_randpage, $bb_usertoken;
+
+			$this->SetSecretKey($bb_randpage . ":" . $bb_usertoken);
+
+			return parent::CreateSecurityToken($action, $extra);
+		}
+	}
+
+	// Can be used to override default functionality with an extended class.  However, form handlers are generally a better solution.
+	$bb_flexforms = new BB_FlexForms();
+
 	// Code swiped from Barebones CMS support functions.
 	function BB_JSSafe($data)
 	{
-		return str_replace(array("'", "\r", "\n"), array("\\'", "\\r", "\\n"), $data);
+		return FlexForms::JSSafe($data);
 	}
 
 	function BB_IsSSLRequest()
 	{
-		return ((isset($_SERVER["HTTPS"]) && ($_SERVER["HTTPS"] == "on" || $_SERVER["HTTPS"] == "1")) || (isset($_SERVER["SERVER_PORT"]) && $_SERVER["SERVER_PORT"] == "443") || (str_replace("\\", "/", strtolower(substr($_SERVER["REQUEST_URI"], 0, 8))) == "https://"));
+		return FlexForms::IsSSLRequest();
 	}
 
 	// Returns 'http[s]://www.something.com[:port]' based on the current page request.
 	function BB_GetRequestHost($protocol = "")
 	{
-		global $bb_getrequesthost_cache;
-
-		$protocol = strtolower($protocol);
-		$ssl = ($protocol == "https" || ($protocol == "" && BB_IsSSLRequest()));
-		if ($protocol == "")  $type = "def";
-		else if ($ssl)  $type = "https";
-		else  $type = "http";
-
-		if (!isset($bb_getrequesthost_cache))  $bb_getrequesthost_cache = array();
-		if (isset($bb_getrequesthost_cache[$type]))  return $bb_getrequesthost_cache[$type];
-
-		$url = "http" . ($ssl ? "s" : "") . "://";
-		if ($ssl && defined("HTTPS_SERVER") && HTTPS_SERVER != "")  $url .= HTTPS_SERVER;
-		else if (!$ssl && defined("HTTP_SERVER") && HTTP_SERVER != "")  $url .= HTTP_SERVER;
-		else
-		{
-			$str = str_replace("\\", "/", $_SERVER["REQUEST_URI"]);
-			$pos = strpos($str, "?");
-			if ($pos !== false)  $str = substr($str, 0, $pos);
-			$str2 = strtolower($str);
-			if (substr($str2, 0, 7) == "http://")
-			{
-				$pos = strpos($str, "/", 7);
-				if ($pos === false)  $str = "";
-				else  $str = substr($str, 7, $pos);
-			}
-			else if (substr($str2, 0, 8) == "https://")
-			{
-				$pos = strpos($str, "/", 8);
-				if ($pos === false)  $str = "";
-				else  $str = substr($str, 8, $pos);
-			}
-			else  $str = "";
-
-			if ($str != "")  $host = $str;
-			else if (isset($_SERVER["HTTP_HOST"]))  $host = $_SERVER["HTTP_HOST"];
-			else  $host = $_SERVER["SERVER_NAME"] . ":" . (int)$_SERVER["SERVER_PORT"];
-
-			$pos = strpos($host, ":");
-			if ($pos === false)  $port = 0;
-			else
-			{
-				$port = (int)substr($host, $pos + 1);
-				$host = substr($host, 0, $pos);
-			}
-			if ($port < 1 || $port > 65535)  $port = ($ssl ? 443 : 80);
-			$url .= preg_replace('/[^a-z0-9.\-]/', "", strtolower($host));
-			if ($protocol == "" && ((!$ssl && $port != 80) || ($ssl && $port != 443)))  $url .= ":" . $port;
-			else if ($protocol == "http" && !$ssl && $port != 80)  $url .= ":" . $port;
-			else if ($protocol == "https" && $ssl && $port != 443)  $url .= ":" . $port;
-		}
-
-		$bb_getrequesthost_cache[$type] = $url;
-
-		return $url;
+		return FlexForms::GetRequestHost($protocol);
 	}
 
 	function BB_GetRequestURLBase()
 	{
-		$str = str_replace("\\", "/", $_SERVER["REQUEST_URI"]);
-		$pos = strpos($str, "?");
-		if ($pos !== false)  $str = substr($str, 0, $pos);
-		$str2 = strtolower($str);
-		if (substr($str2, 0, 7) == "http://" || substr($str2, 0, 8) == "https://")
-		{
-			$pos = strpos($str, "/", 8);
-			if ($pos === false)  $str = "/";
-			else  $str = substr($str, $pos);
-		}
-
-		return $str;
+		return FlexForms::GetRequestURLBase();
 	}
 
 	function BB_GetFullRequestURLBase($protocol = "")
 	{
-		return BB_GetRequestHost($protocol) . BB_GetRequestURLBase();
+		return FlexForms::GetFullRequestURLBase($protocol);
 	}
 
 	// Multilingual admin functions.
@@ -198,6 +152,9 @@
 		}
 	}
 
+	// Route all translation requests through BB_Translate().
+	if (!defined("CS_TRANSLATE_FUNC"))  define("CS_TRANSLATE_FUNC", "BB_Translate");
+
 
 	// Code swiped from CubicleSoft browser cookie support functions.
 	function SetCookieFixDomain($name, $value = "", $expires = 0, $path = "", $domain = "", $secure = false, $httponly = false)
@@ -228,31 +185,18 @@
 	}
 
 
-	function BB_OutputJQueryUI($rooturl, $supportpath)
-	{
-?>
-	<link rel="stylesheet" href="<?php echo htmlspecialchars($rooturl . "/" . $supportpath . "/jquery_ui_themes/smoothness/jquery-ui-1.12.1.css"); ?>" type="text/css" media="all" />
-	<script type="text/javascript" src="<?php echo htmlspecialchars($rooturl . "/" . $supportpath . "/jquery-ui-1.12.1.min.js"); ?>"></script>
-<?php
-	}
-
 	function BB_RegisterPropertyFormHandler($mode, $callback)
 	{
-		global $bb_propformhandlers;
-
-		if (!isset($bb_propformhandlers) || !is_array($bb_propformhandlers))  $bb_propformhandlers = array("init" => array(), "field_string" => array(), "field_type" => array(), "table_row" => array(), "finalize" => array());
-
-		$bb_propformhandlers[$mode][] = $callback;
+		FlexForms::RegisterFormHandler($mode, $callback);
 	}
 
-	// Slightly modified code swiped from Barebone CMS editing routines.
+	// Originally from Barebone CMS editing routines.  Most functionality has now transitioned to FlexForms.
 	function BB_PropertyForm($options)
 	{
-		global $bb_formtables, $bb_formwidths, $bb_propformhandlers;
+		global $bb_formtables, $bb_formwidths, $bb_flexforms;
 
 		if (!isset($bb_formtables) || !is_bool($bb_formtables))  $bb_formtables = true;
 		if (!isset($bb_formwidths) || !is_bool($bb_formwidths))  $bb_formwidths = true;
-		if (!isset($bb_propformhandlers) || !is_array($bb_propformhandlers))  $bb_propformhandlers = array("init" => array(), "field_string" => array(), "field_type" => array(), "table_row" => array(), "finalize" => array());
 
 		// Certain types of fields require the Admin Pack extras package.
 		if (defined("BB_ROOT_URL"))  $rooturl = BB_ROOT_URL;
@@ -268,21 +212,13 @@
 		else if (defined("SUPPORT_PATH"))  $supportpath = SUPPORT_PATH;
 		else  $supportpath = "support";
 
-		$state = array(
-			"autofocus" => false,
-			"jqueryuiused" => false,
-			"rooturl" => $rooturl,
-			"supportpath" => $supportpath,
-			"insiderow" => false,
-			"firstitem" => false,
-			"customfieldtypes" => array()
-		);
+		// Initialize the FlexForms class instance.  Override a few defaults for AdminPack template integration.
+		$bb_flexforms->SetState(array("supporturl" => $rooturl . "/" . $supportpath, "formtables" => $bb_formtables, "formwidths" => $bb_formwidths));
+		$bb_flexforms->SetJSOutput("jquery");
+		$bb_flexforms->SetCSSOutput("formcss");
 
-		// Let property form handlers modify the options and state arrays.
-		foreach ($bb_propformhandlers["init"] as $callback)
-		{
-			if (is_callable($callback))  call_user_func_array($callback, array(&$state, &$options));
-		}
+		// AdminPack provides its own security token logic and doesn't need stringent randomized field support.
+		unset($options["hashnames"]);
 
 ?>
 	<noscript><style type="text/css">
@@ -294,511 +230,10 @@
 	<div class="propinfo"></div>
 	<div class="propmain">
 <?php
-		if (isset($options["submit"]) || (isset($options["useform"]) && $options["useform"]))
-		{
-?>
-		<form id="propform"<?php if (isset($options["formmode"]) && $options["formmode"] === "get")  { ?> method="get"<?php } else { ?> method="post" enctype="multipart/form-data"<?php } ?> action="<?php echo htmlspecialchars(BB_GetRequestURLBase()); ?>">
-<?php
-
-			$extra = array();
-			if (isset($options["hidden"]))
-			{
-				foreach ($options["hidden"] as $name => $value)
-				{
-?>
-		<input type="hidden" name="<?php echo htmlspecialchars($name); ?>" value="<?php echo htmlspecialchars($value); ?>" />
-<?php
-					if ($options["nonce"] != $name)  $extra[$name] = $value;
-				}
-
-?>
-		<input type="hidden" name="sec_extra" value="<?php echo htmlspecialchars(implode(",", array_keys($extra))); ?>" />
-		<input type="hidden" name="sec_t" value="<?php echo htmlspecialchars(BB_CreateSecurityToken($options["hidden"][$options["nonce"]], $extra)); ?>" />
-<?php
-			}
-			unset($extra);
-		}
-
-		if (isset($options["fields"]))
-		{
-?>
-		<div class="formfields<?php if (count($options["fields"]) == 1 && !isset($options["fields"][0]["title"]) && !isset($options["fields"][0]["htmltitle"]))  echo " alt"; ?>">
-<?php
-			foreach ($options["fields"] as $num => $field)
-			{
-				if (is_string($field))
-				{
-					if ($field == "split" && !$state["insiderow"])  echo "<hr />";
-					else if ($field == "startrow")
-					{
-						if ($state["insiderow"])  echo "</tr><tr>";
-						else if ($bb_formtables)
-						{
-							$state["insiderow"] = true;
-?>
-			<div class="fieldtablewrap<?php if ($state["firstitem"])  echo " firstitem"; ?>"><table class="rowwrap"><tr>
-<?php
-							$state["firstitem"] = false;
-						}
-					}
-					else if ($field == "endrow" && $bb_formtables)
-					{
-?>
-			</tr></table></div>
-<?php
-						$state["insiderow"] = false;
-					}
-					else if (substr($field, 0, 5) == "html:")
-					{
-						echo substr($field, 5);
-					}
-
-					// Let property form handlers process strings.
-					foreach ($bb_propformhandlers["field_string"] as $callback)
-					{
-						if (is_callable($callback))  call_user_func_array($callback, array(&$state, $num, &$field));
-					}
-				}
-				else if (!isset($field["type"]))
-				{
-					// Do nothing if type is not specified.
-				}
-				else if (isset($state["customfieldtypes"][$field["type"]]))
-				{
-					// Let property form handlers process custom field types.
-					foreach ($bb_propformhandlers["field_type"] as $callback)
-					{
-						if (is_callable($callback))  call_user_func_array($callback, array(&$state, $num, &$field));
-					}
-				}
-				else
-				{
-					if ($state["insiderow"])  echo "<td>";
-?>
-			<div class="formitem<?php echo ((isset($field["split"]) && $field["split"] === false) || $state["firstitem"] ? " firstitem" : ""); ?>">
-<?php
-					$state["firstitem"] = false;
-					if (isset($field["title"]))
-					{
-						if (is_string($field["title"]))
-						{
-?>
-			<div class="formitemtitle"><?php echo htmlspecialchars(BB_Translate($field["title"])); ?></div>
-<?php
-						}
-					}
-					else if (isset($field["htmltitle"]))
-					{
-?>
-			<div class="formitemtitle"><?php echo BB_Translate($field["htmltitle"]); ?></div>
-<?php
-					}
-					else if ($field["type"] == "checkbox" && $state["insiderow"])
-					{
-?>
-			<div class="formitemtitle">&nbsp;</div>
-<?php
-					}
-
-					if (isset($field["width"]) && !$bb_formwidths)  unset($field["width"]);
-
-					if (isset($field["name"]) && isset($field["default"]))
-					{
-						if ($field["type"] == "select")
-						{
-							if (!isset($field["select"]))
-							{
-								$field["select"] = BB_GetValue($field["name"], $field["default"]);
-								if (is_array($field["select"]))  $field["select"] = BB_SelectValues($field["select"]);
-							}
-						}
-						else if ($field["type"] == "checkbox")
-						{
-							if (!isset($field["check"]) && isset($field["value"]))  $field["check"] = (isset($_REQUEST[$field["name"]]) && $_REQUEST[$field["name"]] === $field["value"] ? true : ($_SERVER["REQUEST_METHOD"] === "GET" ? $field["default"] : false));
-						}
-						else
-						{
-							if (!isset($field["value"]))  $field["value"] = BB_GetValue($field["name"], $field["default"]);
-						}
-					}
-
-					// Let property form handlers process modified and other field types.
-					foreach ($bb_propformhandlers["field_type"] as $callback)
-					{
-						if (is_callable($callback))  call_user_func_array($callback, array(&$state, $num, &$field));
-					}
-
-					switch ($field["type"])
-					{
-						case "static":
-						{
-?>
-			<div class="static"<?php if (isset($field["width"]))  echo " style=\"width: " . htmlspecialchars($field["width"]) . ";\""; ?>><?php echo htmlspecialchars($field["value"]); ?></div>
-<?php
-							break;
-						}
-						case "text":
-						{
-							if ($state["autofocus"] === false)  $state["autofocus"] = htmlspecialchars("f" . $num . "_" . $field["name"]);
-?>
-			<input class="text"<?php if (isset($field["width"]))  echo " style=\"width: " . htmlspecialchars($field["width"]) . ";\""; ?> type="text" id="<?php echo htmlspecialchars("f" . $num . "_" . $field["name"]); ?>" name="<?php echo htmlspecialchars($field["name"]); ?>" value="<?php echo htmlspecialchars($field["value"]); ?>" />
-<?php
-							break;
-						}
-						case "password":
-						{
-							if ($state["autofocus"] === false)  $state["autofocus"] = htmlspecialchars("f" . $num . "_" . $field["name"]);
-?>
-			<input class="text<?php if (isset($field["passwordmanager"]) && $field["passwordmanager"] === false)  echo " nopasswordmanager"; ?>"<?php if (isset($field["width"]))  echo " style=\"width: " . htmlspecialchars($field["width"]) . ";\""; ?> type="password" id="<?php echo htmlspecialchars("f" . $num . "_" . $field["name"]); ?>" name="<?php echo htmlspecialchars($field["name"]); ?>" value="<?php echo htmlspecialchars($field["value"]); ?>" />
-<?php
-							break;
-						}
-						case "checkbox":
-						{
-							if ($state["autofocus"] === false)  $state["autofocus"] = htmlspecialchars("f" . $num . "_" . $field["name"]);
-?>
-			<input class="checkbox" type="checkbox" id="<?php echo htmlspecialchars("f" . $num . "_" . $field["name"]); ?>" name="<?php echo htmlspecialchars($field["name"]); ?>" value="<?php echo htmlspecialchars($field["value"]); ?>"<?php if (isset($field["check"]) && $field["check"])  echo " checked"; ?> />
-			<label for="<?php echo htmlspecialchars("f" . $num . "_" . $field["name"]); ?>"><?php echo htmlspecialchars(BB_Translate($field["display"])); ?></label>
-<?php
-							break;
-						}
-						case "select":
-						{
-							if ($state["autofocus"] === false)  $state["autofocus"] = htmlspecialchars("f" . $num . "_" . $field["name"]);
-
-							if (!isset($field["multiple"]) || $field["multiple"] !== true)  $mode = "select";
-							else if (!isset($field["mode"]) || ($field["mode"] != "formhandler" && $field["mode"] != "select"))  $mode = "checkbox";
-							else  $mode = $field["mode"];
-
-							if (!isset($field["width"]) && !isset($field["height"]))  $style = "";
-							else
-							{
-								$style = array();
-								if (isset($field["width"]))  $style[] = "width: " . htmlspecialchars($field["width"]);
-								if (isset($field["height"]) && isset($field["multiple"]) && $field["multiple"] === true)  $style[] = "height: " . htmlspecialchars($field["height"]);
-								$style = " style=\"" . implode("; ", $style) . ";\"";
-							}
-
-							if (!isset($field["select"]))  $field["select"] = array();
-							else if (is_string($field["select"]))  $field["select"] = array($field["select"] => true);
-
-							$idbase = htmlspecialchars("f" . $num . "_" . $field["name"]);
-							if ($mode == "checkbox")
-							{
-								$idnum = 0;
-								foreach ($field["options"] as $name => $value)
-								{
-									if (is_array($value))
-									{
-										foreach ($value as $name2 => $value2)
-										{
-											$id = $idbase . ($idnum ? "_" . $idnum : "");
-?>
-			<input class="checkbox" type="checkbox" id="<?php echo $id; ?>" name="<?php echo htmlspecialchars($field["name"]); ?>[]" value="<?php echo htmlspecialchars($name2); ?>"<?php if (isset($field["select"][$name2]))  echo " checked"; ?> />
-			<label for="<?php echo $id; ?>"><?php echo htmlspecialchars(BB_Translate($name)); ?> - <?php echo ($value2 == "" ? "&nbsp;" : htmlspecialchars(BB_Translate($value2))); ?></label><br />
-<?php
-											$idnum++;
-										}
-									}
-									else
-									{
-										$id = $idbase . ($idnum ? "_" . $idnum : "");
-?>
-			<input class="checkbox" type="checkbox" id="<?php echo $id; ?>" name="<?php echo htmlspecialchars($field["name"]); ?>[]" value="<?php echo htmlspecialchars($name); ?>"<?php if (isset($field["select"][$name]))  echo " checked"; ?> />
-			<label for="<?php echo $id; ?>"><?php echo ($value == "" ? "&nbsp;" : htmlspecialchars(BB_Translate($value))); ?></label><br />
-<?php
-										$idnum++;
-									}
-								}
-							}
-							else
-							{
-?>
-			<select class="<?php echo (isset($field["multiple"]) && $field["multiple"] === true ? "multi" : "single"); ?>" id="<?php echo $idbase; ?>" name="<?php echo htmlspecialchars($field["name"]) . (isset($field["multiple"]) && $field["multiple"] === true ? "[]" : ""); ?>"<?php if (isset($field["multiple"]) && $field["multiple"] === true)  echo " multiple"; ?><?php echo $style; ?>>
-<?php
-								foreach ($field["options"] as $name => $value)
-								{
-									if (is_array($value))
-									{
-?>
-				<optgroup label="<?php echo htmlspecialchars(BB_Translate($name)); ?>">
-<?php
-										foreach ($value as $name2 => $value2)
-										{
-?>
-					<option value="<?php echo htmlspecialchars($name2); ?>"<?php if (isset($field["select"][$name2]))  echo " selected"; ?>><?php echo ($value2 == "" ? "&nbsp;" : htmlspecialchars(BB_Translate($value2))); ?></option>
-<?php
-										}
-?>
-				</optgroup>
-<?php
-									}
-									else
-									{
-?>
-				<option value="<?php echo htmlspecialchars($name); ?>"<?php if (isset($field["select"][$name]))  echo " selected"; ?>><?php echo ($value == "" ? "&nbsp;" : htmlspecialchars(BB_Translate($value))); ?></option>
-<?php
-									}
-								}
-?>
-			</select>
-<?php
-							}
-
-							break;
-						}
-						case "textarea":
-						{
-							if ($state["autofocus"] === false)  $state["autofocus"] = htmlspecialchars("f" . $num . "_" . $field["name"]);
-							if (!isset($field["width"]) && !isset($field["height"]))  $style = "";
-							else
-							{
-								$style = array();
-								if (isset($field["width"]))  $style[] = "width: " . htmlspecialchars($field["width"]);
-								if (isset($field["height"]))  $style[] = "height: " . htmlspecialchars($field["height"]);
-								$style = " style=\"" . implode("; ", $style) . ";\"";
-							}
-?>
-			<div class="textareawrap"><textarea class="text"<?php echo $style; ?> id="<?php echo htmlspecialchars("f" . $num . "_" . $field["name"]); ?>" name="<?php echo htmlspecialchars($field["name"]); ?>" rows="5" cols="50"><?php echo htmlspecialchars($field["value"]); ?></textarea></div>
-<?php
-							break;
-						}
-						case "table":
-						{
-							$order = (isset($field["order"]) ? $field["order"] : "");
-							$idbase = "f" . $num . "_" . (isset($field["name"]) ? $field["name"] : "table");
-
-							if ($bb_formtables)
-							{
-?>
-			<table id="<?php echo htmlspecialchars($idbase); ?>"<?php if (isset($field["class"]))  echo " class=\"" . htmlspecialchars($field["class"]) . "\""; ?><?php if (isset($field["width"]))  echo " style=\"width: " . htmlspecialchars($field["width"]) . "\""; ?>>
-				<thead>
-<?php
-								// Let property form handlers process the columns.
-								$trattrs = array("class" => "head");
-								$colattrs = array();
-								if (!isset($field["cols"]))  $field["cols"] = array();
-								foreach ($field["cols"] as $col)  $colattrs[] = array();
-								foreach ($bb_propformhandlers["table_row"] as $callback)
-								{
-									if (is_callable($callback))  call_user_func_array($callback, array(&$state, $num, &$field, $idbase, "head", -1, &$trattrs, &$colattrs, &$field["cols"]));
-								}
-
-?>
-				<tr<?php foreach ($trattrs as $key => $val)  echo " " . $key . "=\"" . htmlspecialchars($val) . "\""; ?>>
-<?php
-
-								foreach ($field["cols"] as $num2 => $col)
-								{
-?>
-					<th<?php foreach ($colattrs[$num2] as $key => $val)  echo " " . $key . "=\"" . htmlspecialchars($val) . "\""; ?>><?php echo htmlspecialchars(BB_Translate($col)); ?></th>
-<?php
-								}
-?>
-				</tr>
-				</thead>
-				<tbody>
-<?php
-								$colattrs = array();
-								foreach ($field["cols"] as $col)  $colattrs[] = array();
-
-								$rownum = 0;
-								$altrow = false;
-								if (isset($field["callback"]) && is_callable($field["callback"]))  $field["rows"] = call_user_func($field["callback"]);
-								while (count($field["rows"]))
-								{
-									foreach ($field["rows"] as $row)
-									{
-										// Let property form handlers process the current row.
-										$trattrs = array("class" => "row" . ($altrow ? " altrow" : ""));
-										$colattrs2 = $colattrs;
-										foreach ($bb_propformhandlers["table_row"] as $callback)
-										{
-											if (is_callable($callback))  call_user_func_array($callback, array(&$state, $num, &$field, $idbase, "body", $rownum, &$trattrs, &$colattrs2, &$row));
-										}
-
-										if (count($row) < count($colattrs2))  $colattrs2[count($colattrs2) - 1]["colspan"] = (count($colattrs2) - count($row) + 1);
-
-?>
-				<tr<?php foreach ($trattrs as $key => $val)  echo " " . $key . "=\"" . htmlspecialchars($val) . "\""; ?>>
-<?php
-
-										$num2 = 0;
-										foreach ($row as $col)
-										{
-?>
-					<td<?php if (isset($colattrs2[$num2]))  { foreach ($colattrs2[$num2] as $key => $val)  echo " " . $key . "=\"" . htmlspecialchars($val) . "\""; } ?>><?php echo $col; ?></td>
-<?php
-											$num2++;
-										}
-?>
-				</tr>
-<?php
-										$rownum++;
-										$altrow = !$altrow;
-									}
-
-									if (isset($field["callback"]) && is_callable($field["callback"]))  $field["rows"] = call_user_func($field["callback"]);
-									else  $field["rows"] = array();
-								}
-?>
-				</tbody>
-			</table>
-<?php
-							}
-							else
-							{
-?>
-			<div class="nontablewrap" id="<?php echo htmlspecialchars($idbase); ?>">
-<?php
-								// Let property form handlers process the columns.
-								$trattrs = array();
-								$headcolattrs = array();
-								if (!isset($field["cols"]))  $field["cols"] = array();
-								foreach ($field["cols"] as $num2 => $col)
-								{
-									$headcolattrs[] = array("class" => "nontable_th" . ($num2 ? "" : " firstcol"));
-								}
-								foreach ($bb_propformhandlers["table_row"] as $callback)
-								{
-									if (is_callable($callback))  call_user_func_array($callback, array(&$state, $num, &$field, $idbase, "head", -1, &$trattrs, &$headcolattrs, &$field["cols"]));
-								}
-
-								$colattrs = array();
-								foreach ($field["cols"] as $col)  $colattrs[] = array("class" => "nontable_td");
-
-								$rownum = 0;
-								$altrow = false;
-								if (isset($field["callback"]) && is_callable($field["callback"]))  $field["rows"] = call_user_func($field["callback"]);
-								while (count($field["rows"]))
-								{
-									foreach ($field["rows"] as $row)
-									{
-										// Let property form handlers process the current row.
-										$trattrs = array("class" => "nontable_row" . ($altrow ? " altrow" : "") . ($rownum ? "" : " firstrow"));
-										$colattrs2 = $colattrs;
-										foreach ($bb_propformhandlers["table_row"] as $callback)
-										{
-											if (is_callable($callback))  call_user_func_array($callback, array(&$state, $num, &$field, $idbase, "body", $rownum, &$trattrs, &$colattrs2, &$row));
-										}
-
-?>
-				<div<?php foreach ($trattrs as $key => $val)  echo " " . $key . "=\"" . htmlspecialchars($val) . "\""; ?>>
-<?php
-										$num2 = 0;
-										foreach ($row as $col)
-										{
-?>
-					<div<?php foreach ($headcolattrs as $key => $val)  echo " " . $key . "=\"" . htmlspecialchars($val) . "\""; ?>><?php echo htmlspecialchars(BB_Translate(isset($field["cols"][$num2]) ? $field["cols"][$num2] : "")); ?></div>
-					<div<?php if (isset($colattrs2[$num2]))  { foreach ($colattrs2[$num2] as $key => $val)  echo " " . $key . "=\"" . htmlspecialchars($val) . "\""; } ?>><?php echo $col; ?></div>
-<?php
-											$num2++;
-										}
-?>
-				</div>
-<?php
-										$altrow = !$altrow;
-									}
-
-									if (isset($field["callback"]) && is_callable($field["callback"]))  $field["rows"] = call_user_func($field["callback"]);
-									else  $field["rows"] = array();
-								}
-?>
-			</div>
-<?php
-							}
-
-							break;
-						}
-						case "file":
-						{
-							if ($state["autofocus"] === false)  $state["autofocus"] = htmlspecialchars("f" . $num . "_" . $field["name"]);
-?>
-			<input class="text" type="file" id="<?php echo htmlspecialchars("f" . $num . "_" . $field["name"]); ?>" name="<?php echo htmlspecialchars($field["name"]); ?>" />
-<?php
-							break;
-						}
-						case "custom":
-						{
-							echo $field["value"];
-							break;
-						}
-					}
-
-					if (isset($field["desc"]) && $field["desc"] != "")
-					{
-?>
-			<div class="formitemdesc"><?php echo htmlspecialchars(BB_Translate($field["desc"])); ?></div>
-<?php
-					}
-					else if (isset($field["htmldesc"]) && $field["htmldesc"] != "")
-					{
-?>
-			<div class="formitemdesc"><?php echo $field["htmldesc"]; ?></div>
-<?php
-					}
-?>
-			</div>
-<?php
-					if ($state["insiderow"])  echo "</td>";
-				}
-			}
-
-			if ($state["insiderow"])
-			{
-?>
-			</tr></table></div>
-<?php
-			}
-
-			if ($state["jqueryuiused"])  BB_OutputJQueryUI($state["rooturl"], $state["supportpath"]);
-
-			// Let property form handlers process other field types.
-			foreach ($bb_propformhandlers["finalize"] as $callback)
-			{
-				if (is_callable($callback))  call_user_func_array($callback, array(&$state));
-			}
-
-?>
-		</div>
-<?php
-		}
-
-		if (isset($options["submit"]))
-		{
-			if (is_string($options["submit"]))  $options["submit"] = array($options["submit"]);
-?>
-		<div class="formsubmit">
-<?php
-			foreach ($options["submit"] as $val)
-			{
-?>
-			<input class="submit" type="submit"<?php if (isset($options["submitname"]))  echo " name=\"" . htmlspecialchars($options["submitname"]) . "\""; ?> value="<?php echo htmlspecialchars(BB_Translate($val)); ?>" />
-<?php
-			}
-?>
-		</div>
-<?php
-		}
-
-		if (isset($options["submit"]) || (isset($options["useform"]) && $options["useform"]))
-		{
-?>
-		</form>
-<?php
-		}
+		$bb_flexforms->Generate($options);
 ?>
 	</div>
 <?php
-
-		if (isset($options["focus"]) && (is_string($options["focus"]) || ($options["focus"] === true && $state["autofocus"] !== false)))
-		{
-?>
-	<script type="text/javascript">
-	$('#<?php echo BB_JSSafe(is_string($options["focus"]) ? $options["focus"] : $state["autofocus"]); ?>').focus();
-	</script>
-<?php
-		}
 	}
 
 
@@ -833,40 +268,24 @@
 	// Create a valid language-level security token (also known as a 'nonce').
 	function BB_CreateSecurityToken($name, $extra = "")
 	{
-		global $bb_randpage, $bb_usertoken;
+		global $bb_flexforms;
 
-		$str = $name . ":";
-		if (is_string($extra) && $extra != "")
-		{
-			$extra = explode(",", $extra);
-			foreach ($extra as $key)
-			{
-				$key = trim($key);
-				if ($key != "" && isset($_REQUEST[$key]))  $str .= (string)$_REQUEST[$key] . ":";
-			}
-		}
-		else if (is_array($extra))
-		{
-			foreach ($extra as $val)  $str .= $val . ":";
-		}
-
-		return hash_hmac("sha1", $str, $bb_randpage . ":" . $bb_usertoken);
+		return $bb_flexforms->CreateSecurityToken($name, $extra);
 	}
 
 	function BB_IsSecExtraOpt($opt)
 	{
-		return (isset($_REQUEST["sec_extra"]) && strpos("," . $_REQUEST["sec_extra"] . ",", "," . $opt . ",") !== false);
+		global $bb_flexforms;
+
+		return $bb_flexforms->IsSecExtraOpt($opt);
 	}
 
 	// Custom-built routines specifically for displaying the final page.
 	function BB_ProcessPageToken($name)
 	{
-		// Check the security token.  If it doesn't exist, load the main page.
-		if (isset($_REQUEST[$name]) && (!isset($_REQUEST["sec_t"]) || $_REQUEST["sec_t"] != BB_CreateSecurityToken($_REQUEST[$name], (isset($_REQUEST["sec_extra"]) ? $_REQUEST["sec_extra"] : ""))))
-		{
-			echo BB_Translate("Invalid security token.");
-			exit();
-		}
+		global $bb_flexforms;
+
+		return $bb_flexforms->CheckSecurityToken($name);
 	}
 
 	function BB_GetBackQueryString()
@@ -938,54 +357,27 @@
 
 	function BB_GetValue($key, $default)
 	{
-		return (isset($_REQUEST[$key]) ? $_REQUEST[$key] : $default);
+		return FlexForms::GetValue($key, $default);
 	}
 
 	function BB_SelectValues($data)
 	{
-		$result = array();
-		foreach ($data as $val)  $result[$val] = true;
-
-		return $result;
+		return FlexForms::GetSelectValues($data);
 	}
 
 	function BB_ProcessInfoDefaults($info, $defaults)
 	{
-		foreach ($defaults as $key => $val)
-		{
-			if (!isset($info[$key]))  $info[$key] = $val;
-		}
-
-		return $info;
+		return FlexForms::ProcessInfoDefaults($info, $defaults);
 	}
 
 	function BB_SetNestedPathValue(&$data, $pathparts, $val)
 	{
-		$curr = &$data;
-		foreach ($pathparts as $key)
-		{
-			if (!isset($curr[$key]))  $curr[$key] = array();
-
-			$curr = &$curr[$key];
-		}
-
-		$curr = $val;
+		return FlexForms::SetNestedPathValue($data, $pathparts, $val);
 	}
 
 	function BB_GetIDDiff($origids, $newids)
 	{
-		$result = array("remove" => array(), "add" => array());
-		foreach ($origids as $id => $val)
-		{
-			if (!isset($newids[$id]))  $result["remove"][$id] = $val;
-		}
-
-		foreach ($newids as $id => $val)
-		{
-			if (!isset($origids[$id]))  $result["add"][$id] = $val;
-		}
-
-		return $result;
+		return FlexForms::GetIDDiff($origids, $newids);
 	}
 
 	function BB_InitLayouts()

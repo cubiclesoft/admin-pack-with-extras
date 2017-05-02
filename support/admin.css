@@ -369,7 +369,7 @@ div.maincontent div.propmain div.formfields div.formitem div.formitemtitle {
 	margin-bottom: 2px;
 }
 
-div.maincontent div.propmain div.formfields div.formitem div.static {
+div.maincontent div.propmain div.formfields div.formitem div.static, div.maincontent div.propmain div.formfields div.formitem div.staticwrap {
 	margin-left: 7px;
 	width: 95%;
 	font-size: 0.95em;
