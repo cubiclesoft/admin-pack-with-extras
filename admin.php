@@ -391,6 +391,7 @@
 			"submit" => ($id ? "Save" : "Create")
 		);
 
+		// Rarely used modules.
 		if (file_exists("support/flex_forms_passwordmanager.php"))
 		{
 			require_once "support/flex_forms_passwordmanager.php";
