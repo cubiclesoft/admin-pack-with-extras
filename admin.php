@@ -37,6 +37,17 @@
 		)
 	);
 
+	// Optional function to customize styles.
+	function BB_InjectLayoutHead()
+	{
+		// Menu title underline:  Colors with 60% saturation and 75% brightness generally look good.
+?>
+<style type="text/css">
+#menuwrap .menu .title { border-bottom: 2px solid #C48851; }
+</style>
+<?php
+	}
+
 	// An example function used later on to demonstrate loading user information from a database.
 	function LoadUserDetails($info)
 	{
@@ -106,7 +117,8 @@
 
 		if (isset($_REQUEST["first"]))
 		{
-			if ($_REQUEST["first"] == "")  BB_SetPageMessage("error", "Please fill in 'Field 1'.");
+			if ($_REQUEST["first"] == "")  BB_SetPageMessage("error", "Please fill in 'Field 1'.", "first");
+			if ($_REQUEST["last"] == "")  BB_SetPageMessage("error", "Please fill in 'Field 2'.", "last");
 
 			if (BB_GetPageMessageType() != "error")
 			{
@@ -119,17 +131,18 @@
 //				if ($id)  $db->Query("UPDATE userdetails SET email = ?, info = ? WHERE id = ?", array($info["email"], serialize($info), $id));
 //				else  $db->Query("INSERT INTO userdetails SET email = ?, info = ?", array($info["email"], serialize($info)));
 
-				BB_RedirectPage("success", ($_REQUEST["id"] > 0 ? "Successfully saved the details." : "Successfully created the details."), array("action=manageexample&sec_t=" . BB_CreateSecurityToken("manageexample")));
+				BB_RedirectPage("success", ($_REQUEST["id"] > 0 ? "Successfully saved the details." : "Successfully created the entry."), array("action=manageexample&sec_t=" . BB_CreateSecurityToken("manageexample")));
 			}
 		}
 
 		// [Do processing here to generate any dynamic content options.]
 		$somevar = "default value 2";
 		$items = array("Furries", "Fuzzies", "Fluffies", "Puppies", "Kitties", "Penguins", "Ponies", "Tribbles", "Unicorns");
+		$itemdescs = array("So much pretty.", "Everyone loves fuzzy things.", "Worthy of face burying.", "There's a lot to say about teh puppies and so there might be some wrapping of this line.", "Soakin' up teh suns.  Acceptin' teh belly rubs.", "Adorbs.", "Will you be my neigh-bor?", "Delicious.", "I'm a barbequein' with mah unicorn!");
 		$rows = array();
 		foreach ($items as $num => $item)
 		{
-			$rows[] = array(($num + 1), htmlspecialchars($item), "<a href=\"" . BB_GetRequestURLBase() . "?action=addeditanimals&id=" . ($num + 1) . "&sec_t=" . BB_CreateSecurityToken("addeditanimals") . "\">Edit</a>");
+			$rows[] = array(($num + 1), htmlspecialchars($item), htmlspecialchars($itemdescs[$num]), date("F, j Y @ g:i a"), "<a href=\"" . BB_GetRequestURLBase() . "?action=addeditanimals&id=" . ($num + 1) . "&sec_t=" . BB_CreateSecurityToken("addeditanimals") . "\">Edit</a>");
 		}
 
 		// Load and use most FlexForms Modules if available.
@@ -199,11 +212,18 @@
 					"title" => "Table",
 					"split" => false,
 					"type" => "table",
-					"cols" => array("ID", "Type", "Options"),
+					"cols" => array("ID", "Type", "Description", "Date", "Options"),
+					"nowrap" => array("Date"),
 					"rows" => $rows,
+					"card" => array(
+						"width" => 800,
+						"extracols" => array(1),
+						"head" => "Info/Options",
+						"body" => "<b>#%2 - %3</b><br>%5<br>%6"
+					),
 					"order" => "Order",
-					"stickyheader" => true,
-					"desc" => "Description for Table.  When used with FlexForms Extras, drag-and-drop and sticky header support are enabled."
+					"bodyscroll" => true,
+					"desc" => "Description for Table.  When used with FlexForms Extras, responsive table cards, drag-and-drop, and responsive body scroll support are enabled."
 				),
 				"nosplit",
 				"startrow",
@@ -222,6 +242,14 @@
 					"default" => "",
 				),
 				"endrow",
+				array(
+					"title" => "Select",
+					"type" => "select",
+					"name" => "field2e",
+					"options" => array("name" => "Name", "email" => "E-mail Address", "phone" => "Phone Number"),
+					"default" => array("name"),
+					"desc" => "Description for Select."
+				),
 				array(
 					"title" => "Cookies?",
 					"type" => "checkbox",
@@ -275,7 +303,7 @@
 				array(
 					"title" => "Informational",
 					"type" => "static",
-					"value" => "Did you know that FlexForms, which powers Admin Pack, actually has its origins in Barebones CMS?  BB_PropertyForm() started it all."
+					"value" => "Did you know that FlexForms, which powers CubicleSoft Admin Pack, actually has its origins in Barebones CMS?  BB_PropertyForm() started it all."
 				),
 				array(
 					"title" => "Admin Notes",
@@ -364,8 +392,11 @@
 				array(
 					"title" => "Module:  Table Filter",
 					"type" => "table",
-					"cols" => array("ID", "Type", "Options"),
+					"cols" => array("ID", "Type", "Description", "Date", "Options"),
 					"rows" => $rows,
+//					"cardwidth" => 620,
+					"card" => "<b>#%1 - %2</b><br>%4<br>%3<br>%5",
+					"bodyscroll" => true,
 					"filter" => true,
 					"desc" => "Description for table.  Try typing 'ies' into the filter field.  This feature requires FlexForms Modules to be included."
 				),

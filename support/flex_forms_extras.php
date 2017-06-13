@@ -9,8 +9,12 @@
 		{
 			if ($field["type"] === "date")
 			{
+				if (!isset($field["width"]))  $field["width"] = "20em";
+
 ?>
-			<input class="date"<?php if (isset($field["width"]))  echo " style=\"width: " . htmlspecialchars($field["width"]) . "\""; ?> type="text" id="<?php echo htmlspecialchars($id); ?>" name="<?php echo htmlspecialchars($field["name"]); ?>" value="<?php echo htmlspecialchars($field["value"]); ?>" />
+			<div class="formitemdata">
+				<div class="textitemwrap"><input class="date"<?php if (isset($field["width"]))  echo " style=\"" . ($state["responsive"] ? "max-" : "") . "width: " . htmlspecialchars($field["width"]) . "\""; ?> type="text" id="<?php echo htmlspecialchars($id); ?>" name="<?php echo htmlspecialchars($field["name"]); ?>" value="<?php echo htmlspecialchars($field["value"]); ?>" /></div>
+			</div>
 <?php
 				$state["jqueryuiused"] = true;
 
@@ -40,8 +44,16 @@
 				}
 ?>
 
-		if (jQuery.fn.datepicker)  jQuery('#<?php echo FlexForms::JSSafe($id); ?>').datepicker(options);
-		else  alert('<?php echo FlexForms::JSSafe(FlexForms::FFTranslate("Warning:  Missing jQuery UI for date field.\n\nThis feature requires FlexForms Extras.")); ?>');
+		if (jQuery.fn.datepicker)
+		{
+			if (jQuery(window).width() < jQuery(window).height() || jQuery(window).height() < 600)  jQuery('#<?php echo FlexForms::JSSafe($id); ?>').prop('readonly', true);
+
+			jQuery('#<?php echo FlexForms::JSSafe($id); ?>').datepicker(options);
+		}
+		else
+		{
+			alert('<?php echo FlexForms::JSSafe(FlexForms::FFTranslate("Warning:  Missing jQuery UI for date field.\n\nThis feature requires FlexForms Extras.")); ?>');
+		}
 	});
 <?php
 
@@ -54,6 +66,7 @@
 		// Accordions.
 		public static function AccordionsInit(&$state, &$options)
 		{
+			$state["extras_accordion"] = false;
 			$state["extras_insideaccordion"] = false;
 
 			$state["customfieldtypes"]["accordion"] = true;
@@ -113,7 +126,21 @@
 <?php
 					$state["extras_insideaccordion"] = true;
 
-					$state["jqueryuiused"] = true;
+					if ($state["extras_accordion"] === false)
+					{
+						$state["jqueryuiused"] = true;
+
+						ob_start();
+?>
+FlexForms.modules.Extras_Accordion_Activate = function(event, ui) {
+	jQuery(window).trigger('child:visibility');
+}
+<?php
+						$state["js"]["accordion-activate"] = array("mode" => "inline", "dependency" => "jqueryui", "src" => ob_get_contents(), "detect" => "FlexForms.modules.Extras_Accordion_Activate");
+						ob_end_clean();
+
+						$state["extras_accordion"] = true;
+					}
 
 					$options = array(
 						"collapsible" => true,
@@ -134,14 +161,15 @@
 	jQuery(function() {
 		var options = <?php echo json_encode($options, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES); ?>;
 <?php
-				if (isset($field["callbacks"]))
+				if (!isset($field["callbacks"]))  $field["callbacks"] = array();
+
+				$field["callbacks"]["activate"] = "FlexForms.modules.Extras_Accordion_Activate";
+
+				foreach ($field["callbacks"] as $key => $val)
 				{
-					foreach ($field["callbacks"] as $key => $val)
-					{
 ?>
 		options['<?php echo $key; ?>'] = <?php echo $val; ?>;
 <?php
-					}
 				}
 ?>
 
@@ -150,7 +178,7 @@
 	});
 <?php
 
-					$state["js"]["accordion|" . $id2] = array("mode" => "inline", "dependency" => "jqueryui", "src" => ob_get_contents());
+					$state["js"]["accordion|" . $id2] = array("mode" => "inline", "dependency" => "accordion-activate", "src" => ob_get_contents());
 					ob_end_clean();
 				}
 
@@ -224,8 +252,16 @@
 					}
 ?>
 
-		if (jQuery.fn.select2)  jQuery('#<?php echo FlexForms::JSSafe($id); ?>').select2(options);
-		else  alert('<?php echo FlexForms::JSSafe(FlexForms::FFTranslate("Warning:  Missing select2 for multiple selection field.\n\nThis feature requires FlexForms Extras.")); ?>');
+		if (jQuery.fn.select2)
+		{
+			jQuery('#<?php echo FlexForms::JSSafe($id); ?>').select2(options);
+
+			if (jQuery(window).width() < jQuery(window).height() || jQuery(window).height() < 600)  jQuery('#<?php echo FlexForms::JSSafe($id); ?>').closest('.selectitemwrap').find('.select2-input').prop('readonly', true);
+		}
+		else
+		{
+			alert('<?php echo FlexForms::JSSafe(FlexForms::FFTranslate("Warning:  Missing select2 for multiple selection field.\n\nThis feature requires FlexForms Extras.")); ?>');
+		}
 	});
 <?php
 					$state["js"]["multiselect-select2|" . $id] = array("mode" => "inline", "dependency" => "multiselect-select2", "src" => ob_get_contents());
@@ -282,8 +318,45 @@
 					}
 ?>
 
-		if (jQuery.fn.multiselect && jQuery.fn.multiselectfilter)  jQuery('#<?php echo FlexForms::JSSafe($id); ?>').multiselect(options).multiselectfilter();
-		else  alert('<?php echo FlexForms::JSSafe(FlexForms::FFTranslate("Warning:  Missing jQuery UI multiselect widget or multiselectfilter for dropdown multiple selection field.\n\nThis feature requires FlexForms Extras.")); ?>');
+		if (jQuery.fn.multiselect && jQuery.fn.multiselectfilter)
+		{
+			var scrollarea;
+
+			jQuery('#<?php echo FlexForms::JSSafe($id); ?>').parents().each(function() {
+				var innerheight = jQuery(this).innerHeight();
+
+				if (!scrollarea && innerheight > 0 && this.scrollHeight - 5 > innerheight)  scrollarea = this;
+			});
+
+			jQuery('#<?php echo FlexForms::JSSafe($id); ?>').multiselect(options).multiselectfilter();
+
+			var resizefunc = function() {
+				var obj = jQuery('#<?php echo FlexForms::JSSafe($id); ?>');
+
+				if (!obj.length)
+				{
+					jQuery(window).off('resize', resizefunc);
+					jQuery(scrollarea).off('scroll', scrollfunc);
+				}
+				else
+				{
+					obj.multiselect('close').multiselect('refresh');
+				}
+			};
+
+			var scrollfunc = function() {
+				var obj = jQuery('#<?php echo FlexForms::JSSafe($id); ?>');
+
+				if (obj.length && obj.multiselect('isOpen'))  obj.multiselect('close');
+			};
+
+			jQuery(window).resize(resizefunc);
+			jQuery(scrollarea).scroll(scrollfunc);
+		}
+		else
+		{
+			alert('<?php echo FlexForms::JSSafe(FlexForms::FFTranslate("Warning:  Missing jQuery UI multiselect widget or multiselectfilter for dropdown multiple selection field.\n\nThis feature requires FlexForms Extras.")); ?>');
+		}
 	});
 <?php
 					$state["js"]["multiselect-widget-filter|" . $id] = array("mode" => "inline", "dependency" => "multiselect-widget-filter", "src" => ob_get_contents());
@@ -378,10 +451,63 @@
 				}
 ?>
 
-			jQuery('#<?php echo FlexForms::JSSafe($id); ?>').multiselect(options);
-			jQuery(window).resize(function() {
-				jQuery('#<?php echo FlexForms::JSSafe($id); ?>').multiselect('refresh');
-			});
+			var obj = jQuery('#<?php echo FlexForms::JSSafe($id); ?>');
+			var origheight = obj.height();
+
+			obj.closest('.selectitemwrap').after('<div style="clear: both;"></div>');
+
+<?php
+				if ($state["formtables"] && $state["responsive"])
+				{
+					if (!isset($field["flatwidth"]) || !is_int($field["flatwidth"]))  $field["flatwidth"] = 600;
+
+?>
+			options['availableListPosition'] = (obj.width() > <?php echo $field["flatwidth"]; ?> ? 'left' : 'top');
+			obj.height(options['availableListPosition'] === 'left' ? origheight : origheight * 2);
+<?php
+				}
+?>
+
+			obj.multiselect(options);
+
+			var resizefunc = function() {
+				var obj = jQuery('#<?php echo FlexForms::JSSafe($id); ?>');
+
+				if (!obj.length)  jQuery(window).off('resize', resizefunc).off('child:visibility', resizefunc);
+				else
+				{
+					obj.closest('.selectitemwrap').find('.uix-multiselect').width('100%');
+
+<?php
+				if ($state["formtables"] && $state["responsive"])
+				{
+?>
+					var newpos = (obj.width() > <?php echo $field["flatwidth"]; ?> ? 'left' : 'top');
+					if (newpos !== options['availableListPosition'])
+					{
+						obj.multiselect('destroy');
+
+						obj.height(newpos === 'left' ? origheight : origheight * 2);
+						options['availableListPosition'] = newpos;
+						obj.multiselect(options);
+					}
+					else
+					{
+						obj.multiselect('refresh');
+					}
+<?php
+				}
+				else
+				{
+?>
+					obj.multiselect('refresh');
+<?php
+				}
+?>
+				}
+			};
+
+			jQuery(window).resize(resizefunc).on('child:visibility', resizefunc);
 		}
 		else
 		{
@@ -394,6 +520,79 @@
 
 					$field["mode"] = "formhandler";
 				}
+			}
+		}
+
+
+		// Responsive table cards for data tables.
+		public static function TableCardsInit(&$state, &$options)
+		{
+			if (!isset($state["extras_table_cards"]))  $state["extras_table_cards"] = false;
+		}
+
+		public static function TableCardsFieldType(&$state, $num, &$field, $id)
+		{
+			if ($field["type"] == "table" && isset($field["card"]))
+			{
+				if ($state["extras_table_cards"] === false)
+				{
+					$state["css"]["table-cards"] = array("mode" => "link", "dependency" => false, "src" => $state["supporturl"] . "/jquery.tablecards.css");
+					$state["js"]["table-cards"] = array("mode" => "src", "dependency" => "jquery", "src" => $state["supporturl"] . "/jquery.tablecards.js", "detect" => "jQuery.fn.TableCards");
+
+					$state["extras_table_cards"] = true;
+				}
+
+				// Allow each TableCards instance to be fully customized beyond basic support.
+				// Valid options:  See 'jquery.tablecards.js' file.
+				$options = (is_array($field["card"]) ? $field["card"] : array("body" => $field["card"]));
+
+				if (isset($field["cardhead"]))  $options["head"] = $field["cardhead"];
+				if (isset($field["cardwidth"]))  $options["width"] = (int)$field["cardwidth"];
+				if (isset($options["head"]) && !isset($options["extracols"]))  $options["extracols"] = array("headcol");
+
+				if (isset($field["card_options"]))
+				{
+					foreach ($field["card_options"] as $key => $val)  $options[$key] = $val;
+				}
+
+				// Queue up the necessary Javascript for later output.
+				ob_start();
+?>
+	jQuery(function() {
+		var options = <?php echo json_encode($options, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES); ?>;
+
+<?php
+				if (isset($field["card_callbacks"]))
+				{
+					foreach ($field["card_callbacks"] as $key => $val)
+					{
+?>
+		options['<?php echo $key; ?>'] = <?php echo $val; ?>;
+<?php
+					}
+				}
+?>
+
+		jQuery('#<?php echo FlexForms::JSSafe($id . "_table"); ?>').TableCards(options).on('tablecards:mode', function() {
+			jQuery(this).trigger('table:columnschanged');
+		}).on('table:datachanged', function() {
+			jQuery(this).trigger('tablecards:datachanged');
+		}).on('table:resized', function() {
+			jQuery(this).trigger('tablecards:resize');
+		});
+
+		var resizefunc = function() {
+			var obj = jQuery('#<?php echo FlexForms::JSSafe($id . "_table"); ?>');
+
+			if (!obj.length)  jQuery(window).off('resize', resizefunc).off('child:visibility', resizefunc);
+			else  obj.trigger('tablecards:resize');
+		};
+
+		jQuery(window).resize(resizefunc).on('child:visibility', resizefunc);
+	});
+<?php
+				$state["js"]["table-cards|" . $id] = array("mode" => "inline", "dependency" => "table-cards", "src" => ob_get_contents());
+				ob_end_clean();
 			}
 		}
 
@@ -417,7 +616,7 @@
 
 					if ($state["extras_table_order"] === false)
 					{
-						$state["js"]["table-order"] = array("mode" => "src", "dependency" => "jquery", "src" => $state["supporturl"] . "/jquery.tablednd-20140418.min.js", "detect" => "jQuery.fn.tableDnD");
+						$state["js"]["table-order"] = array("mode" => "src", "dependency" => "jquery", "src" => $state["supporturl"] . "/jquery.tablednd.min.js", "detect" => "jQuery.fn.tableDnD");
 
 						ob_start();
 ?>
@@ -453,6 +652,7 @@ FlexForms.modules.Extras_TableDnD_DefaultDrop = function(table, row) {
 					// Queue up the necessary Javascript for later output.
 					ob_start();
 ?>
+(function() {
 	if (jQuery.fn.tableDnD)
 	{
 		var options = <?php echo json_encode($options, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES); ?>;
@@ -463,14 +663,11 @@ FlexForms.modules.Extras_TableDnD_DefaultDrop = function(table, row) {
 				if (isset($field["reordercallback"]))  $field["order_callbacks"]["onDrop"] = "function(table, row) { FlexForms.modules.Extras_TableDnD_DefaultDrop(table, row);  " .$field["reordercallback"]  . "(); }";
 				else  $field["order_callbacks"]["onDrop"] = "FlexForms.modules.Extras_TableDnD_DefaultDrop";
 
-				if (isset($field["order_callbacks"]))
+				foreach ($field["order_callbacks"] as $key => $val)
 				{
-					foreach ($field["order_callbacks"] as $key => $val)
-					{
 ?>
 		options['<?php echo $key; ?>'] = <?php echo $val; ?>;
 <?php
-					}
 				}
 ?>
 
@@ -480,6 +677,7 @@ FlexForms.modules.Extras_TableDnD_DefaultDrop = function(table, row) {
 	{
 		alert('<?php echo FlexForms::JSSafe(FlexForms::FFTranslate("Warning:  Missing jQuery TableDnD plugin for drag-and-drop row ordering.\n\nThis feature requires FlexForms Extras.")); ?>');
 	}
+})();
 <?php
 					$state["js"]["table-order|" . $idbase] = array("mode" => "inline", "dependency" => "table-order-defaultdrop", "src" => ob_get_contents());
 					ob_end_clean();
@@ -510,17 +708,6 @@ FlexForms.modules.Extras_TableDnD_DefaultDrop = function(table, row) {
 					{
 						$state["js"]["table-sticky-headers"] = array("mode" => "src", "dependency" => "jquery", "src" => $state["supporturl"] . "/jquery.stickytableheaders.min.js", "detect" => "jQuery.fn.stickyTableHeaders");
 
-						ob_start();
-?>
-FlexForms.modules.Extras_StickyTableHeadersResize = true;
-
-jQuery(window).resize(function() {
-	jQuery(window).trigger('resize.stickyTableHeaders');
-});
-<?php
-						$state["js"]["table-sticky-headers-autoresize"] = array("mode" => "inline", "dependency" => "table-sticky-headers", "src" => ob_get_contents(), "detect" => "FlexForms.modules.Extras_StickyTableHeadersResize");
-						ob_end_clean();
-
 						$state["extras_table_stickyheaders"] = true;
 					}
 
@@ -536,12 +723,11 @@ jQuery(window).resize(function() {
 					// Queue up the necessary Javascript for later output.
 					ob_start();
 ?>
+(function() {
 	if (jQuery.fn.stickyTableHeaders)
 	{
 		var options = <?php echo json_encode($options, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES); ?>;
 <?php
-				if (!isset($field["order_callbacks"]))  $field["order_callbacks"] = array();
-
 				if (isset($field["stickyheader_callbacks"]))
 				{
 					foreach ($field["stickyheader_callbacks"] as $key => $val)
@@ -553,16 +739,121 @@ jQuery(window).resize(function() {
 				}
 ?>
 
-		jQuery('#<?php echo FlexForms::JSSafe($idbase); ?>').stickyTableHeaders(options);
+		if (!options['scrollableArea'])
+		{
+			jQuery('#<?php echo FlexForms::JSSafe($idbase); ?>').parents().each(function() {
+				var innerheight = jQuery(this).innerHeight();
+
+				if (!options['scrollableArea'] && innerheight > 0 && this.scrollHeight - 5 > innerheight)  options['scrollableArea'] = this;
+			});
+		}
+
+		var recreatetimeout = null;
+
+		jQuery('#<?php echo FlexForms::JSSafe($idbase); ?>').stickyTableHeaders(options).on('table:columnschanged', function() {
+			if (recreatetimeout)  clearTimeout(recreatetimeout);
+			else  jQuery('#<?php echo FlexForms::JSSafe($idbase); ?>').stickyTableHeaders('destroy').find('thead').attr('style', '').find('th').css('min-width', '0').css('max-width', 'none');
+
+			recreatetimeout = setTimeout(function() { jQuery('#<?php echo FlexForms::JSSafe($idbase); ?>').stickyTableHeaders(options) }, 50);
+		}).on('table:datachanged', function() {
+			jQuery(options['scrollableArea'] ? options['scrollableArea'] : window).trigger('resize.stickyTableHeaders');
+		});
+
+		var resizefunc = function() {
+			var obj = jQuery('#<?php echo FlexForms::JSSafe($idbase); ?>');
+
+			if (!obj.length)  jQuery(window).off('resize', resizefunc).off('child:visibility', resizefunc);
+			else  jQuery(options['scrollableArea'] ? options['scrollableArea'] : window).trigger('resize.stickyTableHeaders');
+		};
+
+		jQuery(window).resize(resizefunc).on('child:visibility', resizefunc);
 	}
 	else
 	{
 		alert('<?php echo FlexForms::JSSafe(FlexForms::FFTranslate("Warning:  Missing jQuery Sticky Table Headers plugin.\n\nThis feature requires FlexForms Extras.")); ?>');
 	}
+})();
 <?php
 					$state["js"]["table-sticky-headers|" . $idbase] = array("mode" => "inline", "dependency" => "table-sticky-headers", "src" => ob_get_contents());
 					ob_end_clean();
 				}
+			}
+		}
+
+
+		// Body scrolling for tables.
+		public static function TableBodyScrollInit(&$state, &$options)
+		{
+			if (!isset($state["extras_table_bodyscroll"]))  $state["extras_table_bodyscroll"] = false;
+		}
+
+		public static function TableBodyScrollFieldType(&$state, $num, &$field, $id)
+		{
+			if ($field["type"] == "table" && isset($field["bodyscroll"]) && $field["bodyscroll"])
+			{
+				$idbase = $id . "_table";
+
+				if ($state["extras_table_bodyscroll"] === false)
+				{
+					$state["css"]["table-body-scroll"] = array("mode" => "link", "dependency" => false, "src" => $state["supporturl"] . "/jquery.tablebodyscroll.css");
+					$state["js"]["table-body-scroll"] = array("mode" => "src", "dependency" => "jquery", "src" => $state["supporturl"] . "/jquery.tablebodyscroll.js", "detect" => "jQuery.fn.TableBodyScroll");
+
+					$state["extras_table_bodyscroll"] = true;
+				}
+
+				$options = array("__flexforms" => true);
+
+				// Allow each table body scroll instance to be fully customized beyond basic support.
+				// Valid options:  See 'jquery.tablecards.js' file.
+				if (isset($field["bodyscroll_options"]))
+				{
+					foreach ($field["bodyscroll_options"] as $key => $val)  $options[$key] = $val;
+				}
+
+				// Queue up the necessary Javascript for later output.
+				ob_start();
+?>
+(function() {
+	if (jQuery.fn.TableBodyScroll)
+	{
+		var options = <?php echo json_encode($options, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES); ?>;
+<?php
+				if (isset($field["bodyscroll_callbacks"]))
+				{
+					foreach ($field["bodyscroll_callbacks"] as $key => $val)
+					{
+?>
+		options['<?php echo $key; ?>'] = <?php echo $val; ?>;
+<?php
+					}
+				}
+?>
+
+		jQuery('#<?php echo FlexForms::JSSafe($idbase); ?>').TableBodyScroll(options).on('table:columnschanged', function() {
+			jQuery(this).trigger('tablebodyscroll:columnschanged');
+		}).on('table:datachanged', function() {
+			jQuery(this).trigger('tablebodyscroll:resize');
+		}).on('tablebodyscroll:sizechanged', function() {
+			jQuery(this).trigger('table:resized');
+		});
+
+		var resizefunc = function() {
+			var obj = jQuery('#<?php echo FlexForms::JSSafe($idbase); ?>');
+
+			if (!obj.length)  jQuery(window).off('resize', resizefunc).off('child:visibility', resizefunc);
+			else  obj.trigger('tablebodyscroll:resize');
+		};
+
+		jQuery(window).resize(resizefunc).on('child:visibility', resizefunc);
+	}
+	else
+	{
+		alert('<?php echo FlexForms::JSSafe(FlexForms::FFTranslate("Warning:  Missing jQuery Table Body Scroll plugin.\n\nThis feature requires FlexForms Extras.")); ?>');
+	}
+})();
+<?php
+				$state["js"]["table-body-scroll|" . $idbase] = array("mode" => "inline", "dependency" => "table-body-scroll", "src" => ob_get_contents());
+				ob_end_clean();
 			}
 		}
 	}
@@ -581,10 +872,16 @@ jQuery(window).resize(function() {
 		FlexForms::RegisterFormHandler("init", "FlexFormsExtras::MultiselectInit");
 		FlexForms::RegisterFormHandler("field_type", "FlexFormsExtras::MultiselectFieldType");
 
+		FlexForms::RegisterFormHandler("init", "FlexFormsExtras::TableCardsInit");
+		FlexForms::RegisterFormHandler("field_type", "FlexFormsExtras::TableCardsFieldType");
+
 		FlexForms::RegisterFormHandler("init", "FlexFormsExtras::TableOrderInit");
 		FlexForms::RegisterFormHandler("table_row", "FlexFormsExtras::TableOrderTableRow");
 
 		FlexForms::RegisterFormHandler("init", "FlexFormsExtras::TableStickyHeadersInit");
 		FlexForms::RegisterFormHandler("table_row", "FlexFormsExtras::TableStickyHeadersTableRow");
+
+		FlexForms::RegisterFormHandler("init", "FlexFormsExtras::TableBodyScrollInit");
+		FlexForms::RegisterFormHandler("field_type", "FlexFormsExtras::TableBodyScrollFieldType");
 	}
 ?>

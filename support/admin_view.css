@@ -63,36 +63,28 @@ a:hover {
 div.message {
 	margin: 10px 7px;
 	font-weight: bold;
+	padding: 7px 15px;
+	border-radius: 3px;
+	-moz-border-radius: 3px;
+	-webkit-border-radius: 3px;
 }
 
 div.message .success {
 	background-color: #E8FCDC;
 	border: 1px solid #008800;
 	color: #008800;
-	padding: 7px 15px;
-	border-radius: 3px;
-	-moz-border-radius: 3px;
-	-webkit-border-radius: 3px;
 }
 
 div.message .error {
 	background-color: #FCDCDC;
 	border: 1px solid #880000;
 	color: #880000;
-	padding: 7px 15px;
-	border-radius: 3px;
-	-moz-border-radius: 3px;
-	-webkit-border-radius: 3px;
 }
 
 div.message .info {
 	background-color: #DCDCDC;
 	border: 1px solid #333333;
 	color: #333333;
-	padding: 7px 15px;
-	border-radius: 3px;
-	-moz-border-radius: 3px;
-	-webkit-border-radius: 3px;
 }
 
 div.maincontent {
@@ -348,7 +340,7 @@ div.menuwrap div.menu {
 	padding: 5px;
 }
 
-div.menuwrap div.menu div.title {
+div.menuwrap div.menu div.titlewrap {
 	font-weight: bold;
 	padding-bottom: 6px;
 }
@@ -365,10 +357,10 @@ div.menuwrap div.menu a:hover {
 }
 
 /* Floating navigation menu styles. */
-div.maincontent div.proptitle div#navbutton {
+div.maincontent div.proptitle #navbutton {
 	display: none;
 }
 
-div.maincontent div.proptitle div#navdropdown {
+div.maincontent div.proptitle #navdropdown {
 	display: none;
 }

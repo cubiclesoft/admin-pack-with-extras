@@ -185,15 +185,17 @@
 	}
 
 
+	$bb_errors = array();
+
 	function BB_RegisterPropertyFormHandler($mode, $callback)
 	{
 		FlexForms::RegisterFormHandler($mode, $callback);
 	}
 
-	// Originally from Barebone CMS editing routines.  Most functionality has now transitioned to FlexForms.
+	// Originally from Barebones CMS editing routines.  Most functionality has now transitioned to FlexForms.
 	function BB_PropertyForm($options)
 	{
-		global $bb_formtables, $bb_formwidths, $bb_flexforms;
+		global $bb_message_layout, $bb_formtables, $bb_formwidths, $bb_flexforms, $bb_errors;
 
 		if (!isset($bb_formtables) || !is_bool($bb_formtables))  $bb_formtables = true;
 		if (!isset($bb_formwidths) || !is_bool($bb_formwidths))  $bb_formwidths = true;
@@ -213,7 +215,7 @@
 		else  $supportpath = "support";
 
 		// Initialize the FlexForms class instance.  Override a few defaults for AdminPack template integration.
-		$bb_flexforms->SetState(array("supporturl" => $rooturl . "/" . $supportpath, "formtables" => $bb_formtables, "formwidths" => $bb_formwidths));
+		$bb_flexforms->SetState(array("supporturl" => $rooturl . "/" . $supportpath, "formtables" => $bb_formtables, "formwidths" => $bb_formwidths, "jqueryuitheme" => "adminpack"));
 		$bb_flexforms->SetJSOutput("jquery");
 		$bb_flexforms->SetCSSOutput("formcss");
 
@@ -221,18 +223,26 @@
 		unset($options["hashnames"]);
 
 ?>
-	<noscript><style type="text/css">
-		div.maincontent div.proptitle div.navbutton { display: none; }
-		div.leftnav { display: block; }
-	</style></noscript>
-	<div class="proptitle"><div id="navbutton">Menu</div><div id="navdropdown"></div><?php echo htmlspecialchars(BB_Translate($options["title"])); ?></div>
-	<div class="propdesc"><?php echo htmlspecialchars(BB_Translate($options["desc"])); ?><?php if (isset($options["htmldesc"]))  echo $options["htmldesc"]; ?></div>
-	<div class="propinfo"></div>
-	<div class="propmain">
+	<div class="proptitlewrap"><div class="proptitle"><span id="navbutton"><span class="navbuttonline"></span><span class="navbuttonline"></span><span class="navbuttonline"></span></span><span class="proptitletext"><?php echo htmlspecialchars(BB_Translate($options["title"])); ?></span></div></div>
 <?php
-		$bb_flexforms->Generate($options);
+		if (isset($_REQUEST["bb_msg"]))
+		{
+			if (!isset($_REQUEST["bb_msgtype"]) || ($_REQUEST["bb_msgtype"] != "error" && $_REQUEST["bb_msgtype"] != "success"))  $_REQUEST["bb_msgtype"] = "info";
+
+			$data2 = str_replace("@MSGTYPE@", htmlspecialchars($_REQUEST["bb_msgtype"]), $bb_message_layout);
+			$data2 = str_replace("@MESSAGE@", htmlspecialchars(BB_Translate($_REQUEST["bb_msg"])), $data2);
+
 ?>
-	</div>
+	<div class="propmessagewrap propmessage<?php echo htmlspecialchars($_REQUEST["bb_msgtype"]); ?>"><div class="propmessage"><?php echo $data2; ?></div></div>
+<?php
+		}
+?>
+	<div class="propdescwrap"><div class="propdesc"><?php echo htmlspecialchars(BB_Translate($options["desc"])); ?><?php if (isset($options["htmldesc"]))  echo $options["htmldesc"]; ?></div></div>
+	<div class="propmainwrap"><div class="propmain">
+<?php
+		$bb_flexforms->Generate($options, $bb_errors);
+?>
+	</div></div>
 <?php
 	}
 
@@ -341,12 +351,16 @@
 		exit();
 	}
 
-	function BB_SetPageMessage($msgtype, $msg)
+	function BB_SetPageMessage($msgtype, $msg, $field = false)
 	{
+		global $bb_errors;
+
 		if (!isset($_REQUEST["bb_msgtype"]) || $msgtype == "error" || ($msgtype == "info" && $_REQUEST["bb_msgtype"] != "error") || ($msgtype == "success" && $_REQUEST["bb_msgtype"] == "success"))
 		{
 			$_REQUEST["bb_msgtype"] = $msgtype;
 			$_REQUEST["bb_msg"] = $msg;
+
+			if ($msgtype == "error" && $field !== false)  $bb_errors[$field] = $msg;
 		}
 	}
 
@@ -391,37 +405,21 @@
 		{
 			ob_start();
 ?>
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml">
+<!DOCTYPE html>
+<html>
 <head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
 <title>@TITLE@</title>
-<link rel="stylesheet" href="@ROOTURL@/@SUPPORTPATH@/admin.css?201402023" type="text/css" media="all" />
-<link rel="stylesheet" href="@ROOTURL@/@SUPPORTPATH@/admin_print.css?201402023" type="text/css" media="print" />
+<link rel="stylesheet" href="@ROOTURL@/@SUPPORTPATH@/admin.css?20170528" type="text/css" media="all" />
+<link rel="stylesheet" href="@ROOTURL@/@SUPPORTPATH@/admin_print.css?20170528" type="text/css" media="print" />
 <script type="text/javascript" src="@ROOTURL@/@SUPPORTPATH@/jquery-3.1.1.min.js"></script>
-<script type="text/javascript" src="@ROOTURL@/@SUPPORTPATH@/admin.js?20140615"></script>
+<script type="text/javascript" src="@ROOTURL@/@SUPPORTPATH@/admin.js?20170528"></script>
 <?php if (function_exists("BB_InjectLayoutHead"))  BB_InjectLayoutHead(); ?>
 </head>
 <body>
-<div class="pagewrap">
-	<div class="contentwrap">
-		<div class="colmask">
-			<div class="colright">
-				<div class="col1wrap">
-					<div class="col1">
-						<div class="col1inner">
-@MESSAGE@
-<div class="maincontent">
-@CONTENT@
-</div>
-						</div>
-					</div>
-				</div>
-				<div class="col2"><div class="leftnav">@MENU@</div></div>
-			</div>
-		</div>
-	</div>
-	<div class="stickycol"></div>
-</div>
+<div id="menuwrap">@MENU@</div>
+<div id="contentwrap">@CONTENT@</div>
 </body>
 </html>
 <?php
@@ -433,7 +431,7 @@
 		{
 			$bb_menu_layout = <<<EOF
 <div class="menu">
-	<div class="title">@TITLE@</div>
+	<div class="titlewrap"><span class="title">@TITLE@</span></div>
 @ITEMS@
 </div>
 EOF;
@@ -486,7 +484,7 @@ EOF;
 
 	function BB_GeneratePage($title, $menuopts, $contentopts)
 	{
-		global $bb_rootname, $bb_page_layout, $bb_menu_layout, $bb_menu_item_layout, $bb_message_layout;
+		global $bb_rootname, $bb_page_layout, $bb_menu_layout, $bb_menu_item_layout;
 
 		if (!isset($contentopts["title"]))  $contentopts["title"] = $title;
 		if (isset($contentopts["hidden"]) && !isset($contentopts["hidden"]["bb_back"]) && (!isset($contentopts["formmode"]) || $contentopts["formmode"] !== "get"))  $contentopts["hidden"]["bb_back"] = (isset($_POST["bb_back"]) ? $_POST["bb_back"] : BB_GetBackQueryString());
@@ -512,18 +510,12 @@ EOF;
 		$data = str_replace("@ROOTURL@", htmlspecialchars($rooturl), $bb_page_layout);
 		$data = str_replace("@SUPPORTPATH@", htmlspecialchars($supportpath), $data);
 
-		// Process the title and message.
+		// Process the title.
 		$data = str_replace("@TITLE@", htmlspecialchars(BB_Translate(($bb_rootname != "" ? $bb_rootname . " | " : "") . $title)), $data);
 		$data = str_replace("@ROOTNAME@", htmlspecialchars(BB_Translate($bb_rootname)), $data);
-		if (!isset($_REQUEST["bb_msg"]))  $data = str_replace("@MESSAGE@", "", $data);
-		else
-		{
-			if (!isset($_REQUEST["bb_msgtype"]) || ($_REQUEST["bb_msgtype"] != "error" && $_REQUEST["bb_msgtype"] != "success"))  $_REQUEST["bb_msgtype"] = "info";
 
-			$data2 = str_replace("@MSGTYPE@", htmlspecialchars($_REQUEST["bb_msgtype"]), $bb_message_layout);
-			$data2 = str_replace("@MESSAGE@", htmlspecialchars(BB_Translate($_REQUEST["bb_msg"])), $data2);
-			$data = str_replace("@MESSAGE@", $data2, $data);
-		}
+		// Old templates.
+		$data = str_replace("@MESSAGE@", "", $data);
 
 		// Process the menu.
 		$data2 = "";

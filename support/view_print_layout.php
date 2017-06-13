@@ -145,21 +145,22 @@
 
 
 	// Main layout.
-	$bb_page_layout = <<<EOF
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml">
+	ob_start();
+?>
+<!DOCTYPE html>
+<html>
 <head>
 <title>@TITLE@</title>
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
 <link rel="stylesheet" href="@ROOTURL@/@SUPPORTPATH@/admin_view.css" type="text/css" media="all" />
 <link rel="stylesheet" href="@ROOTURL@/@SUPPORTPATH@/admin_view_print.css" type="text/css" media="print" />
 <script type="text/javascript" src="@ROOTURL@/@SUPPORTPATH@/jquery-3.1.1.min.js"></script>
+<?php if (function_exists("BB_InjectLayoutHead"))  BB_InjectLayoutHead(); ?>
 </head>
 <body>
 <div class="pagewrap">
 	<div class="headerwrap">@ROOTNAME@</div>
 	<div class="contentwrap">
-@MESSAGE@
 <div class="maincontent">
 @CONTENT@
 </div>
@@ -168,5 +169,7 @@
 </div>
 </body>
 </html>
-EOF;
+<?php
+	$bb_page_layout = ob_get_contents();
+	ob_end_clean();
 ?>

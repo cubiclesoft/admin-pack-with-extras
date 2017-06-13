@@ -1,75 +1,25 @@
-html {
-	height: auto;
-}
+html, body { height: auto; overflow: visible; }
 
-body {
-	height: auto;
-	min-width: 0;
-	overflow: visible;
-}
+#menuwrap { display: none; }
+#menuwrap.showmenu { display: none; }
 
-div.contentwrap div.colmask {
-	position: static;
-	float: none;
-	width: 100%;
-	overflow: visible;
-	background-color: #FFFFFF;  /* Left-column background color. */
-}
+#contentwrap { height: auto; overflow: hidden; }
+#contentwrap .proptitlewrap { background-color: #222222; color: #FAFAFA; padding: 0.85em; box-shadow: none; border-bottom: 1px solid #CCCCCC; }
+#contentwrap.showmenu #navoverflowwrap { display: none; }
+#contentwrap #navbutton { display: none; }
+#contentwrap .proptitletext { padding-left: 0em; }
 
-div.contentwrap div.colmask div.colright {
-	float: none;
-	width: 100%;
-	position: static;
-	left: auto;  /* Left-column width. */
-	background-color: #FFFFFF;  /* Right-column background color. */
-	border-left: 0 none;
-}
+#contentwrap .formitemdata table thead th, #contentwrap .formitemdata table tbody td { border-top: 1px solid #CCCCCC; }
+#contentwrap .formitemdata table thead th:first-child { border-left: 1px solid #CCCCCC; }
+#contentwrap .formitemdata table thead th:last-child { border-right: 1px solid #CCCCCC; }
+#contentwrap .formitemdata table tbody tr:first-child td { border-top: 1px solid #CCCCCC; }
 
-div.contentwrap div.colmask div.colright div.col1wrap {
-	float: none;
-	width: 100%;
-	position: static;
-	right: auto;
-}
+#contentwrap form .formsubmit input { background-color: #FAFAFA; color: #222222; border: 1px solid #222222; }
 
-div.contentwrap div.colmask div.colright div.col1wrap div.col1 {
-	position: static;
-	width: 100%;
-	overflow: visible;
-}
+.ui-multiselect { width: 100% !important; }
+#contentwrap .formitemdata .ui-multiselect.ui-widget { border: 1px solid #c5c5c5 !important; background: #ffffff !important; color: #222222 !important; }
 
-div.contentwrap div.colmask div.colright div.col1wrap div.col1inner {
-	position: static;
-	margin-right: 0;  /* Left-column width. */
-}
+.multiselect-available-list { display: none; }
+.multiselect-selected-list { left: 0 !important; width: 100% !important; }
 
-div.contentwrap div.colmask div.colright div.col2 {
-	display: none;
-}
-
-div.stickycol {
-	display: none;
-}
-
-div.maincontent {
-	position: static;
-	margin: 5px 10px 15px 10px;
-	padding: 0;
-	background-color: #FFFFFF;
-	border: 0 none;
-}
-
-div.maincontent div.proptitle div.navbutton {
-	display: none;
-}
-
-div.maincontent div.propmain div.formfields {
-	border: 0 none;
-	background-color: #FFFFFF;
-	padding-left: 0;
-	padding-right: 0;
-}
-
-div.maincontent div.propmain div.alt {
-	background-color: #FFFFFF;
-}
+.no-print { display: none; }
