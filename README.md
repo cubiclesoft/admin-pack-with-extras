@@ -25,6 +25,8 @@ The Extras
 * Multiselect tags - Adds select2 in tag mode for selecting multiple items.
 * Multiselect dropdown - Adds a jQuery UI widget for selecting multiple items.  If jQuery UI is already loaded or a smaller interface is desired, it can be better than select2.
 * Multiselect flat - Adds a jQuery UI widget for selecting and reordering multiple items.
+* Table cards - Adds a jQuery plugin [TableCards](https://github.com/cubiclesoft/jquery-tablecards) that uses simple templates to convert tables to mobile-friendly cards on the client.  Won't activate in layouts that don't support tables.
+* Table body scrolling - Adds a jQuery plugin [TableBodyScroll](https://github.com/cubiclesoft/jquery-tablebodyscroll) that enables a table's body to be displayed on one screen vertically.  Won't activate in layouts that don't support tables.
 * Table row order - Adds drag-and-drop support to an injected column for the 'table' type.  Won't activate in layouts that don't support tables.
 * Table sticky headers - Adds sticky header support to the header for the 'table' type.  Won't activate in layouts that don't support tables.
 
