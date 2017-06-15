@@ -94,8 +94,9 @@ body { font-family: Verdana, Arial, Helvetica, sans-serif; position: relative; }
 @media (max-width: 420px) {
 	#contentwrap .fieldtablewrap { margin-top: 0; }
 	#contentwrap .fieldtablewrap table { display: block; }
-	#contentwrap .fieldtablewrap table tr { display: block; }
-	#contentwrap .fieldtablewrap table tr td { display: block; padding: 0; margin-top: 1.0em; }
+	#contentwrap .fieldtablewrap table tbody { display: block; }
+	#contentwrap .fieldtablewrap table tbody tr { display: block; }
+	#contentwrap .fieldtablewrap table tbody td { display: block; padding: 0; margin-top: 1.0em; max-width: 100%; }
 	#contentwrap .formfieldsresponsive .fieldtablewrap table td:last-child { display: none; }
 }
 

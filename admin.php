@@ -189,7 +189,7 @@
 				array(
 					"title" => "Field 2a",
 					"type" => "text",
-					"width" => "200px",
+					"width" => "500px",
 					"name" => "field2a",
 					"default" => "",
 				),
@@ -198,6 +198,13 @@
 					"type" => "text",
 					"width" => "50px",
 					"name" => "field2b",
+					"default" => "",
+				),
+				array(
+					"title" => "Field 2c",
+					"type" => "text",
+					"width" => "150px",
+					"name" => "field2c",
 					"default" => "",
 				),
 				"endrow",
