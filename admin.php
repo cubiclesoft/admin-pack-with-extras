@@ -34,13 +34,6 @@
 			"Add Entry" => BB_GetRequestURLBase() . "?action=addeditexample&sec_t=" . BB_CreateSecurityToken("addeditexample"),
 			"Bulk Edit" => BB_GetRequestURLBase() . "?action=bulkeditexample&sec_t=" . BB_CreateSecurityToken("bulkeditexample"),
 			"View/Print" => BB_GetRequestURLBase() . "?action=viewprintexample&id=1&sec_t=" . BB_CreateSecurityToken("viewprintexample")
-		),
-		"Options 2" => array(
-			// Replace these menu options with your own.  The examples contain useful boilerplate code.
-			"Manage" => BB_GetRequestURLBase() . "?action=manageexample&sec_t=" . BB_CreateSecurityToken("manageexample"),
-			"Add Entry" => BB_GetRequestURLBase() . "?action=addeditexample&sec_t=" . BB_CreateSecurityToken("addeditexample"),
-			"Bulk Edit" => BB_GetRequestURLBase() . "?action=bulkeditexample&sec_t=" . BB_CreateSecurityToken("bulkeditexample"),
-			"View/Print" => BB_GetRequestURLBase() . "?action=viewprintexample&id=1&sec_t=" . BB_CreateSecurityToken("viewprintexample")
 		)
 	);
 
