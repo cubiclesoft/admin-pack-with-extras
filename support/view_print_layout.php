@@ -172,4 +172,6 @@
 <?php
 	$bb_page_layout = ob_get_contents();
 	ob_end_clean();
+
+	$bb_page_layout_no_menu = str_replace('<div class="menuwrap">@MENU@</div>', "", $bb_page_layout);
 ?>

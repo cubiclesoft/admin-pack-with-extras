@@ -1,37 +1,24 @@
 html, body { height: 100%; margin: 0px; padding: 0px; overflow: hidden; background-color: #FFFFFF; }
 body { font-family: Verdana, Arial, Helvetica, sans-serif; position: relative; }
 
-#menuwrap { float: left; width: 250px; min-width: 200px; max-width: 15%; height: 100%; overflow: auto; border-right: 1px solid #CCCCCC; font-size: 0.9em; background-color: #222222; color: #FAFAFA; }
-#menuwrap .menu { margin-top: 1.0em; border-top: 1px solid #444444; padding-top: 1.2em; }
-#menuwrap .menu:first-child { margin-top: 0; border-top: 0 none; padding-top: 1.0em; }
-#menuwrap .menu .titlewrap { margin: 0 1.0em 0.85em; }
-#menuwrap .menu .title { font-size: 1.2em; font-weight: bold; padding-bottom: 0.2em; border-bottom: 2px solid #888888; }
-#menuwrap .menu a { display: block; padding: 0.5em 1.0em; color: #FAFAFA; text-decoration: none; }
-#menuwrap .menu a:hover { background-color: #444444; color :#FFFFFF; }
-
 #contentwrap { height: 100%; overflow: auto; }
 #contentwrap .proptitlewrap { background-color: #222222; color: #FAFAFA; padding: 0.85em; box-shadow: 0px 3px 3px 0px rgba(0,0,0,0.15); }
-#contentwrap .proptitle { display: table-row; font-weight: bold; font-size: 1.3em; }
+#contentwrap .proptitle { max-width: 800px; margin-left: auto; margin-right: auto; font-weight: bold; font-size: 1.3em; }
 #contentwrap #navbutton { vertical-align: middle; display: none; padding: 0.23em 0; border: 1px solid #CCCCCC; border-radius: 5px; cursor: pointer; }
 #contentwrap #navbutton .navbuttonline { display: block; margin: 0.23em 0.4em; width: 1.0em; height: 2px; background-color: #FAFAFA; border-radius: 2px; }
 #contentwrap #navbutton:hover { color: #FFFFFF; border: 1px solid #E0E0E0; background-color: #2A2A2A; }
 #contentwrap #navbutton:hover .navbuttonline { background-color: #FFFFFF; }
-#contentwrap .proptitletext { display: table-cell; vertical-align: middle; }
-
-#contentwrap.showmenu { white-space: nowrap; }
-#contentwrap.showmenu #navbutton { display: table-cell; }
-#contentwrap.showmenu .proptitletext { padding-left: 1.0em; }
-#contentwrap #navoverflowwrap { display: none; }
-#contentwrap.showmenu { overflow: hidden; }
-#contentwrap.showmenu #navoverflowwrap { display: block; position: absolute; width: 100%; height: 100%; z-index: 10000; cursor: pointer; background-color: #000000; opacity: 0.25; }
 
 #contentwrap .propmessagewrap { border-top: 1px solid transparent; border-bottom: 1px solid transparent; padding: 0.5em 1.0em; box-shadow: 0px 3px 3px 0px rgba(0,0,0,0.15); }
+#contentwrap .propmessage { max-width: 800px; margin-left: auto; margin-right: auto; }
 #contentwrap .propmessagesuccess { border-color: #B2DBA1; background-color: #DFF0D8; background-repeat: repeat-x; color: #3C763D; }
 #contentwrap .propmessageerror { border-color: #DCA7A7; background-color: #F2DEDE; background-repeat: repeat-x; color: #A94442; }
 #contentwrap .propmessageinfo { border-color: #9ACFEA; background-color: #D9EDF7; background-repeat: repeat-x; color: #31708F; }
 
 #contentwrap .propdescwrap { padding: 1.0em 1.0em 0; }
+#contentwrap .propdesc { max-width: 800px; margin-left: auto; margin-right: auto; }
 #contentwrap .propmainwrap { padding: 1.0em; }
+#contentwrap .propmain { max-width: 800px; margin-left: auto; margin-right: auto; }
 
 #contentwrap a { color: #4E88C2; text-decoration: none; }
 #contentwrap a:hover { color: #297ACC; text-decoration: underline; }
@@ -83,13 +70,6 @@ body { font-family: Verdana, Arial, Helvetica, sans-serif; position: relative; }
 #contentwrap form .formsubmit { margin-top: 1.2em; margin-right: 1.0em; }
 #contentwrap form .formsubmit input { padding: 0.3em 1.0em; font-weight: bold; font-size: 1.0em; background-color: #222222; color: #FAFAFA; border: 1px solid #222222; }
 #contentwrap form .formsubmit input:hover { background-color: #444444; color :#FFFFFF; }
-
-@media (max-width: 1000px) {
-	#menuwrap { display: none; }
-	#menuwrap.showmenu { display: block; }
-	#contentwrap #navbutton { display: table-cell; }
-	#contentwrap .proptitletext { padding-left: 1.0em; }
-}
 
 @media (max-width: 420px) {
 	#contentwrap .fieldtablewrap { margin-top: 0; }

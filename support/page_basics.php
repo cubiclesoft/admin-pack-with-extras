@@ -396,11 +396,8 @@
 
 	function BB_InitLayouts()
 	{
-		global $bb_page_layout, $bb_menu_layout, $bb_menu_item_layout, $bb_message_layout, $bb_page_layout_bulkedit;
+		global $bb_page_layout, $bb_page_layout_no_menu, $bb_menu_layout, $bb_menu_item_layout, $bb_message_layout, $bb_page_layout_bulkedit;
 
-		// Default layout swiped from the Barebones CMS Layout widget.
-		// SEO-friendly (2-1) admin-style 2-column pixel-widths liquid layout (200px 100% height, content).
-		// Sources:  http://matthewjamestaylor.com/blog/holy-grail-no-quirks-mode.htm, http://matthewjamestaylor.com/blog/ultimate-2-column-left-menu-pixels.htm
 		if (!isset($bb_page_layout))
 		{
 			ob_start();
@@ -411,7 +408,8 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
 <title>@TITLE@</title>
-<link rel="stylesheet" href="@ROOTURL@/@SUPPORTPATH@/admin.css?20170528" type="text/css" media="all" />
+<link rel="stylesheet" href="@ROOTURL@/@SUPPORTPATH@/admin.css?20170708" type="text/css" media="all" />
+<link rel="stylesheet" href="@ROOTURL@/@SUPPORTPATH@/admin_menu.css?20170708" type="text/css" media="all" />
 <link rel="stylesheet" href="@ROOTURL@/@SUPPORTPATH@/admin_print.css?20170528" type="text/css" media="print" />
 <script type="text/javascript" src="@ROOTURL@/@SUPPORTPATH@/jquery-3.1.1.min.js"></script>
 <script type="text/javascript" src="@ROOTURL@/@SUPPORTPATH@/admin.js?20170528"></script>
@@ -424,6 +422,30 @@
 </html>
 <?php
 			$bb_page_layout = ob_get_contents();
+			ob_end_clean();
+		}
+
+		if (!isset($bb_page_layout_no_menu))
+		{
+			ob_start();
+?>
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
+<title>@TITLE@</title>
+<link rel="stylesheet" href="@ROOTURL@/@SUPPORTPATH@/admin.css?20170528" type="text/css" media="all" />
+<link rel="stylesheet" href="@ROOTURL@/@SUPPORTPATH@/admin_print.css?20170528" type="text/css" media="print" />
+<script type="text/javascript" src="@ROOTURL@/@SUPPORTPATH@/jquery-3.1.1.min.js"></script>
+<?php if (function_exists("BB_InjectLayoutHead"))  BB_InjectLayoutHead(); ?>
+</head>
+<body>
+<div id="contentwrap">@CONTENT@</div>
+</body>
+</html>
+<?php
+			$bb_page_layout_no_menu = ob_get_contents();
 			ob_end_clean();
 		}
 
@@ -484,7 +506,7 @@ EOF;
 
 	function BB_GeneratePage($title, $menuopts, $contentopts)
 	{
-		global $bb_rootname, $bb_page_layout, $bb_menu_layout, $bb_menu_item_layout;
+		global $bb_rootname, $bb_page_layout, $bb_page_layout_no_menu, $bb_menu_layout, $bb_menu_item_layout;
 
 		if (!isset($contentopts["title"]))  $contentopts["title"] = $title;
 		if (isset($contentopts["hidden"]) && !isset($contentopts["hidden"]["bb_back"]) && (!isset($contentopts["formmode"]) || $contentopts["formmode"] !== "get"))  $contentopts["hidden"]["bb_back"] = (isset($_POST["bb_back"]) ? $_POST["bb_back"] : BB_GetBackQueryString());
@@ -507,7 +529,7 @@ EOF;
 		else if (defined("SUPPORT_PATH"))  $supportpath = SUPPORT_PATH;
 		else  $supportpath = "support";
 
-		$data = str_replace("@ROOTURL@", htmlspecialchars($rooturl), $bb_page_layout);
+		$data = str_replace("@ROOTURL@", htmlspecialchars($rooturl), (count($menuopts) ? $bb_page_layout : $bb_page_layout_no_menu));
 		$data = str_replace("@SUPPORTPATH@", htmlspecialchars($supportpath), $data);
 
 		// Process the title.

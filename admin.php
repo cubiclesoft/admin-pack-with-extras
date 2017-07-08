@@ -33,7 +33,8 @@
 			"Manage" => BB_GetRequestURLBase() . "?action=manageexample&sec_t=" . BB_CreateSecurityToken("manageexample"),
 			"Add Entry" => BB_GetRequestURLBase() . "?action=addeditexample&sec_t=" . BB_CreateSecurityToken("addeditexample"),
 			"Bulk Edit" => BB_GetRequestURLBase() . "?action=bulkeditexample&sec_t=" . BB_CreateSecurityToken("bulkeditexample"),
-			"View/Print" => BB_GetRequestURLBase() . "?action=viewprintexample&id=1&sec_t=" . BB_CreateSecurityToken("viewprintexample")
+			"View/Print" => BB_GetRequestURLBase() . "?action=viewprintexample&id=1&sec_t=" . BB_CreateSecurityToken("viewprintexample"),
+			"No Menu" => BB_GetRequestURLBase() . "?action=nomenuexample&sec_t=" . BB_CreateSecurityToken("nomenuexample")
 		)
 	);
 
@@ -555,8 +556,39 @@ function LoadItem(id) {
 				)
 			);
 
-			BB_GeneratePage("View Entry Example for #" . $id, $menuopts, $contentopts);
+			BB_GeneratePage("View Entry Example for #" . $id, array(), $contentopts);
 //		}
+	}
+	else if (isset($_REQUEST["action"]) && $_REQUEST["action"] == "nomenuexample")
+	{
+		// Demonstrates a common pattern for displaying the standard layout without menu options to the user.
+
+		if (isset($_REQUEST["username"]))
+		{
+			BB_SetPageMessage("error", "Invalid username or password.");
+		}
+
+		$contentopts = array(
+			"desc" => "Please enter some login information.",
+			"htmldesc" => "<br><br><b>IMPORTANT:  Please do not submit real usernames or passwords as this is just an example.</b>",
+			"fields" => array(
+				array(
+					"title" => "Username",
+					"type" => "text",
+					"name" => "username",
+					"default" => ""
+				),
+				array(
+					"title" => "Password",
+					"type" => "password",
+					"name" => "password",
+					"default" => ""
+				),
+			),
+			"submit" => "Login"
+		);
+
+		BB_GeneratePage("Login", array(), $contentopts);
 	}
 	else
 	{
