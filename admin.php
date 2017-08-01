@@ -116,6 +116,55 @@
 //			$id = 0;
 //		}
 
+		// Example handler for the file uploader FlexForms Module.
+		// Note:  It is far easier to only support file uploads when editing existing items.
+		//        Otherwise, temporary file management will need to be implemented via user sessions with server-side cron cleanup if the file is abandoned.
+		if (isset($_REQUEST["fileuploader"]))
+		{
+			header("Content-Type: application/json");
+
+			$allowedexts = array(
+				"jpg" => true,
+				"png" => true,
+				"gif" => true,
+			);
+
+			$files = BB_NormalizeFiles("file2");
+			if (!isset($files[0]) || !$files[0]["success"])  $result = $files[0];
+			else if (!isset($allowedexts[strtolower($files[0]["ext"])]))
+			{
+				$result = array(
+					"success" => false,
+					"error" => "Invalid file extension.  Must be '.jpg', '.png', or '.gif'.",
+					"errorcode" => "invalid_file_ext"
+				);
+			}
+			else
+			{
+				if (file_exists("support/flex_forms_fileuploader.php"))  require_once "support/flex_forms_fileuploader.php";
+
+				// For chunked file uploads, get the current filename and starting position from the incoming headers.
+				$name = FlexForms_FileUploader::GetChunkFilename();
+				if ($name !== false)
+				{
+					$startpos = FlexForms_FileUploader::GetFileStartPosition();
+
+					// [Do stuff with the file chunk.]
+				}
+				else
+				{
+					// [Do stuff with the file here.]
+				}
+
+				$result = array(
+					"success" => true
+				);
+			}
+
+			echo json_encode($result, JSON_UNESCAPED_SLASHES);
+			exit();
+		}
+
 		if (isset($_REQUEST["first"]))
 		{
 			if ($_REQUEST["first"] == "")  BB_SetPageMessage("error", "Please fill in 'Field 1'.", "first");
@@ -152,6 +201,7 @@
 		if (file_exists("support/flex_forms_tablefilter.php"))  require_once "support/flex_forms_tablefilter.php";
 		if (file_exists("support/flex_forms_htmledit.php"))  require_once "support/flex_forms_htmledit.php";
 		if (file_exists("support/flex_forms_textcounter.php"))  require_once "support/flex_forms_textcounter.php";
+		if (file_exists("support/flex_forms_fileuploader.php"))  require_once "support/flex_forms_fileuploader.php";
 
 		$tomorrow = mktime(0, 0, 0, date("n"), date("j") + 1);
 
@@ -426,11 +476,21 @@
 					"counter" => 150,
 					"desc" => "Description for Text Counter.  This feature requires FlexForms Modules to be included."
 				),
+				array(
+					"title" => "Module:  File Uploader",
+					"type" => "file",
+					"name" => "file2",
+					"accept" => ".jpg, .png, .gif, image/jpeg, image/png, image/gif",
+					"multiple" => true,
+					"uploader" => true,
+//					"maxchunk" => min(FlexForms_FileUploader::GetMaxUploadFileSize(), 1000000),
+					"desc" => "Description for File Uploader.  This feature requires FlexForms Modules to be included."
+				),
 			),
 			"submit" => ($id ? "Save" : "Create")
 		);
 
-		// Rarely used modules.
+		// Rarely used modules.  Also demonstrates adding fields dynamically.
 		if (file_exists("support/flex_forms_passwordmanager.php"))
 		{
 			require_once "support/flex_forms_passwordmanager.php";

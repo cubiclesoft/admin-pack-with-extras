@@ -369,6 +369,11 @@
 		return (isset($_REQUEST["bb_msg"]) && isset($_REQUEST["bb_msgtype"]) ? ($_REQUEST["bb_msgtype"] == "error" || $_REQUEST["bb_msgtype"] == "success" ? $_REQUEST["bb_msgtype"] : "info") : "");
 	}
 
+	function BB_NormalizeFiles($key)
+	{
+		return FlexForms::NormalizeFiles($key);
+	}
+
 	function BB_GetValue($key, $default)
 	{
 		return FlexForms::GetValue($key, $default);
