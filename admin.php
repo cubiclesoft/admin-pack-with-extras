@@ -130,7 +130,8 @@
 			);
 
 			$files = BB_NormalizeFiles("file2");
-			if (!isset($files[0]) || !$files[0]["success"])  $result = $files[0];
+			if (!isset($files[0]))  $result = array("success" => false, "error" => "File data was submitted but is missing.", "errorcode" => "bad_input");
+			else if (!$files[0]["success"])  $result = $files[0];
 			else if (!isset($allowedexts[strtolower($files[0]["ext"])]))
 			{
 				$result = array(
