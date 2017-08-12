@@ -1,5 +1,5 @@
 html, body { height: 100%; margin: 0px; padding: 0px; overflow: hidden; background-color: #FFFFFF; }
-body { font-family: Verdana, Arial, Helvetica, sans-serif; position: relative; }
+body { font-family: Verdana, Arial, Helvetica, sans-serif; position: relative; color: #222222; }
 
 #contentwrap { height: 100%; overflow: auto; }
 #contentwrap .proptitlewrap { background-color: #222222; color: #FAFAFA; padding: 0.85em; box-shadow: 0px 3px 3px 0px rgba(0,0,0,0.15); }
@@ -31,7 +31,7 @@ body { font-family: Verdana, Arial, Helvetica, sans-serif; position: relative; }
 
 #contentwrap .formitemdata table { border-collapse: collapse; }
 #contentwrap .formitemdata table thead th, #contentwrap .formitemdata table tbody td { padding: 0.3em 0.5em; border-left: 1px solid #CCCCCC; border-right: 1px solid #CCCCCC; vertical-align: top; }
-#contentwrap .formitemdata table thead th { background-color: #222222; color: #FAFAFA; }
+#contentwrap .formitemdata table thead th { background-color: #222222; color: #FAFAFA; font-weight: normal; }
 #contentwrap .formitemdata table thead th:first-child { border-left: 1px solid #222222; }
 #contentwrap .formitemdata table thead th:last-child { border-right: 1px solid #222222; }
 #contentwrap .formitemdata table tbody tr:first-child td { border-top: none; }
@@ -83,11 +83,13 @@ body { font-family: Verdana, Arial, Helvetica, sans-serif; position: relative; }
 
 /* FlexForms Extras styles for Admin Pack */
 
-#contentwrap .formaccordionwrap.ui-accordion h3.ui-accordion-header { margin-top: 1.0em; border: 1px solid #444444; background: #222222; font-weight: bold; color: #ffffff; }
+#contentwrap .formaccordionwrap.ui-accordion h3.ui-accordion-header { margin-top: 1.0em; border: 1px solid #CCCCCC; background: #F6F6F6; font-weight: bold; color: #222222; }
 #contentwrap .formaccordionwrap.ui-accordion:first-child h3.ui-accordion-header:first-child { margin-top: 0; }
-#contentwrap .formaccordionwrap.ui-accordion h3.ui-accordion-header.ui-active-state { border: 1px solid #444444; background: #222222; font-weight: bold; color: #ffffff; }
-#contentwrap .formaccordionwrap.ui-accordion h3.ui-accordion-header.ui-state-hover { border: 1px solid #444444; background: #333333; font-weight: bold; color: #ffffff; }
-#contentwrap .formaccordionwrap.ui-accordion h3.ui-accordion-header .ui-icon { background-image: url("jquery_ui_themes/adminpack/images/ui-icons_fafafa_256x240.png"); }
+#contentwrap .formaccordionwrap.ui-accordion h3.ui-accordion-header.ui-state-hover { border: 1px solid #C5C5C5; background: #F0F0F0; font-weight: bold; color: #222222; }
+#contentwrap .formaccordionwrap.ui-accordion h3.ui-accordion-header .ui-icon { background-image: url("jquery_ui_themes/adminpack/images/ui-icons_333333_256x240.png"); }
+#contentwrap .formaccordionwrap.ui-accordion h3.ui-accordion-header.ui-state-active { border: 1px solid #444444; background: #222222; font-weight: bold; color: #ffffff; }
+#contentwrap .formaccordionwrap.ui-accordion h3.ui-accordion-header.ui-state-active .ui-icon { background-image: url("jquery_ui_themes/adminpack/images/ui-icons_fafafa_256x240.png"); }
+#contentwrap .formaccordionwrap.ui-accordion h3.ui-accordion-header.ui-state-active.ui-state-hover { border: 1px solid #444444; background: #333333; font-weight: bold; color: #ffffff; }
 
 #contentwrap .formaccordionwrap.ui-accordion .ui-helper-reset { line-height: normal; }
 #contentwrap .formaccordionwrap.ui-accordion .formaccordionitems.ui-accordion-content { padding: 0 1.5em 1.0em; }
