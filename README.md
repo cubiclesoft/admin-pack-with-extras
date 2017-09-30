@@ -33,7 +33,7 @@ The Extras
 Under the Hood
 --------------
 
-Admin Pack uses [FlexForms](https://github.com/cubiclesoft/php-flexforms), which makes it easy to extend Admin Pack with custom functionality (see `support/view_print_layout.php`).  For example, [FlexForms Modules](https://github.com/cubiclesoft/php-flexform-modules) contains several official extensions (e.g. charts, HTML editor, character/word counter).
+Admin Pack uses [FlexForms](https://github.com/cubiclesoft/php-flexforms), which makes it easy to extend Admin Pack with custom functionality (see `support/view_print_layout.php`).  For example, [FlexForms Modules](https://github.com/cubiclesoft/php-flexforms-modules) contains several official extensions (e.g. charts, HTML editor, character/word counter).
 
 More Information
 ----------------
