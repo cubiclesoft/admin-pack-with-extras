@@ -102,10 +102,60 @@
 
 		BB_GeneratePage("Manage Entries Example", $menuopts, $contentopts);
 	}
+	else if (isset($_REQUEST["action"]) && $_REQUEST["action"] == "addeditexample_simple")
+	{
+		// A simple boilerplate version of 'addeditexample' designed for copy/pasting.
+
+		$id = (isset($_REQUEST["id"]) ? (int)$_REQUEST["id"] : 0);
+		$row = $db->GetRow("SELECT * FROM userdetails WHERE id = ?", array($id));
+		if ($row)  $info = LoadUserDetails(unserialize($row->info));
+		else
+		{
+			$info = LoadUserDetails(array());
+			$id = 0;
+		}
+
+		if (isset($_REQUEST["first"]))
+		{
+			if ($_REQUEST["first"] == "")  BB_SetPageMessage("error", "Please fill in 'Field 1'.", "first");
+
+			if (BB_GetPageMessageType() != "error")
+			{
+				// [Save data here.]
+				$originfo = $info;
+				$info["first"] = $_REQUEST["first"];
+
+				if ($id)  $db->Query("UPDATE userdetails SET info = ? WHERE id = ?", array(serialize($info), $id));
+				else  $db->Query("INSERT INTO userdetails SET info = ?", array(serialize($info)));
+
+				BB_RedirectPage("success", ($_REQUEST["id"] > 0 ? "Successfully saved the details." : "Successfully created the entry."), array("action=manageexample&sec_t=" . BB_CreateSecurityToken("manageexample")));
+			}
+		}
+
+		$contentopts = array(
+			"desc" => ($id ? "Edit the user details." : "Add user details."),
+			"hidden" => array(
+				"id" => $id
+			),
+			"fields" => array(
+				array(
+					"title" => "Field 1",
+					"type" => "text",
+					"name" => "first",
+					"default" => $info["first"],
+					"desc" => "Basic text field."
+				),
+			),
+			"submit" => ($id ? "Save" : "Create")
+		);
+
+		BB_GeneratePage(($id ? "Edit Entry Example" : "Add Entry Example"), $menuopts, $contentopts);
+	}
 	else if (isset($_REQUEST["action"]) && $_REQUEST["action"] == "addeditexample")
 	{
 		// Demonstrates a common pattern to easily add new entries AND edit existing entries in a MySQL/MariaDB database with writing code only one time.
 		// Less code results in fewer logic errors.  Some code is commented out so that the example actually functions.
+		// Includes logic to test the most common FlexForms features, so this might be a bit excessive.  Use the 'addeditexample_simple' code above for rapid start development.
 
 		$id = (isset($_REQUEST["id"]) ? (int)$_REQUEST["id"] : 0);
 //		$row = $db->GetRow("SELECT * FROM userdetails WHERE id = ?", array($id));
