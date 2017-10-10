@@ -205,6 +205,7 @@
 				else
 				{
 					// [Do stuff with the file here.]
+					// copy($files[0]["file"], __DIR__ . "/images/" . $id . "." . strtolower($files[0]["ext"]));
 				}
 
 				$result = array(
