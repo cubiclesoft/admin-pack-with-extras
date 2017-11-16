@@ -62,6 +62,90 @@
 			}
 		}
 
+		// Generate a UNIX timestamp for a user-submitted date and time.  International input format is best.
+		public static function ParseDateTime($date, $time)
+		{
+			if ($date === "" || $time === "")  return false;
+
+			$year = false;
+			$month = false;
+			$day = false;
+
+			// Extract named month.
+			$monthmap = array(
+				"jan" => 1, "feb" => 2, "mar" => 3, "apr" => 4, "may" => 5, "jun" => 6,
+				"jul" => 7, "aug" => 8, "sep" => 9, "oct" => 10, "nov" => 11, "dec" => 12
+			);
+			foreach ($monthmap as $key => $val)
+			{
+				$key = FlexForms::FFTranslate($key);
+
+				if (stripos($date, $key) !== false)
+				{
+					$month = $val;
+
+					break;
+				}
+			}
+
+			$items = explode(" ", preg_replace('/\s+/', " ", preg_replace('/[^0-9]/', " ", $date)));
+
+			foreach ($items as $item)
+			{
+				if (strlen($item) >= 4)  $year = (int)$item;
+				else if ($month === false)  $month = (int)$item;
+				else
+				{
+					$day = (int)$item;
+
+					break;
+				}
+			}
+
+			$hour = false;
+			$min = false;
+			$sec = false;
+			$ampm = false;
+
+			if (stripos($time, "a") !== false)  $ampm = "a";
+			else if (stripos($time, "p") !== false)  $ampm = "p";
+
+			$items = explode(" ", preg_replace('/\s+/', " ", preg_replace('/[^0-9]/', " ", $time)));
+
+			foreach ($items as $item)
+			{
+				if ($hour === false)  $hour = (int)$item;
+				else if ($min === false)  $min = (int)$item;
+				else
+				{
+					$sec = (int)$item;
+
+					break;
+				}
+			}
+
+			if ($hour !== false && $ampm !== false)
+			{
+				if ($ampm === "a" && ($hour < 1 || $hour == 12))  $hour = 0;
+				else if ($ampm === "p" && $hour > 0 && $hour < 12)  $hour += 12;
+			}
+
+			if ($min === false)  $min = 0;
+			if ($sec === false)  $sec = 0;
+
+			if ($year === false || $year === 0 || $month === false || $day === false || $hour === false)  return false;
+
+			$ts = @mktime($hour, $min, $sec, $month, $day, $year);
+			if ($ts < 0)  return false;
+
+			return $ts;
+		}
+
+		public static function ParseDate($date)
+		{
+			return self::ParseDateTime($date, "0");
+		}
+
 
 		// Accordions.
 		public static function AccordionsInit(&$state, &$options)

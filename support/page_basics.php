@@ -134,7 +134,7 @@
 		$bb_langmap = array();
 		BB_SetLanguage($path, "");
 		if ($default != "")  BB_SetLanguage($path, $default);
-		$bb_admin_def_lang = $bb_admin_lang;
+		if (isset($bb_admin_lang))  $bb_admin_def_lang = $bb_admin_lang;
 		if (isset($_SERVER["HTTP_ACCEPT_LANGUAGE"]))
 		{
 			$langs = explode(",", $_SERVER["HTTP_ACCEPT_LANGUAGE"]);
@@ -146,7 +146,12 @@
 				if ($lang != "")
 				{
 					$result = BB_SetLanguage($path, $lang);
-					if ($result["success"])  break;
+					if ($result["success"])
+					{
+						if (!isset($bb_admin_def_lang) && isset($bb_admin_lang))  $bb_admin_def_lang = $bb_admin_lang;
+
+						break;
+					}
 				}
 			}
 		}
