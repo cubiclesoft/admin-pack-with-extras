@@ -229,6 +229,7 @@
 				$info["first"] = $_REQUEST["first"];
 				$info["last"] = $_REQUEST["last"];
 //				$info["email"] = $_REQUEST["email"];
+//				$info["start"] = FlexFormsExtras::ParseDateTime($_REQUEST["date"], "1:00 pm");
 
 //				if ($id)  $db->Query("UPDATE userdetails SET email = ?, info = ? WHERE id = ?", array($info["email"], serialize($info), $id));
 //				else  $db->Query("INSERT INTO userdetails SET email = ?, info = ?", array($info["email"], serialize($info)));
