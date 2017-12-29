@@ -629,7 +629,7 @@ EOF;
 			{
 				foreach ($contentopts["items"] as $item)
 				{
-					echo "<a href=\"#\"" . (isset($item["id"]) ? " id=\"" . htmlspecialchars($item["id"]) . "\"" : "") . " class=\"" . trim(($altrow ? "altrow" : "") . (isset($item["class"]) ? " " . htmlspecialchars($item["class"]) : "")) . "\" onclick=\"" . (isset($item["onclick"]) ? htmlspecialchars($item["onclick"]) . "; " : "") . "return BB_SelectSidebarItem(this);\">" . htmlspecialchars($item["display"]) . "</a>\n";
+					echo "<a href=\"#\"" . (isset($item["id"]) ? " id=\"" . htmlspecialchars($item["id"]) . "\"" : "") . " class=\"" . trim(($altrow ? "altrow" : "") . (isset($item["class"]) ? " " . htmlspecialchars($item["class"]) : "")) . "\" onclick=\"" . (isset($item["onclick"]) ? htmlspecialchars($item["onclick"]) . "; " : "") . "return BB_SelectSidebarItem(this);\">" . (isset($item["htmldisplay"]) ? $item["htmldisplay"] : htmlspecialchars($item["display"])) . "</a>\n";
 
 					$altrow = !$altrow;
 				}
