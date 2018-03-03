@@ -192,7 +192,7 @@
 			}
 			else
 			{
-				if (file_exists("support/flex_forms_fileuploader.php"))  require_once "support/flex_forms_fileuploader.php";
+				require_once "support/flex_forms_fileuploader.php";
 
 				// For chunked file uploads, get the current filename and starting position from the incoming headers.
 				$name = FlexForms_FileUploader::GetChunkFilename();
@@ -255,6 +255,7 @@
 		if (file_exists("support/flex_forms_htmledit.php"))  require_once "support/flex_forms_htmledit.php";
 		if (file_exists("support/flex_forms_textcounter.php"))  require_once "support/flex_forms_textcounter.php";
 		if (file_exists("support/flex_forms_fileuploader.php"))  require_once "support/flex_forms_fileuploader.php";
+		if (file_exists("support/flex_forms_previewurl.php"))  require_once "support/flex_forms_previewurl.php";
 
 		$tomorrow = mktime(0, 0, 0, date("n"), date("j") + 1);
 
@@ -538,6 +539,13 @@
 					"uploader" => true,
 //					"maxchunk" => min(FlexForms_FileUploader::GetMaxUploadFileSize(), 1000000),
 					"desc" => "Description for File Uploader.  This feature requires FlexForms Modules to be included."
+				),
+				array(
+					"title" => "Module:  Preview URL",
+					"type" => "custom",
+					"value" => "<div class=\"staticwrap\"><a href=\"https://barebonescms.com/demos/cyprus-1920.jpg\" target=\"_blank\" data-preview-type=\"image/jpeg\">Great photo</a> | <a href=\"https://barebonescms.com/demos/cow.mp4\" target=\"_blank\" data-preview-type=\"video/mp4\">Say wha'?!</a> | <a href=\"https://barebonescms.com/demos/im-sorry-what.mp3\" target=\"_blank\" data-preview-type=\"audio/mpeg\">The sassy factory</a> | <a href=\"https://www.youtube.com/embed/OvZrhdy2UdY?rel=0&showinfo=0&autoplay=1&ts=" . (time() + 1) . "\" target=\"_blank\" data-preview-type=\"iframe\">Everything is awesome</a></div>",
+					"previewurl" => true,
+					"desc" => "Description for Preview URL.  This feature requires FlexForms Modules to be included."
 				),
 			),
 			"submit" => ($id ? "Save" : "Create")
