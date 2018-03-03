@@ -455,7 +455,7 @@ FlexForms.modules.Extras_Accordion_Activate = function(event, ui) {
 						$state["jqueryuiused"] = true;
 
 						$state["css"]["multiselect-flat"] = array("mode" => "link", "dependency" => "jqueryui", "src" => $state["supporturl"] . "/multiselect-flat/css/jquery.uix.multiselect.css");
-						$state["js"]["multiselect-flat"] = array("mode" => "src", "dependency" => "jqueryui", "src" => $state["supporturl"] . "/multiselect-flat/js/jquery.uix.multiselect.js", "detect" => "jQuery.fn.multiselect");
+						$state["js"]["multiselect-flat"] = array("mode" => "src", "dependency" => "jqueryui", "src" => $state["supporturl"] . "/multiselect-flat/js/jquery.uix.multiselect.min.js", "detect" => "jQuery.fn.multiselect");
 
 						$state["extras_multiselect_flat"] = true;
 					}
