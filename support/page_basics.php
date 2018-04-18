@@ -303,40 +303,13 @@
 		return $bb_flexforms->CheckSecurityToken($name);
 	}
 
-	function BB_GetBackQueryString()
-	{
-		$result = $_GET;
-		unset($result["bb_msg"]);
-		unset($result["bb_msgtype"]);
-
-		return str_replace(array("=", "+", "/"), array("", "-", "_"), base64_encode(serialize($result)));
-	}
-
 	function BB_GetBackURL($query = array(), $fullrequest = false, $protocol = "")
 	{
-		if (isset($_REQUEST["bb_back"]))
-		{
-			$items = unserialize(base64_decode(str_replace(array("-", "_"), array("+", "/"), $_REQUEST["bb_back"])));
-			if (is_array($items))
-			{
-				foreach ($items as $key => $val)
-				{
-					if (!is_array($val))  $query[] = urlencode($key) . "=" . urlencode($val);
-					else
-					{
-						foreach ($val as $val2)  $query[] = urlencode($key) . "[]=" . urlencode($val2);
-					}
-				}
-			}
-		}
-
 		return ($fullrequest ? BB_GetFullRequestURLBase($protocol) : BB_GetRequestURLBase()) . (count($query) ? "?" . implode("&", $query) : "");
 	}
 
 	function BB_RedirectPage($msgtype = "", $msg = "", $query = array())
 	{
-		if (count($query))  unset($_REQUEST["bb_back"]);
-
 		if ($msgtype != "")
 		{
 			if (!isset($_REQUEST["bb_msgtype"]) || ($_REQUEST["bb_msgtype"] != "error" && $_REQUEST["bb_msgtype"] != "success" && $_REQUEST["bb_msgtype"] != "info"))  $_REQUEST["bb_msgtype"] = $msgtype;
@@ -489,7 +462,7 @@ EOF;
 			ob_start();
 ?>
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
@@ -519,7 +492,6 @@ EOF;
 		global $bb_rootname, $bb_page_layout, $bb_page_layout_no_menu, $bb_menu_layout, $bb_menu_item_layout;
 
 		if (!isset($contentopts["title"]))  $contentopts["title"] = $title;
-		if (isset($contentopts["hidden"]) && !isset($contentopts["hidden"]["bb_back"]) && (!isset($contentopts["formmode"]) || $contentopts["formmode"] !== "get"))  $contentopts["hidden"]["bb_back"] = (isset($_POST["bb_back"]) ? $_POST["bb_back"] : BB_GetBackQueryString());
 
 		header("Content-Type: text/html; charset=UTF-8");
 
