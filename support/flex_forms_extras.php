@@ -755,7 +755,9 @@ FlexForms.modules.Extras_TableDnD_DefaultDrop = function(table, row) {
 				}
 ?>
 
-		jQuery('#<?php echo FlexForms::JSSafe($idbase); ?>').tableDnD(options);
+		jQuery('#<?php echo FlexForms::JSSafe($idbase); ?>').on('table:datachanged', function() {
+			jQuery(this).tableDnDUpdate();
+		}).tableDnD(options);
 	}
 	else
 	{
