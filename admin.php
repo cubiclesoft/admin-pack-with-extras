@@ -47,6 +47,21 @@
 #menuwrap .menu .title { border-bottom: 2px solid #C48851; }
 </style>
 <?php
+
+		// Keep PHP sessions alive.
+		if (session_status() === PHP_SESSION_ACTIVE)
+		{
+?>
+<script type="text/javascript">
+setInterval(function() {
+	jQuery.post('<?=BB_GetRequestURLBase()?>', {
+		'action': 'heartbeat',
+		'sec_t': '<?=BB_CreateSecurityToken("heartbeat")?>'
+	});
+}, 5 * 60 * 1000);
+</script>
+<?php
+		}
 	}
 
 	// An example function used later on to demonstrate loading user information from a database.
@@ -60,7 +75,13 @@
 		return BB_ProcessInfoDefaults($info, $defaults);
 	}
 
-	if (isset($_REQUEST["action"]) && $_REQUEST["action"] == "deleteexample")
+	if (isset($_REQUEST["action"]) && $_REQUEST["action"] == "heartbeat")
+	{
+		$_SESSION["lastts"] = time();
+
+		echo "OK";
+	}
+	else if (isset($_REQUEST["action"]) && $_REQUEST["action"] == "deleteexample")
 	{
 		$id = (isset($_REQUEST["id"]) ? (int)$_REQUEST["id"] : 0);
 //		$db->Query("DELETE FROM userdetails WHERE id = ?", array($id));
