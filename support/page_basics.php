@@ -211,7 +211,7 @@
 		else
 		{
 			$rooturl = BB_GetRequestURLBase();
-			if (substr($rooturl, -1) != "/")  $rooturl = dirname($rooturl);
+			if (substr($rooturl, -1) != "/")  $rooturl = str_replace("\\", "/", dirname($rooturl));
 			if (substr($rooturl, -1) == "/")  $rooturl = substr($rooturl, 0, -1);
 		}
 
@@ -503,7 +503,7 @@ EOF;
 		else
 		{
 			$rooturl = BB_GetRequestURLBase();
-			if (substr($rooturl, -1) != "/")  $rooturl = dirname($rooturl);
+			if (substr($rooturl, -1) != "/")  $rooturl = str_replace("\\", "/", dirname($rooturl));
 			if (substr($rooturl, -1) == "/")  $rooturl = substr($rooturl, 0, -1);
 		}
 
@@ -569,7 +569,7 @@ EOF;
 		else
 		{
 			$rooturl = BB_GetRequestURLBase();
-			if (substr($rooturl, -1) != "/")  $rooturl = dirname($rooturl);
+			if (substr($rooturl, -1) != "/")  $rooturl = str_replace("\\", "/", dirname($rooturl));
 			if (substr($rooturl, -1) == "/")  $rooturl = substr($rooturl, 0, -1);
 		}
 
