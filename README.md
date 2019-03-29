@@ -14,6 +14,7 @@ Features
 * The default templates look nice enough.  Gets the job done.
 * Integrated CSRF/XSRF defenses.
 * Date picker and fancy multiselect options.
+* Supports custom logos/favicon.
 * Reasonable size (~1MB).
 * Has a liberal open source license.  MIT or LGPL, your choice.
 * Designed for relatively painless integration into your project.
