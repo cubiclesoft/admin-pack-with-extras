@@ -7,11 +7,11 @@ body {
 	margin: 0 auto;
 }
 
-div.pagewrap {
+.pagewrap {
 	margin: 0 5px 5px 5px;
 }
 
-div.pagewrap div.headerwrap {
+.pagewrap .headerwrap {
 	text-align: center;
 	font-weight: bold;
 	font-size: 1.7em;
@@ -28,11 +28,11 @@ div.pagewrap div.headerwrap {
 	-webkitborder-bottom-left-radius: 3px;
 }
 
-div.pagewrap div.contentwrap {
+.pagewrap .contentwrap {
 	margin-top: 10px;
 }
 
-div.pagewrap div.menuwrap {
+.pagewrap .menuwrap {
 	margin-top: 7px;
 	border-top: 1px solid #CCCCCC;
 	padding: 25px 0 10px;
@@ -60,7 +60,7 @@ a:hover {
 }
 
 /* Optional message styles. */
-div.message {
+.message {
 	margin: 10px 7px;
 	font-weight: bold;
 	padding: 7px 15px;
@@ -69,34 +69,34 @@ div.message {
 	-webkit-border-radius: 3px;
 }
 
-div.message .success {
+.message .success {
 	background-color: #E8FCDC;
 	border: 1px solid #008800;
 	color: #008800;
 }
 
-div.message .error {
+.message .error {
 	background-color: #FCDCDC;
 	border: 1px solid #880000;
 	color: #880000;
 }
 
-div.message .info {
+.message .info {
 	background-color: #DCDCDC;
 	border: 1px solid #333333;
 	color: #333333;
 }
 
-div.maincontent {
+.maincontent {
 }
 
-div.maincontent div.proptitle {
+.maincontent .proptitle {
 	font-weight: bold;
 	font-size: 1.3em;
 	color: #1F1F1F;
 }
 
-div.maincontent div.propdesc {
+.maincontent .propdesc {
 	margin-top: 5px;
 	padding: 10px 7px;
 	border-top: 1px solid #CCCCCC;
@@ -104,202 +104,202 @@ div.maincontent div.propdesc {
 	font-size: 1.0em;
 }
 
-div.maincontent div.propinfo {
+.maincontent .propinfo {
 }
 
-div.maincontent div.propmain {
+.maincontent .propmain {
 	margin: 0px 7px;
 }
 
-div.maincontent div.propmain div.formfields {
+.maincontent .propmain .formfields {
 	font-size: 0.9em;
 }
 
-div.maincontent div.propmain div.formfields div.formaccordionwrap.ui-accordion {
+.maincontent .propmain .formfields .formaccordionwrap.ui-accordion {
 	margin-bottom: 7px;
 }
 
-div.maincontent div.propmain div.formfields div.formaccordionwrap.ui-accordion h3.ui-accordion-header {
+.maincontent .propmain .formfields .formaccordionwrap.ui-accordion h3.ui-accordion-header {
 	margin-top: 7px;
 }
 
-div.maincontent div.propmain div.formfields div.formaccordionwrap.ui-accordion h3.ui-state-active {
+.maincontent .propmain .formfields .formaccordionwrap.ui-accordion h3.ui-state-active {
 	background: url("jquery_ui_themes/smoothness/images/ui-bg_glass_75_e6e6e6_1x400.png") repeat-x scroll 50% 50% #E6E6E6;
 }
 
-div.maincontent div.propmain div.formfields div.formaccordionwrap.ui-accordion div.formaccordionitems.ui-accordion-content {
+.maincontent .propmain .formfields .formaccordionwrap.ui-accordion .formaccordionitems.ui-accordion-content {
 	padding: 0 14px;
 	background: none;
 	background-color: #FEFEFE;
 }
 
-div.maincontent div.propmain div.formfields div.formaccordionwrap.ui-accordion div.formaccordionitems.ui-widget-content a {
+.maincontent .propmain .formfields .formaccordionwrap.ui-accordion .formaccordionitems.ui-widget-content a {
 	color: #035488;
 }
 
-div.maincontent div.propmain div.formfields div.formaccordionwrap.ui-accordion div.formaccordionitems.ui-accordion-content div.formitem {
+.maincontent .propmain .formfields .formaccordionwrap.ui-accordion .formaccordionitems.ui-accordion-content .formitem {
 	margin-top: 6px;
 	border-top: 1px dotted #CCCCCC;
 	padding-top: 6px;
 }
 
-div.maincontent div.propmain div.formfields div.formaccordionwrap.ui-accordion div.formaccordionitems.ui-accordion-content div.formitem.firstitem {
+.maincontent .propmain .formfields .formaccordionwrap.ui-accordion .formaccordionitems.ui-accordion-content .formitem.firstitem {
 	border-top: 0;
 }
 
-div.maincontent div.propmain div.formfields div.formitem {
+.maincontent .propmain .formfields .formitem {
 	margin: 0.9em 0 0.5em;
 }
 
-div.maincontent div.propmain div.formfields div.formitem div.formitemtitle {
+.maincontent .propmain .formfields .formitem .formitemtitle {
 	font-weight: bold;
 	margin-bottom: 2px;
 }
 
-div.maincontent div.propmain div.formfields div.formitem div.staticwrap, div.maincontent div.propmain div.formfields div.formitem div.static {
+.maincontent .propmain .formfields .formitem .staticwrap, .maincontent .propmain .formfields .formitem .static {
 	margin-left: 7px;
 	width: 95%;
 	font-size: 0.95em;
 	color: #333333;
 }
 
-div.maincontent div.propmain div.formfields div.formitem input.text {
+.maincontent .propmain .formfields .formitem input.text {
 	padding: 0.5em;
 	width: 95%;
 	border: 1px solid #BBBBBB;
 }
 
-div.maincontent div.propmain div.formfields div.formitem input.text:hover {
+.maincontent .propmain .formfields .formitem input.text:hover {
 	border: 1px solid #888888;
 }
 
-div.maincontent div.propmain div.formfields div.formitem input.text:focus {
+.maincontent .propmain .formfields .formitem input.text:focus {
 	border: 1px solid #888888;
 }
 
-div.maincontent div.propmain div.formfields div.formitem input.date {
+.maincontent .propmain .formfields .formitem input.date {
 	padding: 0.5em;
 	max-width: 20em;
 	width: 95%;
 	border: 1px solid #BBBBBB;
 }
 
-div.maincontent div.propmain div.formfields div.formitem input.date:hover {
+.maincontent .propmain .formfields .formitem input.date:hover {
 	border: 1px solid #888888;
 }
 
-div.maincontent div.propmain div.formfields div.formitem input.date:focus {
+.maincontent .propmain .formfields .formitem input.date:focus {
 	border: 1px solid #888888;
 }
 
-div.maincontent div.propmain div.formfields div.formitem div.textareawrap {
+.maincontent .propmain .formfields .formitem .textareawrap {
 	width: 95%;
 }
 
-div.maincontent div.propmain div.formfields div.formitem textarea.text {
+.maincontent .propmain .formfields .formitem textarea.text {
 	padding: 0.3em;
 	width: 100%;
 	border: 1px solid #BBBBBB;
 }
 
-div.maincontent div.propmain div.formfields div.formitem textarea.text:hover {
+.maincontent .propmain .formfields .formitem textarea.text:hover {
 	border: 1px solid #888888;
 }
 
-div.maincontent div.propmain div.formfields div.formitem textarea.text:focus {
+.maincontent .propmain .formfields .formitem textarea.text:focus {
 	border: 1px solid #888888;
 }
 
-div.maincontent div.propmain div.formfields div.formitem input.checkbox {
+.maincontent .propmain .formfields .formitem input.checkbox {
 	border: 1px solid #BBBBBB;
 }
 
-div.maincontent div.propmain div.formfields div.formitem select {
+.maincontent .propmain .formfields .formitem select {
 	padding: 0.3em;
 	width: 95%;
 	max-width: 750px;
 	border: 1px solid #BBBBBB;
 }
 
-div.maincontent div.propmain div.formfields div.formitem select:hover {
+.maincontent .propmain .formfields .formitem select:hover {
 	border: 1px solid #888888;
 }
 
-div.maincontent div.propmain div.formfields div.formitem select:focus {
+.maincontent .propmain .formfields .formitem select:focus {
 	border: 1px solid #888888;
 }
 
-div.maincontent div.propmain div.formfields div.formitem table.viewtable td {
+.maincontent .propmain .formfields .formitem table.viewtable td {
 	vertical-align: top;
 }
 
-div.maincontent div.propmain div.formfields div.formitem table.viewtable td.datakey {
+.maincontent .propmain .formfields .formitem table.viewtable td.datakey {
 	padding-right: 2.0em;
 	font-weight: bold;
 	white-space: nowrap;
 }
 
-div.maincontent div.propmain div.formfields div.formitem div.formitemdesc {
+.maincontent .propmain .formfields .formitem .formitemdesc {
 	margin-left: 7px;
 	font-size: 0.9em;
 	color: #333333;
 }
 
-div.maincontent div.propmain div.formsubmit {
+.maincontent .propmain .formsubmit {
 	margin: 15px auto;
 	text-align: center;
 }
 
-div.maincontent div.propmain div.formsubmit input.submit {
+.maincontent .propmain .formsubmit input.submit {
 	color: #1F1F1F;
 	font-size: 0.9em;
 	font-weight: bold;
 	padding: 0.2em 0.5em;
 }
 
-div.maincontent div.propmain hr {
+.maincontent .propmain hr {
 	margin-top: 0.7em;
 	border: none 0;
 	border-top: 1px dashed #AAAAAA;
 	height: 1px;
 }
 
-div.maincontent div.propmain div.nontablewrap {
+.maincontent .propmain .nontablewrap {
 	border-left: 1px solid #CCCCCC;
 	border-right: 1px solid #CCCCCC;
 	border-bottom: 1px solid #CCCCCC;
 	color: #333333;
 }
 
-div.maincontent div.propmain div.nontable_row {
+.maincontent .propmain .nontable_row {
 	background-color: #F5F5F5;
 	border-top: 1px dashed #CCCCCC;
 	padding: 0.5em;
 }
 
-div.maincontent div.propmain div.nontable_row.firstrow {
+.maincontent .propmain .nontable_row.firstrow {
 	border-top: 1px solid #CCCCCC;
 }
 
-div.maincontent div.propmain div.nontable_row.altrow {
+.maincontent .propmain .nontable_row.altrow {
 	background-color: #FEFEFE;
 }
 
-div.maincontent div.propmain div.nontable_th {
+.maincontent .propmain .nontable_th {
 	margin-top: 0.4em;
 	font-weight: bold;
 }
 
-div.maincontent div.propmain div.nontable_th.firstcol {
+.maincontent .propmain .nontable_th.firstcol {
 	margin-top: 0;
 }
 
-div.maincontent div.propmain div.nontable_td {
+.maincontent .propmain .nontable_td {
 	margin-left: 7px;
 	color: #444444;
 }
 
-div.maincontent div.propmain div.mediawrap {
+.maincontent .propmain .mediawrap {
 	float: right;
 	margin-left: 2.0em;
 	max-width: 45%;
@@ -307,32 +307,32 @@ div.maincontent div.propmain div.mediawrap {
 }
 
 @media (max-width: 600px) {
-	div.maincontent div.propmain div.mediawrap {
+	.maincontent .propmain .mediawrap {
 		float: none;
 		margin-left: 0;
 		max-width: none;
 	}
 }
 
-div.maincontent div.propmain div.mediawrap div.mediaitemtitle {
+.maincontent .propmain .mediawrap .mediaitemtitle {
 	font-weight: bold;
 	margin-bottom: 0.3em;
 }
 
-div.maincontent div.propmain div.mediawrap .mediaitem {
+.maincontent .propmain .mediawrap .mediaitem {
 	max-width: 100%;
 }
 
-div.maincontent div.propmain div.mediawrap div.mediaitemdesc {
+.maincontent .propmain .mediawrap .mediaitemdesc {
 	font-size: 0.9em;
 	color: #333333;
 }
 
 /* Optional menu navigation styles. */
-div.menuwrap {
+.menuwrap {
 }
 
-div.menuwrap div.menu {
+.menuwrap .menu {
 	font-size: 0.7em;
 	border: 1px solid #BBBBBB;
 	background-color: #F5F5F5;
@@ -340,27 +340,27 @@ div.menuwrap div.menu {
 	padding: 5px;
 }
 
-div.menuwrap div.menu div.titlewrap {
+.menuwrap .menu .titlewrap {
 	font-weight: bold;
 	padding-bottom: 6px;
 }
 
-div.menuwrap div.menu a {
+.menuwrap .menu a {
 	display: block;
 	border-top: 1px solid #CCCCCC;
 	padding: 12px 15px;
 }
 
-div.menuwrap div.menu a:hover {
+.menuwrap .menu a:hover {
 	background-color: #EAEAEA;
 	text-decoration: none;
 }
 
 /* Floating navigation menu styles. */
-div.maincontent div.proptitle #navbutton {
+.maincontent .proptitle #navbutton {
 	display: none;
 }
 
-div.maincontent div.proptitle #navdropdown {
+.maincontent .proptitle #navdropdown {
 	display: none;
 }

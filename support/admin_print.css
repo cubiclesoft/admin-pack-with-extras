@@ -9,15 +9,15 @@ html, body { height: auto; overflow: visible; }
 #contentwrap #navbutton { display: none; }
 #contentwrap .proptitletext { padding-left: 0em; }
 
-#contentwrap .formitemdata table thead th, #contentwrap .formitemdata table tbody td { border-top: 1px solid #CCCCCC; }
-#contentwrap .formitemdata table thead th:first-child { border-left: 1px solid #CCCCCC; }
-#contentwrap .formitemdata table thead th:last-child { border-right: 1px solid #CCCCCC; }
-#contentwrap .formitemdata table tbody tr:first-child td { border-top: 1px solid #CCCCCC; }
+.formitemdata table.formitemtable > thead > tr > th, .formitemdata table.formitemtable > tbody > tr > td { border-top: 1px solid #CCCCCC; }
+.formitemdata table.formitemtable > thead > tr > th:first-child { border-left: 1px solid #CCCCCC; }
+.formitemdata table.formitemtable > thead > tr > th:last-child { border-right: 1px solid #CCCCCC; }
+.formitemdata table.formitemtable > tbody > tr:first-child > td { border-top: 1px solid #CCCCCC; }
 
-#contentwrap form .formsubmit input { background-color: #FAFAFA; color: #222222; border: 1px solid #222222; }
+form.ff_form .formsubmit input { background-color: #FAFAFA; color: #222222; border: 1px solid #222222; }
 
 .ui-multiselect { width: 100% !important; }
-#contentwrap .formitemdata .ui-multiselect.ui-widget { border: 1px solid #c5c5c5 !important; background: #ffffff !important; color: #222222 !important; }
+.formitemdata .ui-multiselect.ui-widget { border: 1px solid #c5c5c5 !important; background: #ffffff !important; color: #222222 !important; }
 
 .multiselect-available-list { display: none; }
 .multiselect-selected-list { left: 0 !important; width: 100% !important; }

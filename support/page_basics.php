@@ -1,6 +1,6 @@
 <?php
 	// Admin Pack server-side page manipulation functions.
-	// (C) 2017 CubicleSoft.  All Rights Reserved.
+	// (C) 2019 CubicleSoft.  All Rights Reserved.
 
 	// Most functionality has been moved into FlexForms.  Much of this is legacy interface code for convenience and to avoid breaking things badly.
 	require_once "flex_forms.php";
@@ -391,11 +391,10 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
 <title>@TITLE@</title>
-<link rel="stylesheet" href="@ROOTURL@/@SUPPORTPATH@/admin.css?20170708" type="text/css" media="all" />
-<link rel="stylesheet" href="@ROOTURL@/@SUPPORTPATH@/admin_menu.css?20170708" type="text/css" media="all" />
-<link rel="stylesheet" href="@ROOTURL@/@SUPPORTPATH@/admin_print.css?20170528" type="text/css" media="print" />
+<link rel="stylesheet" href="@ROOTURL@/@SUPPORTPATH@/admin.css?20190329" type="text/css" media="all" />
+<link rel="stylesheet" href="@ROOTURL@/@SUPPORTPATH@/admin_print.css?20190329" type="text/css" media="print" />
 <script type="text/javascript" src="@ROOTURL@/@SUPPORTPATH@/jquery-3.1.1.min.js"></script>
-<script type="text/javascript" src="@ROOTURL@/@SUPPORTPATH@/admin.js?20170528"></script>
+<script type="text/javascript" src="@ROOTURL@/@SUPPORTPATH@/admin.js?20190329"></script>
 <?php if (function_exists("BB_InjectLayoutHead"))  BB_InjectLayoutHead(); ?>
 </head>
 <body>
@@ -418,13 +417,13 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
 <title>@TITLE@</title>
-<link rel="stylesheet" href="@ROOTURL@/@SUPPORTPATH@/admin.css?20170528" type="text/css" media="all" />
-<link rel="stylesheet" href="@ROOTURL@/@SUPPORTPATH@/admin_print.css?20170528" type="text/css" media="print" />
+<link rel="stylesheet" href="@ROOTURL@/@SUPPORTPATH@/admin.css?20190329" type="text/css" media="all" />
+<link rel="stylesheet" href="@ROOTURL@/@SUPPORTPATH@/admin_print.css?20190329" type="text/css" media="print" />
 <script type="text/javascript" src="@ROOTURL@/@SUPPORTPATH@/jquery-3.1.1.min.js"></script>
 <?php if (function_exists("BB_InjectLayoutHead"))  BB_InjectLayoutHead(); ?>
 </head>
 <body>
-<div id="contentwrap">@CONTENT@</div>
+<div id="contentwrap" class="nomenu">@CONTENT@</div>
 </body>
 </html>
 <?php
@@ -467,9 +466,9 @@ EOF;
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
 <title>@TITLE@</title>
-<link rel="stylesheet" href="@ROOTURL@/@SUPPORTPATH@/admin_bulkedit.css?201703018" type="text/css" media="all" />
+<link rel="stylesheet" href="@ROOTURL@/@SUPPORTPATH@/admin_bulkedit.css?20190329" type="text/css" media="all" />
 <script type="text/javascript" src="@ROOTURL@/@SUPPORTPATH@/jquery-3.1.1.min.js"></script>
-<script type="text/javascript" src="@ROOTURL@/@SUPPORTPATH@/admin_bulkedit.js?201703018"></script>
+<script type="text/javascript" src="@ROOTURL@/@SUPPORTPATH@/admin_bulkedit.js?20190329"></script>
 <?php if (function_exists("BB_InjectLayoutHead"))  BB_InjectLayoutHead(); ?>
 </head>
 <body>
@@ -525,24 +524,29 @@ EOF;
 		$data2 = "";
 		foreach ($menuopts as $title => $items)
 		{
-			$data3 = "";
-			foreach ($items as $name => $opts)
+			// Allows for injecting custom HTML into the menu.
+			if (is_string($items))  $data2 .= $items;
+			else
 			{
-				if (!is_array($opts))  $opts = array("href" => $opts);
-
-				$data5 = array();
-				foreach ($opts as $name2 => $val)
+				$data3 = "";
+				foreach ($items as $name => $opts)
 				{
-					$data5[] = htmlspecialchars($name2) . "=\"" . htmlspecialchars($val) . "\"";
+					if (!is_array($opts))  $opts = array("href" => $opts);
+
+					$data5 = array();
+					foreach ($opts as $name2 => $val)
+					{
+						$data5[] = htmlspecialchars($name2) . "=\"" . htmlspecialchars($val) . "\"";
+					}
+
+					$data4 = str_replace("@OPTS@", implode(" ", $data5), $bb_menu_item_layout);
+
+					$data3 .= str_replace("@NAME@", htmlspecialchars(BB_Translate($name)), $data4);
 				}
 
-				$data4 = str_replace("@OPTS@", implode(" ", $data5), $bb_menu_item_layout);
-
-				$data3 .= str_replace("@NAME@", htmlspecialchars(BB_Translate($name)), $data4);
+				$data3 = str_replace("@ITEMS@", $data3, $bb_menu_layout);
+				$data2 .= str_replace("@TITLE@", htmlspecialchars(BB_Translate($title)), $data3);
 			}
-
-			$data3 = str_replace("@ITEMS@", $data3, $bb_menu_layout);
-			$data2 .= str_replace("@TITLE@", htmlspecialchars(BB_Translate($title)), $data3);
 		}
 		$data = str_replace("@MENU@", $data2, $data);
 

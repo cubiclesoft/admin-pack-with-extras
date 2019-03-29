@@ -28,6 +28,7 @@
 
 	// Menu/Navigation options.
 	$menuopts = array(
+//		"Top Logo" => "<div class=\"logo\"><img src=\"admin_pack_demo_logo.png\" height=\"150\" title=\"An optional logo/icon goes here.  This is just the Admin Pack demo image.\"></div>",
 		"Options" => array(
 			// Replace these menu options with your own.  The examples contain useful boilerplate code.
 			"Manage" => BB_GetRequestURLBase() . "?action=manageexample&sec_t=" . BB_CreateSecurityToken("manageexample"),
@@ -35,16 +36,24 @@
 			"Bulk Edit" => BB_GetRequestURLBase() . "?action=bulkeditexample&sec_t=" . BB_CreateSecurityToken("bulkeditexample"),
 			"View/Print" => BB_GetRequestURLBase() . "?action=viewprintexample&id=1&sec_t=" . BB_CreateSecurityToken("viewprintexample"),
 			"No Menu" => BB_GetRequestURLBase() . "?action=nomenuexample&sec_t=" . BB_CreateSecurityToken("nomenuexample")
-		)
+		),
+		"Bottom Logo" => "<div class=\"logo\"><img src=\"admin_pack_demo_logo.png\" height=\"150\" title=\"An optional logo/icon goes here.  This is just the Admin Pack demo image.\"></div>"
 	);
 
 	// Optional function to customize styles.
 	function BB_InjectLayoutHead()
 	{
+		// Customize favicon:  Ideal image is 256x256 that scales well to small sizes.
 		// Menu title underline:  Colors with 60% saturation and 75% brightness generally look good.
+		// Customize branding:  Icons probably look best with some extra padding.  Max width of the menu is 250 pixels wide.  Approximately 150 pixels tall is a good limit.
 ?>
+<link rel="icon" type="image/png" href="admin_pack_demo_favicon.png" />
+<link rel="apple-touch-icon" href="admin_pack_demo_favicon.png" />
+
 <style type="text/css">
 #menuwrap .menu .title { border-bottom: 2px solid #C48851; }
+#menuwrap .logo:first-child > * { padding-bottom: 1em; }
+#menuwrap .logo:last-child > * { padding-bottom: 1.5em; }
 </style>
 <?php
 
