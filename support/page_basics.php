@@ -399,7 +399,7 @@
 </head>
 <body>
 <div id="menuwrap">@MENU@</div>
-<div id="contentwrap">@CONTENT@</div>
+<div id="contentwrap" tabindex="-1">@CONTENT@</div>
 </body>
 </html>
 <?php
@@ -423,7 +423,7 @@
 <?php if (function_exists("BB_InjectLayoutHead"))  BB_InjectLayoutHead(); ?>
 </head>
 <body>
-<div id="contentwrap" class="nomenu">@CONTENT@</div>
+<div id="contentwrap" class="nomenu" tabindex="-1">@CONTENT@</div>
 </body>
 </html>
 <?php

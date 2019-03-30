@@ -47,4 +47,6 @@ $(function() {
 			scrolltarget.scrollLeft += o.deltaX * mult;
 		}
 	});
+
+	$('#contentwrap').focus();
 });
