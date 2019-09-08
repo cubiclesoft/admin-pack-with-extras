@@ -555,6 +555,8 @@ EOF;
 		echo substr($data, 0, $pos);
 		BB_PropertyForm($contentopts);
 		echo substr($data, $pos + 9);
+
+		if (!isset($contentopts["exit"]) || $contentopts["exit"])  exit();
 	}
 
 	function BB_GenerateBulkEditPage($title, $contentopts)
@@ -615,5 +617,7 @@ EOF;
 			}
 		}
 		echo substr($data, $pos + 7);
+
+		if (!isset($contentopts["exit"]) || $contentopts["exit"])  exit();
 	}
 ?>

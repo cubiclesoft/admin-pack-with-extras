@@ -37,7 +37,7 @@
 			"View/Print" => BB_GetRequestURLBase() . "?action=viewprintexample&id=1&sec_t=" . BB_CreateSecurityToken("viewprintexample"),
 			"No Menu" => BB_GetRequestURLBase() . "?action=nomenuexample&sec_t=" . BB_CreateSecurityToken("nomenuexample")
 		),
-		"Bottom Logo" => "<div class=\"logo\"><img src=\"admin_pack_demo_logo.png\" height=\"150\" title=\"An optional logo/icon goes here.  This is just the Admin Pack demo image.\"></div>"
+//		"Bottom Logo" => "<div class=\"logo\"><img src=\"admin_pack_demo_logo.png\" height=\"150\" title=\"An optional logo/icon goes here.  This is just the Admin Pack demo image.\"></div>"
 	);
 
 	// Optional function to customize styles.
@@ -81,7 +81,7 @@ setInterval(function() {
 			"status" => "Approved", "notes" => "What a great guy.\n\nUser approved on " . date("m/d/Y") . ".", "othernotes" => ""
 		);
 
-		return BB_ProcessInfoDefaults($info, $defaults);
+		return $info + $defaults;
 	}
 
 	if (isset($_REQUEST["action"]) && $_REQUEST["action"] == "heartbeat")
@@ -89,18 +89,21 @@ setInterval(function() {
 		$_SESSION["lastts"] = time();
 
 		echo "OK";
+
+		exit();
 	}
-	else if (isset($_REQUEST["action"]) && $_REQUEST["action"] == "deleteexample")
+
+	if (isset($_REQUEST["action"]) && $_REQUEST["action"] == "deleteexample")
 	{
 		$id = (isset($_REQUEST["id"]) ? (int)$_REQUEST["id"] : 0);
 //		$db->Query("DELETE FROM userdetails WHERE id = ?", array($id));
 
 		BB_RedirectPage("success", "Successfully deleted the details entry.  (Just imagine that it worked.  After all, this is only an example.)", array("action=manageexample&sec_t=" . BB_CreateSecurityToken("manageexample")));
 	}
-	else if (isset($_REQUEST["action"]) && $_REQUEST["action"] == "manageexample")
-	{
-		// Demonstrates a common pattern to show all entries in a MySQL/MariaDB database and provide options.
 
+	// Demonstrates a common pattern to show all entries in a MySQL/MariaDB database and provide options.
+	if (isset($_REQUEST["action"]) && $_REQUEST["action"] == "manageexample")
+	{
 //		$rows = array();
 //		$result = $db->Query("SELECT * FROM userdetails");
 //		while ($row = $result->NextRow())
@@ -132,10 +135,10 @@ setInterval(function() {
 
 		BB_GeneratePage("Manage Entries Example", $menuopts, $contentopts);
 	}
-	else if (isset($_REQUEST["action"]) && $_REQUEST["action"] == "addeditexample_simple")
-	{
-		// A simple boilerplate version of 'addeditexample' designed for copy/pasting.
 
+	// A simple boilerplate version of 'addeditexample' designed for copy/pasting.
+	if (isset($_REQUEST["action"]) && $_REQUEST["action"] == "addeditexample_simple")
+	{
 		$id = (isset($_REQUEST["id"]) ? (int)$_REQUEST["id"] : 0);
 		$row = $db->GetRow("SELECT * FROM userdetails WHERE id = ?", array($id));
 		if ($row)  $info = LoadUserDetails(unserialize($row->info));
@@ -181,12 +184,12 @@ setInterval(function() {
 
 		BB_GeneratePage(($id ? "Edit Entry Example" : "Add Entry Example"), $menuopts, $contentopts);
 	}
-	else if (isset($_REQUEST["action"]) && $_REQUEST["action"] == "addeditexample")
-	{
-		// Demonstrates a common pattern to easily add new entries AND edit existing entries in a MySQL/MariaDB database with writing code only one time.
-		// Less code results in fewer logic errors.  Some code is commented out so that the example actually functions.
-		// Includes logic to test the most common FlexForms features, so this might be a bit excessive.  Use the 'addeditexample_simple' code above for rapid start development.
 
+	// Demonstrates a common pattern to easily add new entries AND edit existing entries in a MySQL/MariaDB database with writing code only one time.
+	// Less code results in fewer logic errors.  Some code is commented out so that the example actually functions.
+	// Includes logic to test the most common FlexForms features, so this might be a bit excessive.  Use the 'addeditexample_simple' code above for rapid start development.
+	if (isset($_REQUEST["action"]) && $_REQUEST["action"] == "addeditexample")
+	{
 		$id = (isset($_REQUEST["id"]) ? (int)$_REQUEST["id"] : 0);
 //		$row = $db->GetRow("SELECT * FROM userdetails WHERE id = ?", array($id));
 //		if ($row)  $info = LoadUserDetails(unserialize($row->info));
@@ -599,7 +602,9 @@ setInterval(function() {
 
 		BB_GeneratePage(($id ? "Edit Entry Example" : "Add Entry Example"), $menuopts, $contentopts);
 	}
-	else if (isset($_REQUEST["action"]) && $_REQUEST["action"] == "bulkeditexample_getinfo")
+
+	// Demonstrates a common pattern for bulk editing highly visual content (e.g. placing pins on a map).
+	if (isset($_REQUEST["action"]) && $_REQUEST["action"] == "bulkeditexample_getinfo")
 	{
 		$id = (int)$_REQUEST["id"];
 
@@ -613,11 +618,11 @@ setTimeout(function() {
 $('#maincontentwrap').html('Loaded item #<b><?=$id?></b> and the item will be removed from the sidebar in two seconds.  Items in the sidebar can be inserted/updated/removed dynamically.');
 </script>
 <?php
+
+		exit();
 	}
 	else if (isset($_REQUEST["action"]) && $_REQUEST["action"] == "bulkeditexample")
 	{
-		// Demonstrates a common pattern for bulk editing highly visual content (e.g. placing pins on a map).
-
 		$items = array();
 		for ($x = 0; $x < 1000; $x++)
 		{
@@ -653,11 +658,11 @@ function LoadItem(id) {
 
 		BB_GenerateBulkEditPage("Example Bulk Edit Page", $contentopts);
 	}
-	else if (isset($_REQUEST["action"]) && $_REQUEST["action"] == "viewprintexample")
-	{
-		// Demonstrates a common pattern to display a summary view that is also print-ready.
-		// The view/print layout adds additional features to FlexForms.
 
+	// Demonstrates a common pattern to display a summary view that is also print-ready.
+	// The view/print layout adds additional features to FlexForms.
+	if (isset($_REQUEST["action"]) && $_REQUEST["action"] == "viewprintexample")
+	{
 		$id = (isset($_REQUEST["id"]) ? (int)$_REQUEST["id"] : 0);
 //		$row = $db->GetRow("SELECT * FROM userdetails WHERE id = ?", array($id));
 //		if ($row)
@@ -711,10 +716,10 @@ function LoadItem(id) {
 			BB_GeneratePage("View Entry Example for #" . $id, array(), $contentopts);
 //		}
 	}
-	else if (isset($_REQUEST["action"]) && $_REQUEST["action"] == "nomenuexample")
-	{
-		// Demonstrates a common pattern for displaying the standard layout without menu options to the user.
 
+	// Demonstrates a common pattern for displaying the standard layout without menu options to the user.
+	if (isset($_REQUEST["action"]) && $_REQUEST["action"] == "nomenuexample")
+	{
 		if (isset($_REQUEST["username"]))
 		{
 			BB_SetPageMessage("error", "Invalid username or password.");
@@ -742,12 +747,11 @@ function LoadItem(id) {
 
 		BB_GeneratePage("Login", array(), $contentopts);
 	}
-	else
-	{
-		$contentopts = array(
-			"desc" => "Pick an option from the menu."
-		);
 
-		BB_GeneratePage("Home", $menuopts, $contentopts);
-	}
+	// Default action.  For security, this page should never actually do anything.
+	$contentopts = array(
+		"desc" => "Pick an option from the menu."
+	);
+
+	BB_GeneratePage("Home", $menuopts, $contentopts);
 ?>
