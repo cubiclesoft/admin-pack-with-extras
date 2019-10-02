@@ -879,7 +879,7 @@
 					}
 					case "table":
 					{
-						$idbase = $id . "_" . (isset($field["name"]) ? $field["name"] : "table");
+						$idbase = $id . "_table";
 
 ?>
 			<div class="formitemdata">
@@ -1084,7 +1084,7 @@
 				if ($this->state["responsive"] && $this->state["insiderowwidth"])  echo "<td></td>";
 
 ?>
-			</tr></table></div>
+			</tr></tbody></table></div>
 <?php
 			}
 
