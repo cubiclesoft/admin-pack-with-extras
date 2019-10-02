@@ -202,52 +202,22 @@ setInterval(function() {
 		// Example handler for the file uploader FlexForms Module.
 		// Note:  It is far easier to only support file uploads when editing existing items.
 		//        Otherwise, temporary file management will need to be implemented via user sessions with server-side cron cleanup if the file is abandoned.
-		if (isset($_REQUEST["fileuploader"]))
+		if (file_exists("support/flex_forms_fileuploader.php"))
 		{
-			header("Content-Type: application/json");
+			require_once "support/flex_forms_fileuploader.php";
 
-			$allowedexts = array(
-				"jpg" => true,
-				"png" => true,
-				"gif" => true,
+			function AddEditExample_ModifyUploadResult(&$result, $filename, $name, $ext, $fileinfo)
+			{
+				@unlink($filename);
+			}
+
+			$options = array(
+				"allowed_exts" => array("jpg", "png", "gif"),
+				"filename" => sys_get_temp_dir() . "/temp_" . time() . ".{ext}",
+				"result_callback" => "AddEditExample_ModifyUploadResult"
 			);
 
-			$files = BB_NormalizeFiles("file2");
-			if (!isset($files[0]))  $result = array("success" => false, "error" => "File data was submitted but is missing.", "errorcode" => "bad_input");
-			else if (!$files[0]["success"])  $result = $files[0];
-			else if (!isset($allowedexts[strtolower($files[0]["ext"])]))
-			{
-				$result = array(
-					"success" => false,
-					"error" => "Invalid file extension.  Must be '.jpg', '.png', or '.gif'.",
-					"errorcode" => "invalid_file_ext"
-				);
-			}
-			else
-			{
-				require_once "support/flex_forms_fileuploader.php";
-
-				// For chunked file uploads, get the current filename and starting position from the incoming headers.
-				$name = FlexForms_FileUploader::GetChunkFilename();
-				if ($name !== false)
-				{
-					$startpos = FlexForms_FileUploader::GetFileStartPosition();
-
-					// [Do stuff with the file chunk.]
-				}
-				else
-				{
-					// [Do stuff with the file here.]
-					// copy($files[0]["file"], __DIR__ . "/images/" . $id . "." . strtolower($files[0]["ext"]));
-				}
-
-				$result = array(
-					"success" => true
-				);
-			}
-
-			echo json_encode($result, JSON_UNESCAPED_SLASHES);
-			exit();
+			FlexForms_FileUploader::HandleUpload("file2", $options);
 		}
 
 		if (isset($_REQUEST["first"]))
@@ -287,7 +257,6 @@ setInterval(function() {
 		if (file_exists("support/flex_forms_tablefilter.php"))  require_once "support/flex_forms_tablefilter.php";
 		if (file_exists("support/flex_forms_htmledit.php"))  require_once "support/flex_forms_htmledit.php";
 		if (file_exists("support/flex_forms_textcounter.php"))  require_once "support/flex_forms_textcounter.php";
-		if (file_exists("support/flex_forms_fileuploader.php"))  require_once "support/flex_forms_fileuploader.php";
 		if (file_exists("support/flex_forms_previewurl.php"))  require_once "support/flex_forms_previewurl.php";
 
 		$tomorrow = mktime(0, 0, 0, date("n"), date("j") + 1);
