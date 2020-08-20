@@ -71,13 +71,14 @@ a:hover { color: #297ACC; text-decoration: underline; }
 .formitemdata table.formitemtable > tbody > tr:last-child { border-bottom: 1px solid #CCCCCC; }
 .formitemdata table.formitemtable > tbody > tr > td.nowrap { white-space: nowrap; }
 
+.formitemdata .textitemwrap > input { outline: none; }
 .formitemdata .textitemwrap > input.text { box-sizing: border-box; width: 100%; font-size: 0.9em; padding: 0.3em; border: 1px solid #BBBBBB; }
 .formitemdata .textitemwrap > input.text:focus, .formitemdata .textitemwrap > input.text:hover { border: 1px solid #888888; }
 
-.formitemdata .textareawrap > textarea { box-sizing: border-box; width: 100%; font-size: 0.9em; padding: 0.3em; border: 1px solid #BBBBBB; }
+.formitemdata .textareawrap > textarea { box-sizing: border-box; width: 100%; font-size: 0.9em; padding: 0.3em; border: 1px solid #BBBBBB; outline: none; }
 .formitemdata .textareawrap > textarea:focus, .formitemdata .textareawrap > textarea:hover { border: 1px solid #888888; }
 
-.formitemdata .selectitemwrap > select { box-sizing: border-box; width: 100%; font-size: 0.9em; padding: 0.3em; border: 1px solid #BBBBBB; }
+.formitemdata .selectitemwrap > select { box-sizing: border-box; width: 100%; font-size: 0.9em; padding: 0.3em; border: 1px solid #BBBBBB; outline: none; }
 .formitemdata .selectitemwrap > select:focus, .formitemdata .selectitemwrap > select:hover { border: 1px solid #888888; }
 
 .formitemdata .radioitemwrap, .formitemdata .checkboxitemwrap { margin-left: 1.7em; text-indent: -1.7em; }
