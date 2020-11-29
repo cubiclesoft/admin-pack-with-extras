@@ -5,7 +5,7 @@ A PHP toolkit designed specifically for programmers to quickly create a nice-loo
 
 Admin Pack with FlexForms Extras is the functionality of [Admin Pack](https://github.com/cubiclesoft/admin-pack) with the powerful extensions of [FlexForms Extras](https://github.com/cubiclesoft/php-flexforms-extras).
 
-[![Donate](https://cubiclesoft.com/res/donate-shield.png)](https://cubiclesoft.com/donate/)
+[![Donate](https://cubiclesoft.com/res/donate-shield.png)](https://cubiclesoft.com/donate/) [![Discord](https://img.shields.io/discord/777282089980526602?label=chat&logo=discord)](https://cubiclesoft.com/product-support/github/)
 
 Features
 --------
