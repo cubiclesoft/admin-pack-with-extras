@@ -261,8 +261,34 @@ setInterval(function() {
 
 		$tomorrow = mktime(0, 0, 0, date("n"), date("j") + 1);
 
+		// Inject some custom Javascript or CSS as needed.
+		$desc = "";
+		ob_start();
+?>
+<script type="text/javascript">
+function AddedFileToUploader(e, data)
+{
+	console.log('Added file');
+	console.log(e);
+	console.log(data);
+}
+
+function StartUploadingFile(SubmitUpload, e, data)
+{
+	console.log('Starting upload');
+	console.log(e);
+	console.log(data);
+
+	SubmitUpload();
+}
+</script>
+<?php
+		$desc .= ob_get_contents();
+		ob_end_clean();
+
 		$contentopts = array(
 			"desc" => ($id ? "Edit the user details." : "Add user details."),
+			"htmldesc" => $desc,
 			"hidden" => array(
 				"id" => $id
 			),
@@ -540,6 +566,8 @@ setInterval(function() {
 					"multiple" => true,
 					"uploader" => true,
 					"uploader_options" => array("recordaudio" => true, "recordvideo" => true),
+					// The following is not necessarily needed but shows how to assign custom callbacks when using FlexForms modules.
+					"uploader_callbacks" => array("added" => "AddedFileToUploader", "startupload" => "StartUploadingFile"),
 //					"maxchunk" => min(FlexForms_FileUploader::GetMaxUploadFileSize(), 1000000),
 					"desc" => "Description for File Uploader.  This feature requires FlexForms Modules to be included."
 				),
