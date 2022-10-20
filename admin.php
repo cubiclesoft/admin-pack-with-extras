@@ -579,7 +579,8 @@ function StartUploadingFile(SubmitUpload, e, data)
 					"desc" => "Description for Preview URL.  This feature requires FlexForms Modules to be included."
 				),
 			),
-			"submit" => ($id ? "Save" : "Create")
+			"submit" => ($id ? array("Save", "Export") : "Create"),
+			"submitname" => "submit"
 		);
 
 		// Rarely used modules.  Also demonstrates adding fields dynamically.
